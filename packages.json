@@ -28,6 +28,6 @@
   "dependencies": {
     "beam-client-node": "0.1.0",
     "beam-interactive-node": "0.2.0",
-    "play-sound": "
+    "play-sound": "0.0.7"
   }
 }
