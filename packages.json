@@ -1,0 +1,33 @@
+{
+  "name": "BeamSoundlyInteractive",
+  "version": "0.0.1",
+  "description": "Interactive Sound Board for Beam",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Derek Jensen",
+    "email": "derek@pewf.co"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Leviathan5/BeamSoundlyInteractive.git"
+  },
+  "bugs" : {
+    "url": "https://github.com/Leviathan5/BeamSoundlyInteractive/issues"
+  },
+  "homepage": "https://github.com/Leviathan5/BeamSoundlyInteractive",
+  "keywords": [
+    "beam",
+    "sound",
+    "audio",
+    "interactive"
+  ],
+  "dependencies": {
+    "beam-client-node": "0.1.0",
+    "beam-interactive-node": "0.2.0",
+    "play-sound": "
+  }
+}
