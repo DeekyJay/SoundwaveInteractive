@@ -184,6 +184,6 @@ function main() {
     });
 }
 
-
-//Start the application
-main();
+module.exports = {
+  main: main
+}
