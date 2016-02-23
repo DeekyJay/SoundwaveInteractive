@@ -1,6 +1,7 @@
 'use strict';
+'use esversion:6';
 
-var interactive = require('./interactive');
+const Interactive = require('./interactive');
 
 const electron = require('electron');
 // Module to control application life.
@@ -31,7 +32,7 @@ function createWindow () {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  startInteractive();
+  //startInteractive();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -63,6 +64,5 @@ app.on('activate', function () {
   }
 });
 
-function startInteractive() {
-  interactive.main();
-}
+
+var interactive = new Interactive(electron);
