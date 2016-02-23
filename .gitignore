@@ -34,3 +34,5 @@ node_modules
 
 #Added By Derek
 sounds/
+.jshintrc
+.tern-project
