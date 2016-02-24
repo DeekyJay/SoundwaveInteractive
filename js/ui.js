@@ -10,6 +10,7 @@ $(function(){
   var btnAbout = $('#btnAbout');
   /*** Navigation Label ELements ***/
   var lblNavConStatus = $('#lblNavConStatus');
+  var lblTabTitle = $('#title>span');
   /*** Status Elements ***/
   var btnConnect = $('#btnConnect');
   var lblConStatus = $('#lblConStatus');
@@ -107,11 +108,14 @@ $(function(){
     btnParent.css('border-left', '8px solid #2f549d');
     btnParent.css('margin-left', '0px');
 
+    lblTabTitle.text(btnCurrent.text());
+
     if(tabCurrent.css('display') !== 'inline-block') {
       tabs.hide();
       tabCurrent.fadeIn();
     }
   }
+  showTab(tabStatus, btnStatus);
 
   /**
    * Toggles the connection to Beam
