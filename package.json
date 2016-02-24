@@ -33,6 +33,7 @@
     "grunt-browser-sync": "^2.2.0",
     "grunt-contrib-less": "^1.2.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-shell-spawn": "^0.3.10",
     "jit-grunt": "^0.9.1"
   }
 }

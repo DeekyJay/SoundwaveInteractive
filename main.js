@@ -20,7 +20,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 400,
-    center: true,
+    x: 920,
+    y: 570,
     fullscreenable: false,
     resizable: false
   });
@@ -42,6 +43,10 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  mainWindow.on('move', function() {
+    console.log(mainWindow.getPosition());
   });
 }
 
