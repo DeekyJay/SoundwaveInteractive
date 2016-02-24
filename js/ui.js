@@ -14,10 +14,17 @@ $(function(){
   var btnConnect = $('#btnConnect');
   var lblConStatus = $('#lblConStatus');
   var lblUserCount = $('#lblUserCount');
+  var txtTitleEdit = $('#txtTitleEdit');
+  var editSoundTitleOverlay = $('#editSoundTitleOverlay');
+  var btnEditTitle = $('#btnEditTitle');
+  var btnEditCancel = $('#btnEditCancel');
   /*** Sound Board Elements ***/
-  var btnSounds = $('.sound');
+  var sounds = $('.sound>audio');
+  var btnSoundTitles = $('.sound>span:first-child');
+  var btnPlays = $('.sound>span>div>a');
+  var btnLoads = $(".sound>span:last-child>a");
   /*** Content Elements ***/
-  var tabs = $('#content > div');
+  var tabs = $('#content>div');
   var tabStatus = $('#status');
   var tabSound = $('#soundboard');
   var tabSettings = $('#settings');
@@ -30,9 +37,40 @@ $(function(){
   btnBoard.click(function() {showTab(tabSound, btnBoard);});
   btnSettings.click(function() {showTab(tabSettings, btnSettings);});
   btnAbout.click(function() {showTab(tabAbout, btnAbout);});
-  /*** Status Button Events **/
+  /*** Status Button Events ***/
   btnConnect.click(function(){toggleConnection();});
+  /*** Sound Board Button Events ***/
+  btnLoads.each(function(){
+    $(this).click(function(){loadAudioFile($(this));});
+  });
+  btnPlays.each(function(){
+    $(this).click(function(){playAudio($(this).parent().parent()
+      .parent().children('audio'));});
+  });
+  var i = 0;
+  btnSoundTitles.each(function() {
+    $(this).attr('sid', i);
+    i+=1;
+    $(this).attr('name', $(this).text());
+    $(this).attr('default', $(this).text());
+    $(this).click(function() {
+      editSoundTitle($(this));
+    });
+  });
+  btnEditCancel.click(function(){closeEditTitleOverlay();});
+  btnEditTitle.click(function(){saveTitle();});
   /*################ Click Events END ################*/
+
+  /*################## Hover Events ##################*/
+  btnSoundTitles.each(function(){
+    $(this).mouseover(function(){
+      $(this).text('Edit');
+    });
+    $(this).mouseleave(function(){
+      $(this).text($(this).attr('name'));
+    });
+  });
+  /*################ Hover Events END ################*/
 
   //&&&&&&&&&&&&&&&&&&&&&&&&&& UI END &&&&&&&&&&&&&&&&&&&&&&&&&&//
 
@@ -40,6 +78,8 @@ $(function(){
 
   /*################## Declares ##################*/
   const ipcRenderer = require('electron').ipcRenderer;
+  var remote = require('remote');
+  var dialog = remote.dialog;
   /*################ Declares END ################*/
 
   /*################## Variables ##################*/
@@ -80,22 +120,88 @@ $(function(){
     ipcRenderer.send('toggle-connection', boolConnect);
     var strCommand = boolConnect ? "Connect" : "Disconnect";
     btnConnect.text(strCommand);
-    if(boolConnect)
-    {
-      lblNavConStatus.text("Disconnected");
-      lblConStatus.text("Disconnected");
-    }
+    //if(boolConnect)
+    //{
+    //  lblNavConStatus.text("Disconnected");
+    //  lblConStatus.text("Disconnected");
+    //  lblUserCount.text("Unknown");
+    //}
     boolConnect = !boolConnect;
   }
 
+  /**
+   * Sets the Audio SRC for playback
+   * @param  {button} audio - The load button for the sound
+   */
+  function loadAudioFile(audio) {
+    dialog.showOpenDialog(
+      {
+        filters: [
+          { name: 'Audio', extensions: ['mp3', 'wav', 'ogg'] }
+        ]
+      },
+      function(fileNames) {
+        if (fileNames === undefined) return;
+        var fileName = fileNames[0];
+        console.log(fileName);
+        audio.parent().parent().children('audio').attr('src', fileName);
+      });
+  }
+
+  /**
+   * [playAudio description]
+   * @param  {button} play - The audio to play
+   */
+  function playAudio(play) {
+    play.trigger('play');
+  }
+
+  /**
+   * Displays the Edit Title overlay
+   * @param  {title} title - The title to edit
+   */
+  function editSoundTitle(title) {
+    txtTitleEdit.val(title.attr('name'));
+    txtTitleEdit.attr('name', title.attr('name'));
+    txtTitleEdit.attr('sid', title.attr('sid'));
+    editSoundTitleOverlay.fadeIn(300);
+    editSoundTitleOverlay.css('display', 'flex');
+    txtTitleEdit[0].select();
+  }
+
+  function saveTitle() {
+    var sid = txtTitleEdit.attr('sid');
+    var title = $(btnSoundTitles[sid]);
+    //TODO Make sure you cannot save if input is empty by disabling button
+    if(txtTitleEdit.val() === "")
+    {
+      txtTitleEdit.val(title.attr('default'));
+    }
+    title.text(txtTitleEdit.val());
+    title.attr('name', txtTitleEdit.val());
+    //TODO Save to config file
+    closeEditTitleOverlay();
+  }
+
+  function closeEditTitleOverlay() {
+    txtTitleEdit.val('');
+    txtTitleEdit.attr('name', '');
+    txtTitleEdit.attr('sid', '');
+    editSoundTitleOverlay.css('display', '');
+  }
   /*################ Functions END ################*/
 
   /*################## Event Listeners ##################*/
   ipcRenderer.on('connection-status', function(event, status, count){
     lblConStatus.text(status);
     lblNavConStatus.text(status);
-    count  = count === null ? "Unknown" : count;
+    count = count === undefined ? "Unknown" : count;
     lblUserCount.text(count);
+  });
+
+  ipcRenderer.on('play-sound', function(event, id){
+    var audio = $(sounds[id]);
+    playAudio(audio);
   });
   /*################ Event Listeners END ################*/
 

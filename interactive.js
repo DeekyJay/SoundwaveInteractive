@@ -1,5 +1,6 @@
 function Interactive(electron) {
   const ipcMain = electron.ipcMain;
+  const app = electron.app;
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
   var Player = require('play-sound')(opts = {});
@@ -11,6 +12,7 @@ function Interactive(electron) {
   var beam = new Beam();
   var robot = null;
   var sender = null;
+  var running = false;
   /**
    * Gets the Channel ID from the Channel's Name
    * @param {string} The name of the channel
@@ -100,20 +102,23 @@ function Interactive(electron) {
   function handleReport(report) {
     //console.log("*****************");
     //console.log(report);
-    sender.send('connection-status', 'Connected', report.users.connected);
-    report.tactile.forEach(function (tac) {
-      if(tac.pressFrequency == 1)
-      {
-        var date = new Date();
-        var hour = date.getHours();
-        var min = date.getMinutes();
-        var sec = date.getSeconds();
-        var sDate = hour + ":" + min + ":" + sec;
-        console.log("[" + sDate + "] Tactile: " + tac.id + ", Press: " +
-                tac.pressFrequency + ", Release: " + tac.releaseFrequency);
-        Player.play('sounds/' + tac.id + ".mp3", function(err){});
-      }
-    });
+    if(running)
+    {
+      sender.send('connection-status', 'Connected', report.users.connected);
+      report.tactile.forEach(function (tac) {
+        if(tac.pressFrequency == 1)
+        {
+          var date = new Date();
+          var hour = date.getHours();
+          var min = date.getMinutes();
+          var sec = date.getSeconds();
+          var sDate = hour + ":" + min + ":" + sec;
+          console.log("[" + sDate + "] Tactile: " + tac.id + ", Press: " +
+                  tac.pressFrequency + ", Release: " + tac.releaseFrequency);
+          sender.send('play-sound', tac.id);
+        }
+      });
+    }
 
   }
 
@@ -160,6 +165,7 @@ function Interactive(electron) {
       sender.send('connection-status', 'Getting Controls');
       return getInteractiveControls(id);
     }).then(function(controls) {
+      sender.send('connection-status', "Validating Controls");
       return validateInteractiveControls(controls);
     }).then(function() {
       return beam.game.join(id);
@@ -189,8 +195,12 @@ function Interactive(electron) {
   }
 
   function stop () {
-    DebugSpot("Closing Connection");
-    robot.close();
+    if(running === true)
+    {
+      DebugSpot("Closing Connection");
+      robot.close();
+      sender.send('connection-status', 'Disconnected');
+    }
   }
 
   ipcMain.on('toggle-connection', function(event, args){
@@ -198,13 +208,23 @@ function Interactive(electron) {
     if (args === false)
     {
       start();
+      running = true;
     }
     else {
       stop();
+      running = false;
     }
   });
 
+  // Quit when all windows are closed.
+  app.on('window-all-closed', function () {
+    stop();
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
 }
-
 
 module.exports = Interactive;
