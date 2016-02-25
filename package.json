@@ -1,6 +1,6 @@
 {
   "name": "beam-soundly-interactive",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "description": "Interactive Sound Board for Beam",
   "main": "main.js",
   "scripts": {

@@ -1,3 +1,25 @@
+/**Mixins**/
+.flexy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.darkinput(@font-size: 20px) {
+  font: @font-size Ubuntu;
+  border-radius: 7px;
+  border: 1px solid #404040;
+  color: white;
+  background-color: #1b1b1b;
+  &:focus{outline: none;}
+}
+/** VARIABLES **/
+@old-title-color: #546BBF;
+@title-color: #3e68b0;
+@bg-nav-color: #2E3136;
+//Header Line Height
+@htitle: 50px;
+
 @font-face {
   font-family: Ubuntu;
   src: url('../fonts/Ubuntu-L.ttf');
@@ -27,13 +49,6 @@ a {
   color: inherit;
 }
 
-/** VARIABLS **/
-@old-title-color: #546BBF;
-@title-color: #3e68b0;
-@bg-nav-color: #2E3136;
-//Header Line Height
-@htitle: 50px;
-
 #nav {
   @hli: 50px;
   @crline: 30px;
@@ -54,6 +69,7 @@ a {
     padding: 0;
     list-style: none;
     li {
+      cursor: pointer;
       font-size: 18px;
       color: #CCCCCC;
       line-height: @hli;
@@ -67,10 +83,9 @@ a {
     }
   }
   >div {
-    display: flex;
+    .flexy;
     height: 400 - (@hli * 4) - @htitle - @crline;
     text-align: center;
-    justify-content: center;
     &:nth-last-child(2) {
       color: #8C8C8C;
       >span {
@@ -105,6 +120,32 @@ a {
   }
 }
 
+#status {
+  .flexy;
+  height: 100%;
+  >div>div {
+    width: 100%;
+    .flexy;
+    span {
+      margin: 5px;
+      margin-bottom: 10px;
+      font-size: 22px;
+      &:first-child {
+        font-weight: bold;
+      }
+    }
+    &:last-child {
+      >span {
+        background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);
+        padding: 10px;
+        border-radius: 5px;
+        width: 150px;
+        text-align: center;
+      }
+    }
+  }
+}
+
 #content {
   display: inline-block;
   width: 750px;
@@ -114,49 +155,18 @@ a {
     display: none;
     width: 100%;
     height: 100%;
-    margin: 0px;
-  }
-
-}
-
-#status {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  >div {
-    >div {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      span {
-        margin: 5px;
-        margin-bottom: 10px;
-        font-size: 22px;
-        &:first-child {
-          font-weight: bold;
-        }
-      }
-      &:last-child {
-        >span {
-          background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);
-          padding: 10px;
-          border-radius: 5px;
-          width: 150px;
-          text-align: center;
-        }
-      }
-    }
+    margin: 0;
   }
 }
+
+
 
 #soundboard {
   //display: inline-block;
   .row {
+    .flexy;
     width: 100%;
     height: 50%;
-    display: flex;
-    justify-content: center;
   }
   .sound {
     @brds: 1px solid #1D1D1D;
@@ -164,7 +174,6 @@ a {
     margin: 5px;
     width: 90px;
     height: 130px;
-    align-self: center;
     text-align: center;
     span {
       @tline: 25px;
@@ -174,8 +183,8 @@ a {
       width: auto;
       &:first-child {
         line-height: @tline;
-        padding: 2px 0px;
-        margin: 3px 0px;
+        padding: 2px 0;
+        margin: 3px 0;
         width: 100%;
         height: 23px;
         overflow: hidden;
@@ -221,48 +230,32 @@ a {
 }
 
 #editSoundTitleOverlay {
+  .flexy;
+  display: none;
   position: fixed;
   width: 750px;
   height: 349px;
   background-color: rgba(41, 41, 41, 0.90);
-  display: none;
-  //display: flex;
-  align-items: center;
-  justify-content: center;
   >div {
-    //width: 300px;
+    .flexy;
     height: 38px;
     text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 10px;
     border-radius: 5px;
     border: 2px solid #3E68B0;
     >input {
+      .darkinput;
       @mtop: 1px;
       height: 36px;
       width: 150px;
-      padding: 0px 7px;
-      margin: 0px 5px;
+      padding: 0 7px;
+      margin: 0 5px;
       line-height: 25px  - (@mtop * 2);
-      font-size: 20px;
-      font-family: Ubuntu;
-      border-radius: 7px;
-      border: none;
-      border: @mtop solid #404040;
-      color: white;
-      background-color: #1b1b1b;
-      outline: none;
     }
     >span {
-      //position: relative;
-      //font-size: 18px;
-      //height: 27px;
       line-height: 34px;
-      margin: 0px 5px;
+      margin: 0 5px;
       padding: 2px 20px;
-      //border: 2px solid black;
       background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
       border-radius: 5px;
       font-weight: bold;
@@ -285,40 +278,26 @@ a {
 }
 
 #settings {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .flexy;
   >div>div {
-    justify-content: center;
-    display: flex;
-    padding: 7px 0px;
+    .flexy;
+    padding: 7px 0;
     >* {
-      //height: 36px;
-      margin: 0px 5px;
-      //padding: 2px 20px;
+      margin: 0 5px;
       line-height: 34px;
-      //font-size: 18px;
       border-radius: 5px;
     }
     >input {
+      .darkinput(16px);
       width: 150px;
-      padding: 0px 7px;
-      //margin: 0px 5px;
-      //line-height: 25px  - (@mtop * 2);
-      font-size: 16px;
-      font-family: Ubuntu;
-      border-radius: 7px;
-      border: none;
-      border: 1px solid #404040;
-      color: white;
-      background-color: #1b1b1b;
-      outline: none;
+      height: 34px;
+      padding: 0 7px;
     }
     >span {
       &:nth-last-child(2) {
         background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
         font-weight: bold;
-        padding: 0px 20px;
+        padding: 0 20px;
         &:hover {
           background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
           cursor: pointer;
@@ -327,7 +306,7 @@ a {
       &:last-child {
         background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
         color: white;
-        padding: 0px 15px;
+        padding: 0 15px;
         &:hover {
           background: linear-gradient(to bottom, #3d3c3d 0%, #4b4b4b 100%);
         }
