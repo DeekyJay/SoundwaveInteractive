@@ -85,6 +85,7 @@ $(function(){
 
   /*################## Variables ##################*/
   var boolConnect = false;
+  var boolCanToggle = true;
   /*################ Variables END ################*/
 
   /*################## Functions ##################*/
@@ -118,16 +119,12 @@ $(function(){
    * Toggles the connection to Beam
    */
   function toggleConnection() {
-    ipcRenderer.send('toggle-connection', boolConnect);
-    var strCommand = boolConnect ? "Connect" : "Disconnect";
-    btnConnect.text(strCommand);
-    //if(boolConnect)
-    //{
-    //  lblNavConStatus.text("Disconnected");
-    //  lblConStatus.text("Disconnected");
-    //  lblUserCount.text("Unknown");
-    //}
-    boolConnect = !boolConnect;
+    if(boolCanToggle)
+    {
+      ipcRenderer.send('toggle-connection', boolConnect);
+      boolCanToggle = false;
+      boolConnect = !boolConnect;
+    }
   }
 
   /**
@@ -198,6 +195,20 @@ $(function(){
     lblNavConStatus.text(status);
     count = count === undefined ? "Unknown" : count;
     lblUserCount.text(count);
+    if(status == "Error" || status == "Disconnected")
+    {
+      boolConnect = false;
+      btnConnect.text("Connect");
+      boolCanToggle = true;
+    }
+    else if(status == "Connected") {
+      boolConnect = true;
+      boolCanToggle = true;
+      btnConnect.text("Disconnect");
+    }
+    else {
+      btnConnect.text("Connecting...");
+    }
   });
 
   ipcRenderer.on('play-sound', function(event, id){

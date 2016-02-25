@@ -49,6 +49,27 @@ a {
   color: inherit;
 }
 
+.button {
+  background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
+  border-radius: 5px;
+  font-weight: bold;
+  &:hover {
+    background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
+    cursor: pointer;
+  }
+}
+
+.cancel-button {
+  background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
+  font-weight: bold;
+  border-radius: 5px;
+  &:hover {
+    background: linear-gradient(to bottom, #3d3c3d 0%, #4b4b4b 100%);
+    cursor: pointer;
+    color: #8C8C8C;
+  }
+}
+
 #nav {
   @hli: 50px;
   @crline: 30px;
@@ -136,9 +157,9 @@ a {
     }
     &:last-child {
       >span {
-        background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);
+
         padding: 10px;
-        border-radius: 5px;
+
         width: 150px;
         text-align: center;
       }
@@ -159,13 +180,15 @@ a {
   }
 }
 
-
-
 #soundboard {
   //display: inline-block;
+  #sounds {
+    width: 100%;
+    height: 100%;
+  }
   .row {
     .flexy;
-    width: 100%;
+    //width: 100%;
     height: 50%;
   }
   .sound {
@@ -240,9 +263,9 @@ a {
     .flexy;
     height: 38px;
     text-align: center;
-    padding: 10px;
+    //padding: 10px;
     border-radius: 5px;
-    border: 2px solid #3E68B0;
+    //border: 2px solid #3E68B0;
     >input {
       .darkinput;
       @mtop: 1px;
@@ -256,22 +279,9 @@ a {
       line-height: 34px;
       margin: 0 5px;
       padding: 2px 20px;
-      background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
-      border-radius: 5px;
-      font-weight: bold;
-      &:hover {
-        background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
-        cursor: pointer;
-      }
       &:last-child {
-         padding: 2px 15px;
-         background: linear-gradient(to bottom, #4d4d4d 0%, #363636 100%);
-         color: #8C8C8C;
-         //font-size: 14px;
-         //border: 2px solid #404040;
-         &:hover {
-           background: linear-gradient(to bottom, #3d3c3d 0%, #212021 100%);
-         }
+         padding: 2px 12px;
+         font-size: 20px;
       }
     }
   }
@@ -282,7 +292,7 @@ a {
   >div>div {
     .flexy;
     padding: 7px 0;
-    >* {
+     span,input {
       margin: 0 5px;
       line-height: 34px;
       border-radius: 5px;
@@ -295,21 +305,10 @@ a {
     }
     >span {
       &:nth-last-child(2) {
-        background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
-        font-weight: bold;
         padding: 0 20px;
-        &:hover {
-          background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
-          cursor: pointer;
-        }
       }
       &:last-child {
-        background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
-        color: white;
         padding: 0 15px;
-        &:hover {
-          background: linear-gradient(to bottom, #3d3c3d 0%, #4b4b4b 100%);
-        }
       }
     }
   }

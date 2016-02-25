@@ -20,8 +20,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 400,
-    x: 920,
-    y: 570,
+    x: 2360,
+    y: 54,
     fullscreenable: false,
     resizable: false
   });

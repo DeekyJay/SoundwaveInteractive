@@ -134,9 +134,11 @@ function Interactive(electron) {
     details.channel = id;
 
     robot = new Tetris.Robot(details);
+    console.log(robot.handshake);
     robot.handshake(function(err){
       if(err) {
-        console.log("There was a problem connection to Tetris");
+        sender.send('connection-status', 'Error');
+        console.log("There was a problem connecting to Tetris");
         console.log(err);
       }
       else {
@@ -172,6 +174,7 @@ function Interactive(electron) {
     }).then(function (res) {
       initHandshake(id, res);
     }).catch(function(err) {
+      console.log("Error Connecting...");
       sender.send('connection-status', 'Error');
       throw err;
     });
