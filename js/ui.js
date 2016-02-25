@@ -102,18 +102,15 @@ $(function(){
       $(this).css('background', '');
     });
 
-    var btnParent = btnCurrent.parent();
-    btnParent.css('background',
+    btnCurrent.css('background',
         'linear-gradient(to right, rgba(46,46,46,1) 0%, rgba(6,39,69,0) 100%)');
-    btnParent.css('border-left', '8px solid #2f549d');
-    btnParent.css('margin-left', '0px');
+    btnCurrent.css('border-left', '8px solid #2f549d');
+    btnCurrent.css('margin-left', '0px');
 
     lblTabTitle.text(btnCurrent.text());
-
-    if(tabCurrent.css('display') !== 'inline-block') {
-      tabs.hide();
-      tabCurrent.fadeIn();
-    }
+    tabs.hide();
+    tabCurrent.fadeIn();
+    tabCurrent.css('display', 'flex');
   }
   showTab(tabStatus, btnStatus);
 
