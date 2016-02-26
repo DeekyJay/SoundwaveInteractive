@@ -1,19 +1,17 @@
-'use strict';
-'use esversion:6';
-
-const Interactive = require('./interactive');
-
-const electron = require('electron');
+var Interactive = require('./interactive');
+var Logger = require('./lib/Logger');
+var logger = new Logger("Main");
+var electron = require('electron');
 // Module to control application life.
-const app = electron.app;
+var app = electron.app;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+var BrowserWindow = electron.BrowserWindow;
+
 
 var interactive = new Interactive(electron);
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+var mainWindow;
 
 function createWindow () {
   // Create the browser window.
@@ -35,7 +33,7 @@ function createWindow () {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  //startInteractive();
+  logger.log("UserData Path: " + app.getPath("userData"));
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -46,7 +44,7 @@ function createWindow () {
   });
 
   mainWindow.on('move', function() {
-    console.log(mainWindow.getPosition());
+    logger.log("Window Position: " + mainWindow.getPosition());
   });
 }
 

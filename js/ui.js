@@ -11,6 +11,12 @@ $(function(){
   /*** Navigation Label ELements ***/
   var lblNavConStatus = $('#lblNavConStatus');
   var lblTabTitle = $('#title>span');
+  /*** Content Elements ***/
+  var tabs = $('#content>div');
+  var tabStatus = $('#status');
+  var tabSound = $('#soundboard');
+  var tabSettings = $('#settings');
+  var tabAbout = $('#about');
   /*** Status Elements ***/
   var btnConnect = $('#btnConnect');
   var lblConStatus = $('#lblConStatus');
@@ -24,12 +30,10 @@ $(function(){
   var btnSoundTitles = $('.sound>span:first-child');
   var btnPlays = $('.sound>span>div>a');
   var btnLoads = $(".sound>span:last-child>a");
-  /*** Content Elements ***/
-  var tabs = $('#content>div');
-  var tabStatus = $('#status');
-  var tabSound = $('#soundboard');
-  var tabSettings = $('#settings');
-  var tabAbout = $('#about');
+  /*** Settings Elements ***/
+  var txtUsername = $('#txtUsername');
+  var txtPassword = $('#txtPassword');
+  var txtChannel = $('#txtChannel');
   /*################ Elements END ################*/
 
   /*################## Click Events ##################*/
@@ -73,6 +77,12 @@ $(function(){
   });
   /*################ Hover Events END ################*/
 
+  /*################## Key Events ##################*/
+  txtUsername.keyup(function() {saveConfig(txtUsername);});
+  txtPassword.keyup(function() {saveConfig(txtPassword);});
+  txtChannel.keyup (function() {saveConfig(txtChannel);});
+  /*################ Key Events END ################*/
+
   //&&&&&&&&&&&&&&&&&&&&&&&&&& UI END &&&&&&&&&&&&&&&&&&&&&&&&&&//
 
   //&&&&&&&&&&&&&&&&&&&&&&& Funtionality &&&&&&&&&&&&&&&&&&&&&&&//
@@ -113,7 +123,6 @@ $(function(){
     tabCurrent.fadeIn();
     tabCurrent.css('display', 'flex');
   }
-  showTab(tabStatus, btnStatus);
 
   /**
    * Toggles the connection to Beam
@@ -167,6 +176,9 @@ $(function(){
     txtTitleEdit[0].select();
   }
 
+  /**
+   * Saves the newly edited title
+   */
   function saveTitle() {
     var sid = txtTitleEdit.attr('sid');
     var title = $(btnSoundTitles[sid]);
@@ -181,15 +193,31 @@ $(function(){
     closeEditTitleOverlay();
   }
 
+  /**
+   * Closes the Edit Title Overlay
+   */
   function closeEditTitleOverlay() {
     txtTitleEdit.val('');
     txtTitleEdit.attr('name', '');
     txtTitleEdit.attr('sid', '');
     editSoundTitleOverlay.css('display', '');
   }
+
+  function saveConfig(txtField)
+  {
+    var field = txtField.attr('placeholder').toLowerCase();
+    var value = txtField.val();
+    ipcRenderer.send('update-config', field, value);
+  }
   /*################ Functions END ################*/
 
   /*################## Event Listeners ##################*/
+  ipcRenderer.on('load-config', function(event, config) {
+    txtUsername.val(config.auth.username);
+    txtPassword.val(config.auth.password);
+    txtChannel.val(config.auth.channel);
+  });
+
   ipcRenderer.on('connection-status', function(event, status, count){
     lblConStatus.text(status);
     lblNavConStatus.text(status);
@@ -218,4 +246,9 @@ $(function(){
   /*################ Event Listeners END ################*/
 
   //&&&&&&&&&&&&&&&&&&&&& Funtionality END &&&&&&&&&&&&&&&&&&&&&//
+
+  //&&&&&&&&&&&&&&&&&&&&&&& Startup &&&&&&&&&&&&&&&&&&&&&&&//
+  ipcRenderer.send('initialize');
+  showTab(tabStatus, btnStatus);
+  //&&&&&&&&&&&&&&&&&&&&& Startup END &&&&&&&&&&&&&&&&&&&&&//
 });
