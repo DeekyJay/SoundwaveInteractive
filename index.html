@@ -158,7 +158,25 @@
         <div id="settings">
           <div>
             <div>
-              <!--<span>Sound Board Name</span>-->
+              <span>Username</span>
+              <input type="text"
+                id="txtUsername"
+                placeholder="Username" />
+            </div>
+            <div>
+              <span>Password</span>
+              <input type="password"
+                id="txtPassword"
+                placeholder="Password" />
+            </div>
+            <div>
+              <span>Channel</span>
+              <input type="text"
+                id="txtChannel"
+                placeholder="Channel" />
+            </div>
+            <span>•••••••••••••••••••••••••</span>
+            <div>
               <input type="text"
                 id="txtConfigName"
                 placeholder="Sound Board Name"
@@ -167,12 +185,16 @@
               <span class="cancel-button" >Clear</span>
             </div>
             <div>
-              <span>Current Sound Board Configuration</span>
-              <select id="cboConfigs">
-                <option value="Default">
-                  Default
-                </option>
-              </select>
+              <span>Profile</span>
+              <div class="dropdown">
+                <span class="button dropdown-toggle">Default
+                <span class="caret"></span></span>
+                <ul class="dropdown-menu">
+                  <li>HTML</li>
+                  <li>CSS</li>
+                  <li>JavaScript</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

@@ -1,18 +1,25 @@
 function Interactive(electron) {
-  const ipcMain = electron.ipcMain;
-  const app = electron.app;
+  var ipcMain = electron.ipcMain;
+  var app = electron.app;
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
   var Player = require('play-sound')(opts = {});
 
   var Config = require('./lib/Config');
-  var DebugPrint = require('./lib/Debug');
-  var DebugSpot = require('./lib/Debug');
-  var config = new Config("./config/soundly.json");
+  var config = new Config(app.getPath("userData")+"/user.json");
+  var Logger = require('./lib/Logger');
+  var logger = new Logger("Tetris");
   var beam = new Beam();
   var robot = null;
   var sender = null;
   var running = false;
+
+  ipcMain.on('initialize', function(event){
+    logger.log("IPCMain and IPCRenderer Talking . . .");
+    sender = event.sender;
+    sender.send('load-config', config);
+  });
+
   /**
    * Gets the Channel ID from the Channel's Name
    * @param {string} The name of the channel
@@ -32,7 +39,7 @@ function Interactive(electron) {
     if(!config) {
       throw new Error('The config file is missing, Please create a config file.');
     }
-    if(!config.version || !config.code) {
+    if(!config.version) {
       throw new Error('Missing version id and share code.');
     }
     var required = ["channel","password","username"];
@@ -91,8 +98,7 @@ function Interactive(electron) {
     { body :
       {
         interactive: true,
-        tetrisGameId: versionId,
-        tetrisShareCode: shareId
+        tetrisGameId: versionId
       },
       json:true
     }
@@ -113,7 +119,7 @@ function Interactive(electron) {
           var min = date.getMinutes();
           var sec = date.getSeconds();
           var sDate = hour + ":" + min + ":" + sec;
-          console.log("[" + sDate + "] Tactile: " + tac.id + ", Press: " +
+          logger.log("Tactile: " + tac.id + ", Press: " +
                   tac.pressFrequency + ", Release: " + tac.releaseFrequency);
           sender.send('play-sound', tac.id);
         }
@@ -128,25 +134,28 @@ function Interactive(electron) {
    * @param {Object} Result of the channel join
    */
   function initHandshake(id, res) {
-    DebugSpot("Authenticated with Beam. Starting Interactive Handshake");
+    logger.log("Authenticated with Beam. Starting Interactive Handshake");
     var details = res.body;
     details.remote = details.address;
     details.channel = id;
 
     robot = new Tetris.Robot(details);
-    console.log(robot.handshake);
     robot.handshake(function(err){
       if(err) {
         sender.send('connection-status', 'Error');
-        console.log("There was a problem connecting to Tetris");
-        console.log(err);
+        logger.log("There was a problem connecting to Tetris");
+        logger.log(err);
       }
       else {
-        console.log("Connected to Tetris");
+        logger.log("Connected to Tetris");
         sender.send('connection-status', 'Connected');
       }
     });
     robot.on('report', handleReport);
+    robot.on('error', function(err){
+      logger.log(err);
+      sender.send('connection-status', 'Error');
+    });
   }
 
   /**
@@ -156,7 +165,7 @@ function Interactive(electron) {
   */
   function init(id) {
     sender.send('connection-status', 'Connecting');
-    DebugSpot("ChannelID: " + id);
+    logger.log("ChannelID: " + id);
     beam.use('password', {
       username: config.auth.username,
       password: config.auth.password
@@ -174,7 +183,7 @@ function Interactive(electron) {
     }).then(function (res) {
       initHandshake(id, res);
     }).catch(function(err) {
-      console.log("Error Connecting...");
+      logger.log("Error Connecting...");
       sender.send('connection-status', 'Error');
       throw err;
     });
@@ -200,14 +209,13 @@ function Interactive(electron) {
   function stop () {
     if(running === true)
     {
-      DebugSpot("Closing Connection");
+      logger.log("Closing Connection");
       robot.close();
       sender.send('connection-status', 'Disconnected');
     }
   }
 
   ipcMain.on('toggle-connection', function(event, args){
-    sender = event.sender;
     if (args === false)
     {
       start();
@@ -217,6 +225,11 @@ function Interactive(electron) {
       stop();
       running = false;
     }
+  });
+
+  ipcMain.on('update-config', function(event, field, value){
+    config.auth[field] = value;
+    config.save();
   });
 
   // Quit when all windows are closed.
