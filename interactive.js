@@ -6,7 +6,7 @@ function Interactive(electron) {
   var Player = require('play-sound')(opts = {});
 
   var Config = require('./lib/Config');
-  var config = new Config(app.getPath("userData")+"/user.json");
+  var config = new Config(app.getPath("userData"));
   var Logger = require('./lib/Logger');
   var logger = new Logger("Tetris");
   var beam = new Beam();
@@ -107,7 +107,6 @@ function Interactive(electron) {
 
   function handleReport(report) {
     //console.log("*****************");
-    //console.log(report);
     if(running)
     {
       sender.send('connection-status', 'Connected', report.users.connected);
@@ -227,9 +226,14 @@ function Interactive(electron) {
     }
   });
 
-  ipcMain.on('update-config', function(event, field, value){
-    config.auth[field] = value;
+  ipcMain.on('update-config', function(event, newConfig){
+    config.auth = newConfig.auth;
+    config.profiles = newConfig.profiles;
     config.save();
+  });
+
+  ipcMain.on('delete-profile', function(event, deleteProfile){
+    config.deleteProfile(deleteProfile);
   });
 
   // Quit when all windows are closed.

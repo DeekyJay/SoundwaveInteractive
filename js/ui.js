@@ -34,6 +34,12 @@ $(function(){
   var txtUsername = $('#txtUsername');
   var txtPassword = $('#txtPassword');
   var txtChannel = $('#txtChannel');
+  var txtProfileName = $('#txtProfileName');
+  var btnCreateProfile = $('#btnCreateProfile');
+  var btnClearCreate = $('#btnClearCreate');
+  var cboProfile = $('#cboProfile');
+  var ulProfiles = $('#ulProfiles');
+  var btnDeleteProfile = $('#btnDeleteProfile');
   /*################ Elements END ################*/
 
   /*################## Click Events ##################*/
@@ -64,6 +70,11 @@ $(function(){
   });
   btnEditCancel.click(function(){closeEditTitleOverlay();});
   btnEditTitle.click(function(){saveTitle();});
+  /*** Settings Button Events ***/
+  btnCreateProfile.click(function(){createProfile();});
+  btnClearCreate.click(function(){txtProfileName.val("");});
+  cboProfile.click(function(){displayDropdown(cboProfile);});
+  btnDeleteProfile.click(function() {deleteCurrentProfile();});
   /*################ Click Events END ################*/
 
   /*################## Hover Events ##################*/
@@ -78,9 +89,20 @@ $(function(){
   /*################ Hover Events END ################*/
 
   /*################## Key Events ##################*/
-  txtUsername.keyup(function() {saveConfig(txtUsername);});
-  txtPassword.keyup(function() {saveConfig(txtPassword);});
-  txtChannel.keyup (function() {saveConfig(txtChannel);});
+  /*** Sound Board Key Events ***/
+  txtTitleEdit.keydown(function(e){
+    if(e.keyCode == 13) saveTitle();
+    else if (e.keyCode == 27) closeEditTitleOverlay();
+  });
+  /*** Settings Key Events ***/
+  txtUsername.keyup(function() {saveConfig();});
+  txtPassword.keyup(function() {saveConfig();});
+  txtChannel.keyup (function() {saveConfig();});
+  txtProfileName.keydown(function(){checkCanCreateProfile();});
+  txtProfileName.keyup(function(e){
+    if(e.keyCode == 13 && !btnCreateProfile.hasClass("disabled")) createProfile();
+  });
+
   /*################ Key Events END ################*/
 
   //&&&&&&&&&&&&&&&&&&&&&&&&&& UI END &&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -96,6 +118,7 @@ $(function(){
   /*################## Variables ##################*/
   var boolConnect = false;
   var boolCanToggle = true;
+  var mainConfig;
   /*################ Variables END ################*/
 
   /*################## Functions ##################*/
@@ -189,7 +212,7 @@ $(function(){
     }
     title.text(txtTitleEdit.val());
     title.attr('name', txtTitleEdit.val());
-    //TODO Save to config file
+    saveConfig();
     closeEditTitleOverlay();
   }
 
@@ -200,22 +223,134 @@ $(function(){
     txtTitleEdit.val('');
     txtTitleEdit.attr('name', '');
     txtTitleEdit.attr('sid', '');
-    editSoundTitleOverlay.css('display', '');
+    editSoundTitleOverlay.css('display', 'none');
   }
 
-  function saveConfig(txtField)
+  function saveConfig()
   {
-    var field = txtField.attr('placeholder').toLowerCase();
-    var value = txtField.val();
-    ipcRenderer.send('update-config', field, value);
+    mainConfig.auth.username = txtUsername.val();
+    mainConfig.auth.password = txtPassword.val();
+    mainConfig.auth.channel = txtChannel.val();
+    mainConfig.auth.last = cboProfile.text();
+
+    var curProId = cboProfile.attr('pid');
+    var currentProfile = mainConfig.profiles[curProId];
+
+    btnSoundTitles.each(function(index){
+      i = index;
+      var curTitle = $(this);
+      var curAudio = $(sounds[i]);
+      var curSound = currentProfile.sounds[i];
+      if(curTitle.text() === curTitle.attr('default'))
+        curSound.title = "";
+      else
+        curSound.title = curTitle.text();
+      curSound.url = curAudio.attr('src');
+    });
+
+    ipcRenderer.send('update-config', mainConfig);
+  }
+
+  function loadConfig(config) {
+    txtUsername.val(config.auth.username);
+    txtPassword.val(config.auth.password);
+    txtChannel.val(config.auth.channel);
+    ulProfiles.html("");
+    var curPid;
+    for(var i in config.profiles)
+    {
+      var curProfile = config.profiles[i].profile;
+      if(curProfile.name === config.auth.last)
+        curPid = i;
+      if(curProfile == "Default")
+        ulProfiles.prepend("<li pid='"+i+"'>" + curProfile + "</li>");
+      else
+        ulProfiles.append("<li pid='"+i+"'>" + curProfile + "</li>");
+    }
+    mainConfig = config;
+    var liProfiles = ulProfiles.children("li");
+
+    liProfiles.each(function(){
+      if($(this).text() === config.auth.last)
+        setProfile($(this));
+      $(this).click(function(){setProfile($(this));});
+    });
+  }
+
+  function setProfile(li) {
+    if(ulProfiles.hasClass("show"))
+      ulProfiles.toggleClass("show");
+    cboProfile.html(li.text() + "<span class='caret'></span>");
+
+    var currentProfile;
+    for(var i in mainConfig.profiles){
+      if(li.attr('pid') == i)
+      {
+        currentProfile = mainConfig.profiles[i];
+        cboProfile.attr('pid', i);
+        break;
+      }
+    }
+    console.log(currentProfile);
+    for(var j in currentProfile.sounds)
+    {
+      var currentSound = currentProfile.sounds[j];
+      var curTitle = $(btnSoundTitles[j]);
+      if(currentSound.title !== "")
+      {
+        curTitle.text(currentSound.title);
+        curTitle.attr('name', currentSound.title);
+      }
+      else {
+        curTitle.text(curTitle.attr('default'));
+        curTitle.attr('name', curTitle.attr('default'));
+      }
+      $(sounds[j]).attr('src', currentSound.url);
+    }
+    checkCanDeleteProfile();
+    saveConfig();
+  }
+
+  function displayDropdown(cbo) {
+    cbo.siblings("ul").toggleClass("show");
+  }
+
+  function checkCanDeleteProfile()
+  {
+    if(cboProfile.text() == "Default")
+      btnDeleteProfile.addClass("disabled");
+    else
+      btnDeleteProfile.removeClass("disabled");
+  }
+
+  function deleteCurrentProfile() {
+    var liProfiles = ulProfiles.children("li");
+    liProfiles.each(function() {
+      if($(this).attr('pid') == cboProfile.attr('pid'))
+      {
+        var num = parseInt($(this).attr('pid'));
+        mainConfig.profiles.splice(num, 1);
+        $(this).remove();
+        ipcRenderer.send('delete-profile', cboProfile.text());
+      }
+    });
+    liProfiles = ulProfiles.children("li");
+    setProfile(liProfiles.first());
+  }
+
+  function checkCanCreateProfile()
+  {
+
+  }
+
+  function createProfile() {
+
   }
   /*################ Functions END ################*/
 
   /*################## Event Listeners ##################*/
   ipcRenderer.on('load-config', function(event, config) {
-    txtUsername.val(config.auth.username);
-    txtPassword.val(config.auth.password);
-    txtChannel.val(config.auth.channel);
+    loadConfig(config);
   });
 
   ipcRenderer.on('connection-status', function(event, status, count){
@@ -234,9 +369,8 @@ $(function(){
       boolCanToggle = true;
       btnConnect.text("Disconnect");
     }
-    else {
+    else
       btnConnect.text("Connecting...");
-    }
   });
 
   ipcRenderer.on('play-sound', function(event, id){
