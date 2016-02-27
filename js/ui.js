@@ -43,6 +43,14 @@ $(function(){
   /*################ Elements END ################*/
 
   /*################## Click Events ##################*/
+
+  /*** Global Click Events ***/
+  $(document).on('click', function(event) {
+    if (!$(event.target).closest('#cboProfile').length) {
+      ulProfiles.removeClass("show");
+    }
+  });
+
   /*** Navigation Button Events ***/
   btnStatus.click(function() {showTab(tabStatus, btnStatus);});
   btnBoard.click(function() {showTab(tabSound, btnBoard);});
@@ -71,10 +79,13 @@ $(function(){
   btnEditCancel.click(function(){closeEditTitleOverlay();});
   btnEditTitle.click(function(){saveTitle();});
   /*** Settings Button Events ***/
-  btnCreateProfile.click(function(){createProfile();});
+  btnCreateProfile.click(function(){
+    if(!btnCreateProfile.hasClass("disabled")) createProfile();});
   btnClearCreate.click(function(){txtProfileName.val("");});
   cboProfile.click(function(){displayDropdown(cboProfile);});
-  btnDeleteProfile.click(function() {deleteCurrentProfile();});
+  btnDeleteProfile.click(function() {
+    if(!btnDeleteProfile.hasClass("disabled")) deleteCurrentProfile();}
+  );
   /*################ Click Events END ################*/
 
   /*################## Hover Events ##################*/
@@ -95,12 +106,13 @@ $(function(){
     else if (e.keyCode == 27) closeEditTitleOverlay();
   });
   /*** Settings Key Events ***/
-  txtUsername.keyup(function() {saveConfig();});
-  txtPassword.keyup(function() {saveConfig();});
-  txtChannel.keyup (function() {saveConfig();});
-  txtProfileName.keydown(function(){checkCanCreateProfile();});
+  txtUsername.keyup(function() {saveConfig(); canConnect();});
+  txtPassword.keyup(function() {saveConfig(); canConnect();});
+  txtChannel.keyup (function() {saveConfig(); canConnect();});
   txtProfileName.keyup(function(e){
-    if(e.keyCode == 13 && !btnCreateProfile.hasClass("disabled")) createProfile();
+    checkCanCreateProfile();
+    if(e.keyCode == 13 &&
+      !btnCreateProfile.hasClass("disabled")) createProfile();
   });
 
   /*################ Key Events END ################*/
@@ -340,23 +352,57 @@ $(function(){
 
   function checkCanCreateProfile()
   {
-
+    var newProfile = txtProfileName.val();
+    console.log(newProfile);
+    btnCreateProfile.removeClass("disabled");
+    for(var i in mainConfig.profiles)
+    {
+      var curProfile = mainConfig.profiles[i];
+      console.log(curProfile.profile);
+      if(curProfile.profile == newProfile || newProfile === "")
+      {
+        btnCreateProfile.addClass("disabled");
+        break;
+      }
+    }
   }
 
   function createProfile() {
+    ipcRenderer.send('create-profile', txtProfileName.val());
+    txtProfileName.val("");
+  }
 
+  function canConnect() {
+    var username = txtUsername.val();
+    var password = txtPassword.val();
+    var channel = txtChannel.val();
+    if(username === "" || password === "" || channel === "")
+    {
+      btnConnect.addClass("disabled");
+      boolCanToggle = false;
+    }
+    else
+    {
+      btnConnect.removeClass("disabled");
+      boolCanToggle = true;
+    }
   }
   /*################ Functions END ################*/
 
   /*################## Event Listeners ##################*/
   ipcRenderer.on('load-config', function(event, config) {
     loadConfig(config);
+    canConnect();
   });
 
-  ipcRenderer.on('connection-status', function(event, status, count){
-    lblConStatus.text(status);
+  ipcRenderer.on('connection-status', function(event, status, args){
+    if(status == "Error")
+      lblConStatus.text(args.error !== null ? "Error - " + args.error : "Error - Unknown");
+    else
+      lblConStatus.text(status);
+
     lblNavConStatus.text(status);
-    count = count === undefined ? "Unknown" : count;
+    count = args === undefined || args.count === undefined ? "Unknown" : args.count;
     lblUserCount.text(count);
     if(status == "Error" || status == "Disconnected")
     {

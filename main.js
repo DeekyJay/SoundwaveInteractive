@@ -44,7 +44,7 @@ function createWindow () {
   });
 
   mainWindow.on('move', function() {
-    logger.log("Window Position: " + mainWindow.getPosition());
+    //logger.log("Window Position: " + mainWindow.getPosition());
   });
 }
 

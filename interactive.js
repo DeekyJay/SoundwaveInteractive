@@ -133,7 +133,7 @@ function Interactive(electron) {
    * @param {Object} Result of the channel join
    */
   function initHandshake(id, res) {
-    logger.log("Authenticated with Beam. Starting Interactive Handshake");
+    logger.log("Authenticated with Beam. Starting Interactive Handshake.");
     var details = res.body;
     details.remote = details.address;
     details.channel = id;
@@ -141,19 +141,23 @@ function Interactive(electron) {
     robot = new Tetris.Robot(details);
     robot.handshake(function(err){
       if(err) {
-        sender.send('connection-status', 'Error');
-        logger.log("There was a problem connecting to Tetris");
+        sender.send('connection-status', 'Error', {error: "Problem Connecting"});
+        logger.log("There was a problem connecting to Tetris.");
         logger.log(err);
       }
       else {
-        logger.log("Connected to Tetris");
+        logger.log("Connected to Tetris.");
         sender.send('connection-status', 'Connected');
       }
     });
     robot.on('report', handleReport);
     robot.on('error', function(err){
       logger.log(err);
-      sender.send('connection-status', 'Error');
+      if(err.code === 'ECONNRESET')
+        sender.send('connection-status', 'Error', {error: "Connection Reset"});
+      else {
+
+      }
     });
   }
 
@@ -163,7 +167,6 @@ function Interactive(electron) {
   * @param {int} channel ID to connect to
   */
   function init(id) {
-    sender.send('connection-status', 'Connecting');
     logger.log("ChannelID: " + id);
     beam.use('password', {
       username: config.auth.username,
@@ -182,9 +185,9 @@ function Interactive(electron) {
     }).then(function (res) {
       initHandshake(id, res);
     }).catch(function(err) {
-      logger.log("Error Connecting...");
-      sender.send('connection-status', 'Error');
-      throw err;
+      var reason = err.message.request.responseContent.body.message;
+      logger.log("Connection Error: " + reason);
+      sender.send('connection-status', 'Error', {error: reason});
     });
   }
 
@@ -192,16 +195,23 @@ function Interactive(electron) {
   * Setup before initialization
   */
   function start () {
+    sender.send('connection-status', 'Connecting');
+    logger.log("Starting Tetris.");
     //Check to see if the config file is correct
+    logger.log("Validating Configuration.");
     validateConfig();
+    logger.log("Getting Channel ID for " + config.auth.channel + ".");
     getChannelID(config.auth.channel)
     .then(function (result) {
         if(result) {
           init(result);
         }
       }, function (e) {
-        throw new Error('Invalid channel specified in config file,' +
-                ' or no channel found on beam');
+          logger.log(e);
+          if(e.code == "EAI_AGAIN")
+            sender.send('connection-status', 'Error', {error: 'No Connection'});
+          else
+            sender.send('connection-status', 'Error', {error:'Invalid Channel'});
       });
   }
 
@@ -234,6 +244,11 @@ function Interactive(electron) {
 
   ipcMain.on('delete-profile', function(event, deleteProfile){
     config.deleteProfile(deleteProfile);
+  });
+
+  ipcMain.on('create-profile', function(event, createProfile){
+    config.createProfile(createProfile);
+    sender.send('load-config', config);
   });
 
   // Quit when all windows are closed.
