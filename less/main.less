@@ -52,7 +52,7 @@ a {
 .button {
   background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);;
   border-radius: 5px;
-  font-weight: bold;
+  //font-weight: bold;
   &:hover {
     background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
     cursor: pointer;
@@ -61,7 +61,7 @@ a {
 
 .cancel-button {
   background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
-  font-weight: bold;
+  //font-weight: bold;
   border-radius: 5px;
   &:hover {
     background: linear-gradient(to bottom, #3d3c3d 0%, #4b4b4b 100%);
@@ -137,7 +137,7 @@ a {
     align-self: center;
     padding-left: 20px;
     font-size: 20px;
-    font-weight: bold;
+    //font-weight: bold;
   }
 }
 
@@ -168,7 +168,7 @@ a {
       margin-bottom: 10px;
       font-size: 22px;
       &:first-child {
-        font-weight: bold;
+        //font-weight: bold;
       }
     }
     &:last-child {
@@ -297,13 +297,13 @@ a {
     padding: 2px 0;
     >span,>input {
       margin: 0 5px;
-      line-height: 34px;
+      line-height: 28px;
       border-radius: 5px;
     }
     >input {
       .darkinput(16px);
       width: 150px;
-      height: 34px;
+      height: 28px;
       padding: 0 7px;
     }
     >span {
@@ -335,21 +335,21 @@ a {
   >div>span {
     display: block;
     width: 100%;
-    @spacing: 10px;
     font-size: 15px;
     color: #D2D2D2;
-    margin-left: @spacing / 2;
-    letter-spacing: @spacing;
-    line-height: 10px;
+    margin-left: 12px;
+    letter-spacing: 10px;
+    line-height: 40px;
   }
 }
 
 .dropdown {
   display: inline-flex;
-  width: 230px;
+  width: 245px;
   position: relative;
   .dropdown-toggle {
-    padding: 6px 12px;
+    margin: 0 5px;
+    padding: 3px 10px;
     text-align: left;
     width: 100%;
   }
@@ -376,11 +376,11 @@ a {
     z-index: 1000;
     //display: none;
     float: left;
-    min-width: 229px;
+    min-width: 233px;
     max-height: 120px;
     overflow: auto;
     padding: 0;
-    margin: 2px 0 0;
+    margin: 2px 5px 0;
     font-size: 14px;
     text-align: left;
     list-style: none;
