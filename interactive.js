@@ -25,8 +25,14 @@ function Interactive(electron) {
    * @param {string} The name of the channel
    */
   function getChannelID() {
-    return beam.request('GET','channels/' + config.auth.channel)
+    return beam.request('GET','channels/' + config.auth.channel , {timeout: 7000})
     .then(function(res) {
+      if(res.body.id === undefined)
+      {
+        logger.log(res.body);
+        sender.send('connection-status', 'Error', {error:'Invalid Channel'});
+        return null;
+      }
       return res.body.id;
     });
   }
@@ -79,6 +85,7 @@ function Interactive(electron) {
   * @param {string} The ID of the channel
   */
   function getInteractiveControls(channelID) {
+    logger.log("Getting Interactive Controls");
     return beam.request('GET', 'tetris/'+channelID)
     .then(function(res) {
       return res.body.version.controls;
@@ -185,6 +192,7 @@ function Interactive(electron) {
     }).then(function (res) {
       initHandshake(id, res);
     }).catch(function(err) {
+      logger.log(err);
       var reason = err.message.request.responseContent.body.message;
       logger.log("Connection Error: " + reason);
       sender.send('connection-status', 'Error', {error: reason});
@@ -210,8 +218,6 @@ function Interactive(electron) {
           logger.log(e);
           if(e.code == "EAI_AGAIN")
             sender.send('connection-status', 'Error', {error: 'No Connection'});
-          else
-            sender.send('connection-status', 'Error', {error:'Invalid Channel'});
       });
   }
 
