@@ -26,6 +26,7 @@
   "dependencies": {
     "beam-client-node": "0.1.0",
     "beam-interactive-node": "0.2.0",
+    "fs-extra": "^0.26.5",
     "jquery": "^2.2.1"
   },
   "devDependencies": {

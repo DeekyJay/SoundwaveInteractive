@@ -14,18 +14,10 @@
       <div id="nav">
         <span>Beam Soundly Interactive</span>
         <ul>
-          <li id="btnStatus">
-            Status
-          </li>
-          <li id="btnBoard">
-            Sound Board
-          </li>
-          <li id="btnSettings">
-            Settings
-          </li>
-          <li id="btnAbout">
-            About
-          </li>
+          <li id="btnStatus">Status</li>
+          <li id="btnBoard">Sound Board</li>
+          <li id="btnSettings">Settings</li>
+          <li id="btnAbout">About</li>
         </ul>
         <div>
           <span id="lblNavConStatus">Disconnected</span>
@@ -178,23 +170,21 @@
             <span>•••••••••••••••••••••••••</span>
             <div>
               <input type="text"
-                id="txtConfigName"
-                placeholder="Sound Board Name"
+                id="txtProfileName"
+                placeholder="Profile"
                 maxlength="16" />
-              <span class="button" >Save</span>
+              <span id="btnCreateProfile" class="button" >Create</span>
               <span class="cancel-button" >Clear</span>
             </div>
             <div>
               <span>Profile</span>
               <div class="dropdown">
-                <span class="button dropdown-toggle">Default
+                <span id="cboProfile" class="button dropdown-toggle">Default
                 <span class="caret"></span></span>
-                <ul class="dropdown-menu">
-                  <li>HTML</li>
-                  <li>CSS</li>
-                  <li>JavaScript</li>
+                <ul id="ulProfiles" class="dropdown-menu">
                 </ul>
               </div>
+              <span id="btnDeleteProfile" class="cancel-button" >✕</span>
             </div>
           </div>
         </div>
