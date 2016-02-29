@@ -48,6 +48,20 @@ a {
   cursor: pointer;
   color: #8C8C8C;
 }
+.img-play {
+  background-image: url('../images/play.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.img-play:hover {
+  background-image: url('../images/play-hover.png');
+}
+.playing {
+  background-image: url('../images/pause.png');
+}
+.playing:hover {
+  background-image: url('../images/pause-hover.png');
+}
 #nav {
   width: 249px;
   float: left;
@@ -195,21 +209,21 @@ a {
   line-height: 10px;
 }
 #soundboard .sound span:nth-last-child(2) {
-  display: block;
+  display: flex;
   margin-top: 10px;
   margin-bottom: 10px;
+  justify-content: center;
 }
 #soundboard .sound span:nth-last-child(2) div {
   height: 45px;
-}
-#soundboard .sound span:nth-last-child(2) div img {
   width: 50px;
-  height: 45px;
+  cursor: pointer;
 }
 #soundboard .sound span:last-child {
   border-radius: 3px;
   background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);
   line-height: 22px;
+  cursor: pointer;
 }
 #soundboard .sound span:last-child:hover {
   background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
@@ -292,7 +306,7 @@ a {
 #settings > div > div > span:last-child {
   padding: 0 15px;
 }
-#settings > div > div:nth-child(-n+3) > span {
+#settings > div > div:nth-child(-n+2) > span {
   width: 75px;
   text-align: right;
   padding: 0 0;
@@ -386,7 +400,7 @@ a {
 .disabled,
 .disabled:hover {
   background: linear-gradient(to bottom, #3C3B3B 0%, #252424 100%);
-  color: #191919;
+  color: #505050;
   cursor: default;
 }
 ::-webkit-scrollbar {

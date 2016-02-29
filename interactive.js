@@ -116,17 +116,38 @@ function Interactive(electron) {
     //console.log("*****************");
     if(running)
     {
-      sender.send('connection-status', 'Connected', report.users.connected);
+      //console.log(report);
+      sender.send('connection-status', 'Connected', {count: report.users.connected});
+
+      var tactileResults;
+      var progress = {
+        tactile: tactileResults,
+        joystick: [],
+        state: "default"
+      };
+      //robot.send(new Packets.ProgressUpdate(progress));
       report.tactile.forEach(function (tac) {
+
+        //var tactile = report.ProgressUpdate.TactileUpdate({
+        //  id: tac.id,
+        //  cooldown: 5000,
+        //  fired: true,
+        //  progress: 0
+        //});
+
+        //tactileResults.push(tactile);
+
         if(tac.pressFrequency == 1)
         {
+          logger.log(robot);
+          //robot.send(new Packets.ProgressUpdate(progress));
           var date = new Date();
           var hour = date.getHours();
           var min = date.getMinutes();
           var sec = date.getSeconds();
           var sDate = hour + ":" + min + ":" + sec;
           logger.log("Tactile: " + tac.id + ", Press: " +
-                  tac.pressFrequency + ", Release: " + tac.releaseFrequency);
+                  tac.pressFrequency + ", Release: " + tac.releaseFrequency + ", Connected: " + report.users.connected);
           sender.send('play-sound', tac.id);
         }
       });
@@ -182,8 +203,14 @@ function Interactive(electron) {
     .then(function() {
       return requestInteractive(id, config.version, config.code);
     }).then(function(res) {
-      sender.send('connection-status', 'Getting Controls');
-      return getInteractiveControls(id);
+      if(res.body.tetrisGameId === 'You don\'t have access to that.')
+      {
+        throw Error("Permission Denied");
+      }
+      else {
+        sender.send('connection-status', 'Getting Controls');
+        return getInteractiveControls(id);
+      }
     }).then(function(controls) {
       sender.send('connection-status', "Validating Controls");
       return validateInteractiveControls(controls);
@@ -193,9 +220,7 @@ function Interactive(electron) {
       initHandshake(id, res);
     }).catch(function(err) {
       logger.log(err);
-      var reason = err.message.request.responseContent.body.message;
-      logger.log("Connection Error: " + reason);
-      sender.send('connection-status', 'Error', {error: reason});
+      sender.send('connection-status', 'Error', {error: err.message});
     });
   }
 
