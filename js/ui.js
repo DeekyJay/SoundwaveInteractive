@@ -28,12 +28,12 @@ $(function(){
   /*** Sound Board Elements ***/
   var sounds = $('.sound>audio');
   var btnSoundTitles = $('.sound>span:first-child');
-  var btnPlays = $('.sound>span>div>a');
-  var btnLoads = $(".sound>span:last-child>a");
+  var btnPlays = $('.sound>span>div');
+  var btnLoads = $(".sound>span:last-child");
   /*** Settings Elements ***/
   var txtUsername = $('#txtUsername');
   var txtPassword = $('#txtPassword');
-  var txtChannel = $('#txtChannel');
+  //var txtChannel = $('#txtChannel');
   var txtProfileName = $('#txtProfileName');
   var btnCreateProfile = $('#btnCreateProfile');
   var btnClearCreate = $('#btnClearCreate');
@@ -108,7 +108,7 @@ $(function(){
   /*** Settings Key Events ***/
   txtUsername.keyup(function() {saveConfig(); canConnect();});
   txtPassword.keyup(function() {saveConfig(); canConnect();});
-  txtChannel.keyup (function() {saveConfig(); canConnect();});
+  //txtChannel.keyup (function() {saveConfig(); canConnect();});
   txtProfileName.keyup(function(e){
     checkCanCreateProfile();
     if(e.keyCode == 13 &&
@@ -155,7 +155,7 @@ $(function(){
 
     lblTabTitle.text(btnCurrent.text());
     tabs.hide();
-    tabCurrent.fadeIn();
+    tabCurrent.fadeIn(100);
     tabCurrent.css('display', 'flex');
   }
 
@@ -167,6 +167,7 @@ $(function(){
     {
       ipcRenderer.send('toggle-connection', boolConnect);
       boolCanToggle = false;
+      btnConnect.addClass("disabled");
       boolConnect = !boolConnect;
     }
   }
@@ -242,7 +243,8 @@ $(function(){
   {
     mainConfig.auth.username = txtUsername.val();
     mainConfig.auth.password = txtPassword.val();
-    mainConfig.auth.channel = txtChannel.val();
+    //mainConfig.auth.channel = txtChannel.val();
+    mainConfig.auth.channel = txtUsername.val();
     mainConfig.auth.last = cboProfile.text();
 
     var curProId = cboProfile.attr('pid');
@@ -266,7 +268,7 @@ $(function(){
   function loadConfig(config) {
     txtUsername.val(config.auth.username);
     txtPassword.val(config.auth.password);
-    txtChannel.val(config.auth.channel);
+    //txtChannel.val(config.auth.channel);
     ulProfiles.html("");
     var curPid;
     for(var i in config.profiles)
@@ -375,7 +377,9 @@ $(function(){
   function canConnect() {
     var username = txtUsername.val();
     var password = txtPassword.val();
-    var channel = txtChannel.val();
+    //var channel = txtChannel.val();
+    var channel = txtUsername.val();
+
     if(username === "" || password === "" || channel === "")
     {
       btnConnect.addClass("disabled");
@@ -409,11 +413,13 @@ $(function(){
       boolConnect = false;
       btnConnect.text("Connect");
       boolCanToggle = true;
+      btnConnect.removeClass("disabled");
     }
     else if(status == "Connected") {
       boolConnect = true;
       boolCanToggle = true;
       btnConnect.text("Disconnect");
+      btnConnect.removeClass("disabled");
     }
     else
       btnConnect.text("Connecting...");
