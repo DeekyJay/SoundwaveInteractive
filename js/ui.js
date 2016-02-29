@@ -28,7 +28,7 @@ $(function(){
   /*** Sound Board Elements ***/
   var sounds = $('.sound>audio');
   var btnSoundTitles = $('.sound>span:first-child');
-  var btnPlays = $('.sound>span>div');
+  var btnPlays = $('.img-play');
   var btnLoads = $(".sound>span:last-child");
   /*** Settings Elements ***/
   var txtUsername = $('#txtUsername');
@@ -63,7 +63,7 @@ $(function(){
     $(this).click(function(){loadAudioFile($(this));});
   });
   btnPlays.each(function(){
-    $(this).click(function(){playAudio($(this).parent().parent()
+    $(this).click(function(){playAudio($(this).parent()
       .parent().children('audio'));});
   });
   var i = 0;
@@ -187,7 +187,8 @@ $(function(){
         if (fileNames === undefined) return;
         var fileName = fileNames[0];
         console.log(fileName);
-        audio.parent().parent().children('audio').attr('src', fileName);
+        audio.parent().children('audio').attr('src', fileName);
+        saveConfig();
       });
   }
 
@@ -305,7 +306,6 @@ $(function(){
         break;
       }
     }
-    console.log(currentProfile);
     for(var j in currentProfile.sounds)
     {
       var currentSound = currentProfile.sounds[j];
@@ -355,12 +355,10 @@ $(function(){
   function checkCanCreateProfile()
   {
     var newProfile = txtProfileName.val();
-    console.log(newProfile);
     btnCreateProfile.removeClass("disabled");
     for(var i in mainConfig.profiles)
     {
       var curProfile = mainConfig.profiles[i];
-      console.log(curProfile.profile);
       if(curProfile.profile == newProfile || newProfile === "")
       {
         btnCreateProfile.addClass("disabled");

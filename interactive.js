@@ -3,6 +3,7 @@ function Interactive(electron) {
   var app = electron.app;
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
+  var Packets = require('beam-interactive-node/dist/robot/packets');
   var Player = require('play-sound')(opts = {});
 
   var Config = require('./lib/Config');
@@ -69,7 +70,7 @@ function Interactive(electron) {
 
     //Make sure all the buttons have holding and fequency enabled
     var analysis = controls.tactiles.every(function(tactile) {
-      return (tactile.analysis.frequency);
+      return (tactile.analysis.holding && tactile.analysis.frequency);
     });
 
     if(!analysis)
@@ -113,44 +114,46 @@ function Interactive(electron) {
   }
 
   function handleReport(report) {
-    //console.log("*****************");
     if(running)
     {
-      //console.log(report);
       sender.send('connection-status', 'Connected', {count: report.users.connected});
+      var tactileResults = [];
+      var isUpdate = false;
+      report.tactile.forEach(function (tac) {
+        var isFired = false;
+        var prog = 0;
+        if(tac.pressFrequency > 0)
+        {
+          isUpdate = true;
+          isFired = true;
+          prog = 1;
+          logger.log("Tactile: " + tac.id + ", Press: " +
+                  tac.pressFrequency + ", Release: " + tac.releaseFrequency + ", Connected: " + report.users.connected);
+          sender.send('play-sound', tac.id);
+        }
 
-      var tactileResults;
+        var tactile = new Packets.ProgressUpdate.TactileUpdate({
+          id: tac.id,
+          cooldown: 5000,
+          fired: isFired,
+          progress: prog
+        });
+        tactileResults.push(tactile);
+      });
+
       var progress = {
         tactile: tactileResults,
         joystick: [],
         state: "default"
       };
-      //robot.send(new Packets.ProgressUpdate(progress));
-      report.tactile.forEach(function (tac) {
 
-        //var tactile = report.ProgressUpdate.TactileUpdate({
-        //  id: tac.id,
-        //  cooldown: 5000,
-        //  fired: true,
-        //  progress: 0
-        //});
+      if(isUpdate)
+      {
+        //logger.log(report.tactile);
+        //logger.log(progress);
+        robot.send(new Packets.ProgressUpdate(progress));
+      }
 
-        //tactileResults.push(tactile);
-
-        if(tac.pressFrequency == 1)
-        {
-          logger.log(robot);
-          //robot.send(new Packets.ProgressUpdate(progress));
-          var date = new Date();
-          var hour = date.getHours();
-          var min = date.getMinutes();
-          var sec = date.getSeconds();
-          var sDate = hour + ":" + min + ":" + sec;
-          logger.log("Tactile: " + tac.id + ", Press: " +
-                  tac.pressFrequency + ", Release: " + tac.releaseFrequency + ", Connected: " + report.users.connected);
-          sender.send('play-sound', tac.id);
-        }
-      });
     }
 
   }

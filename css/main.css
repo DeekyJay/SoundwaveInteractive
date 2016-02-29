@@ -21,7 +21,7 @@ body {
   color: white;
   margin: 0;
   height: 400px;
-  width: 1000px;
+  width: 1020px;
   font-family: Ubuntu;
   -webkit-user-select: none;
   cursor: default;
@@ -118,7 +118,7 @@ a {
 }
 #title {
   display: flex;
-  width: 750px;
+  width: 770px;
   height: 49px;
   border-bottom: 2px inset #2E3136;
 }
@@ -130,7 +130,7 @@ a {
 }
 #content {
   display: inline-block;
-  width: 750px;
+  width: 770px;
   height: 349px;
   margin: 0;
 }
@@ -176,7 +176,7 @@ a {
   height: 50%;
 }
 #soundboard .sound {
-  margin: 5px;
+  margin: 2px;
   width: 90px;
   height: 130px;
   text-align: center;
@@ -234,7 +234,7 @@ a {
   align-items: center;
   display: none;
   position: fixed;
-  width: 750px;
+  width: 770px;
   height: 349px;
   background-color: rgba(41, 41, 41, 0.9);
 }
