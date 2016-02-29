@@ -32,12 +32,15 @@
   src: url('../fonts/UbuntuMono-R.ttf');
 }
 
+@twidth: 1020px;
+@tlwidth: @twidth - 250px;
+
 html, body {
   background-color: #36393E;
   color: white;
   margin: 0;
   height: 400px;
-  width: 1000px;
+  width: @twidth;
   font-family: Ubuntu;
   -webkit-user-select: none;
   cursor: default;
@@ -145,7 +148,7 @@ a {
 
 #title {
   display: flex;
-  width: 750px;
+  width: @tlwidth;
   height: @htitle - 1px;
   border-bottom: 2px inset #2E3136;
   >span {
@@ -159,7 +162,7 @@ a {
 
 #content {
   display: inline-block;
-  width: 750px;
+  width: @tlwidth;
   height: 400px - @htitle - 1px;
   margin: 0;
   >div {
@@ -213,7 +216,7 @@ a {
   .sound {
     @brds: 1px solid #1D1D1D;
     @brad: 3px;
-    margin: 5px;
+    margin: 2px;
     width: 90px;
     height: 130px;
     text-align: center;
@@ -275,7 +278,7 @@ a {
   .flexy;
   display: none;
   position: fixed;
-  width: 750px;
+  width: @tlwidth;
   height: 349px;
   background-color: rgba(41, 41, 41, 0.90);
   >div {
