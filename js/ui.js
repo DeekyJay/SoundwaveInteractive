@@ -167,7 +167,7 @@ $(function() {
     });
 
     btnCurrent.css('background',
-        'linear-gradient(to right, rgba(46,46,46,1) 0%, rgba(6,39,69,0) 100%)');
+        'background: linear-gradient(to right, #222B3C 70%, #1E222F);');
     btnCurrent.css('border-left', '8px solid #2f549d');
     btnCurrent.css('margin-left', '0px');
 
