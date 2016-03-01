@@ -1,6 +1,6 @@
 window.$ = window.jQuery = require('jquery');
 var Open = require('open');
-$(function(){
+$(function() {
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&& UI &&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
   /*################## Elements ##################*/
@@ -60,11 +60,20 @@ $(function(){
   btnSettings.click(function() {showTab(tabSettings, btnSettings);});
   btnAbout.click(function() {showTab(tabAbout, btnAbout);});
   /*** Status Button Events ***/
-  btnConnect.click(function(){toggleConnection();});
+  btnConnect.click(function() {toggleConnection();});
   /*** Sound Board Button Events ***/
-  btnLoads.each(function(){
-    $(this).click(function(){loadAudioFile($(this));});
+  btnLoads.each(function() {
+    $(this).click(function() {loadAudioFile($(this));});
   });
+
+  btnPlays.each(function() {
+    var audio = $(this).parent().parent().children('audio');
+    var btnPlay = audio.siblings("span").children(".img-play");
+     $(this).click(function() {playAudio(audio);});
+     audio.on('ended', function(){
+        btnPlay.removeClass("playing");
+     });
+   });
 
   btnSoundTitles.each(function(i) {
     $(this).attr('sid', i);
@@ -74,28 +83,28 @@ $(function(){
       editSoundTitle($(this));
     });
   });
-  btnEditCancel.click(function(){closeEditTitleOverlay();});
-  btnEditTitle.click(function(){saveTitle();});
+  btnEditCancel.click(function() {closeEditTitleOverlay();});
+  btnEditTitle.click(function() {saveTitle();});
   /*** Settings Button Events ***/
-  btnCreateProfile.click(function(){
+  btnCreateProfile.click(function() {
     if(!btnCreateProfile.hasClass("disabled")) createProfile();});
-  btnClearCreate.click(function(){txtProfileName.val("");});
-  cboProfile.click(function(){displayDropdown(cboProfile);});
+  btnClearCreate.click(function() {txtProfileName.val("");});
+  cboProfile.click(function() {displayDropdown(cboProfile);});
   btnDeleteProfile.click(function() {
     if(!btnDeleteProfile.hasClass("disabled")) deleteCurrentProfile();}
   );
   /*** About Button Events ***/
-  btnGitHub.click(function(){
+  btnGitHub.click(function() {
     Open("https://github.com/Leviathan5");
   });
   /*################ Click Events END ################*/
 
   /*################## Hover Events ##################*/
-  btnSoundTitles.each(function(){
-    $(this).mouseover(function(){
+  btnSoundTitles.each(function() {
+    $(this).mouseover(function() {
       $(this).text('Edit');
     });
-    $(this).mouseleave(function(){
+    $(this).mouseleave(function() {
       $(this).text($(this).attr('name'));
     });
   });
@@ -144,7 +153,7 @@ $(function(){
    * @param {button} btnCurrent - The current button being clicked
    */
   function showTab(tabCurrent, btnCurrent) {
-    $('#nav ul li').each(function(){
+    $('#nav ul li').each(function() {
       $(this).css('margin-left', '');
       $(this).css('border-left', '');
       $(this).css('background', '');
@@ -188,7 +197,6 @@ $(function(){
       function(fileNames) {
         if (fileNames === undefined) return;
         var fileName = fileNames[0];
-        console.log(fileName);
         audio.parent().children('audio').attr('src', fileName);
         saveConfig();
       });
@@ -199,7 +207,7 @@ $(function(){
    * @param  {button} play - The audio to play
    */
   function playAudio(play) {
-    var btnPlay = $(play).siblings("span").children(".img-play");
+    var btnPlay = play.siblings("span").children(".img-play");
     if(!btnPlay.hasClass("playing"))
     {
       btnPlay.addClass("playing");
@@ -303,10 +311,10 @@ $(function(){
     mainConfig = config;
     var liProfiles = ulProfiles.children("li");
 
-    liProfiles.each(function(){
+    liProfiles.each(function() {
       if($(this).text() === config.auth.last)
         setProfile($(this));
-      $(this).click(function(){setProfile($(this));});
+      $(this).click(function() {setProfile($(this));});
     });
   }
 
@@ -478,6 +486,13 @@ $(function(){
    */
   ipcRenderer.on('play-sound', function(event, id){
     var audio = $(sounds[id]);
+    var btnPlay = audio.siblings("span").children(".img-play");
+    if(btnPlay.hasClass("playing"))
+    {
+      btnPlay.removeClass("playing");
+      audio.trigger('pause');
+      audio[0].src = audio[0].src;
+    }
     playAudio(audio);
   });
   /*################ Event Listeners END ################*/
