@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js"
   },
   "author": "Derek Jensen <derek@pewf.co>",
   "license": "MIT",
@@ -24,12 +25,14 @@
     "interactive"
   ],
   "dependencies": {
-    "beam-client-node": "0.1.0",
-    "beam-interactive-node": "0.2.0",
+    "beam-client-node": "^0.1.0",
+    "beam-interactive-node": "^0.2.0",
     "fs-extra": "^0.26.5",
-    "jquery": "^2.2.1"
+    "jquery": "^2.2.1",
+    "open": "0.0.5"
   },
   "devDependencies": {
+    "electron-packager": "^5.2.1",
     "grunt": "^0.4.5",
     "grunt-browser-sync": "^2.2.0",
     "grunt-contrib-less": "^1.2.0",
