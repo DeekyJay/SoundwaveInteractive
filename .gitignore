@@ -36,3 +36,4 @@ node_modules
 sounds/
 .jshintrc
 .tern-project
+build/
