@@ -4,7 +4,6 @@ function Interactive(electron) {
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
   var Packets = require('beam-interactive-node/dist/robot/packets');
-  var Player = require('play-sound')(opts = {});
 
   var Config = require('./lib/Config');
   var config = new Config(app.getPath("userData"));
@@ -23,7 +22,6 @@ function Interactive(electron) {
 
   /**
    * Gets the Channel ID from the Channel's Name
-   * @param {string} The name of the channel
    */
   function getChannelID() {
     return beam.request('GET','channels/' + config.auth.channel , {timeout: 7000})
@@ -60,7 +58,7 @@ function Interactive(electron) {
   /**
   * Validates the controls on the Beam Interactive application to see
   * if there is the proper amount of buttons
-  * @param {Object} Controls recieved from the channel
+  * @param {Object} controls - Controls recieved from the channel
   */
   function validateInteractiveControls(controls) {
     //Make sure the Interactive app has controls.
@@ -83,7 +81,7 @@ function Interactive(electron) {
 
   /**
   * Get's the controls of the interactive app running on a channel
-  * @param {string} The ID of the channel
+  * @param {string} channelID - The ID of the channel
   */
   function getInteractiveControls(channelID) {
     logger.log("Getting Interactive Controls");
@@ -98,21 +96,25 @@ function Interactive(electron) {
   /**
   * Initializes the handsake between the application and Beam Tetris
   * To make the stream run the application
-  * @param {string} the versionID of the Beam Interactive application
-  * @param {string} the shareID of the Beam Interactive application
+  * @param {string} channelID - the versionID of the Beam Interactive application
+  * @param {string} versionId - the shareID of the Beam Interactive application
   */
-  function requestInteractive(channelID, versionId, shareId) {
+  function requestInteractive(channelID, versionId) {
     return beam.request('PUT', 'channels/'+channelID,
-    { body :
-      {
-        interactive: true,
-        tetrisGameId: versionId
-      },
-      json:true
-    }
-  );
+      { body :
+        {
+          interactive: true,
+          tetrisGameId: versionId
+        },
+        json:true
+      }
+    );
   }
 
+  /**
+   * Handles the report sent from Beam to us.
+   * @param  {report} report - The report from Beam
+   */
   function handleReport(report) {
     if(running)
     {
@@ -131,7 +133,6 @@ function Interactive(electron) {
                   tac.pressFrequency + ", Release: " + tac.releaseFrequency + ", Connected: " + report.users.connected);
           sender.send('play-sound', tac.id);
         }
-
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
           cooldown: 5000,
@@ -140,28 +141,24 @@ function Interactive(electron) {
         });
         tactileResults.push(tactile);
       });
-
       var progress = {
         tactile: tactileResults,
         joystick: [],
         state: "default"
       };
-
       if(isUpdate)
       {
         //logger.log(report.tactile);
         //logger.log(progress);
         robot.send(new Packets.ProgressUpdate(progress));
       }
-
     }
-
   }
 
   /**
    * Initialize and start Hanshake with Interactive app
-   * @param {int} Channel ID
-   * @param {Object} Result of the channel join
+   * @param {int} id - Channel ID
+   * @param {Object} res - Result of the channel join
    */
   function initHandshake(id, res) {
     logger.log("Authenticated with Beam. Starting Interactive Handshake.");
@@ -193,10 +190,10 @@ function Interactive(electron) {
   }
 
   /**
-  * Called after setup is complete.
-  * Connects to Beam Interactive
-  * @param {int} channel ID to connect to
-  */
+   * Called after setup is complete.
+   * Connects to Beam Interactive
+   * @param {int} id - channel ID to connect to
+   */
   function init(id) {
     logger.log("ChannelID: " + id);
     beam.use('password', {
@@ -228,8 +225,8 @@ function Interactive(electron) {
   }
 
   /**
-  * Setup before initialization
-  */
+   * Setup before initialization.
+   */
   function start () {
     sender.send('connection-status', 'Connecting');
     logger.log("Starting Tetris.");
@@ -249,6 +246,9 @@ function Interactive(electron) {
       });
   }
 
+  /**
+   * Stops the connection to Beam.
+   */
   function stop () {
     if(running === true)
     {

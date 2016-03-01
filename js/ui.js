@@ -1,4 +1,5 @@
 window.$ = window.jQuery = require('jquery');
+var Open = require('open');
 $(function(){
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&& UI &&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
@@ -40,6 +41,8 @@ $(function(){
   var cboProfile = $('#cboProfile');
   var ulProfiles = $('#ulProfiles');
   var btnDeleteProfile = $('#btnDeleteProfile');
+  /*** About Elements ***/
+  var btnGitHub = $('#btnGitHub');
   /*################ Elements END ################*/
 
   /*################## Click Events ##################*/
@@ -62,14 +65,9 @@ $(function(){
   btnLoads.each(function(){
     $(this).click(function(){loadAudioFile($(this));});
   });
-  btnPlays.each(function(){
-    $(this).click(function(){playAudio($(this).parent()
-      .parent().children('audio'));});
-  });
-  var i = 0;
-  btnSoundTitles.each(function() {
+
+  btnSoundTitles.each(function(i) {
     $(this).attr('sid', i);
-    i+=1;
     $(this).attr('name', $(this).text());
     $(this).attr('default', $(this).text());
     $(this).click(function() {
@@ -86,6 +84,10 @@ $(function(){
   btnDeleteProfile.click(function() {
     if(!btnDeleteProfile.hasClass("disabled")) deleteCurrentProfile();}
   );
+  /*** About Button Events ***/
+  btnGitHub.click(function(){
+    Open("https://github.com/Leviathan5");
+  });
   /*################ Click Events END ################*/
 
   /*################## Hover Events ##################*/
@@ -122,7 +124,7 @@ $(function(){
   //&&&&&&&&&&&&&&&&&&&&&&& Funtionality &&&&&&&&&&&&&&&&&&&&&&&//
 
   /*################## Declares ##################*/
-  const ipcRenderer = require('electron').ipcRenderer;
+  var ipcRenderer = require('electron').ipcRenderer;
   var remote = require('remote');
   var dialog = remote.dialog;
   /*################ Declares END ################*/
@@ -137,7 +139,7 @@ $(function(){
 
   /**
    * Displays the Tab Passed in and hides
-   * the rest of the tabs
+   * the rest of the tabs.
    * @param {tab} tabCurrent - The tab to display
    * @param {button} btnCurrent - The current button being clicked
    */
@@ -160,7 +162,7 @@ $(function(){
   }
 
   /**
-   * Toggles the connection to Beam
+   * Toggles the connection to Beam.
    */
   function toggleConnection() {
     if(boolCanToggle)
@@ -173,7 +175,7 @@ $(function(){
   }
 
   /**
-   * Sets the Audio SRC for playback
+   * Sets the Audio SRC for playback.
    * @param  {button} audio - The load button for the sound
    */
   function loadAudioFile(audio) {
@@ -193,11 +195,21 @@ $(function(){
   }
 
   /**
-   * [playAudio description]
+   * Plays the current audio passed in.
    * @param  {button} play - The audio to play
    */
   function playAudio(play) {
-    play.trigger('play');
+    var btnPlay = $(play).siblings("span").children(".img-play");
+    if(!btnPlay.hasClass("playing"))
+    {
+      btnPlay.addClass("playing");
+      play.trigger('play');
+    }
+    else {
+      btnPlay.removeClass("playing");
+      play.trigger('pause');
+      play[0].src = play[0].src;
+    }
   }
 
   /**
@@ -240,8 +252,10 @@ $(function(){
     editSoundTitleOverlay.css('display', 'none');
   }
 
-  function saveConfig()
-  {
+  /**
+   * Save the current settings into the config files.
+   */
+  function saveConfig() {
     mainConfig.auth.username = txtUsername.val();
     mainConfig.auth.password = txtPassword.val();
     //mainConfig.auth.channel = txtChannel.val();
@@ -262,10 +276,14 @@ $(function(){
         curSound.title = curTitle.text();
       curSound.url = curAudio.attr('src');
     });
-
     ipcRenderer.send('update-config', mainConfig);
   }
 
+  /**
+   * Loads the config from the backend to the frontend and sets the appropriate
+   * fields up.
+   * @param  {Config} config - The new config to set.
+   */
   function loadConfig(config) {
     txtUsername.val(config.auth.username);
     txtPassword.val(config.auth.password);
@@ -292,11 +310,14 @@ $(function(){
     });
   }
 
+  /**
+   * Set the current profile to the profile clicked in the dropdown menu.
+   * @param {Profile} li - The profile to set.
+   */
   function setProfile(li) {
     if(ulProfiles.hasClass("show"))
       ulProfiles.toggleClass("show");
     cboProfile.html(li.text() + "<span class='caret'></span>");
-
     var currentProfile;
     for(var i in mainConfig.profiles){
       if(li.attr('pid') == i)
@@ -325,10 +346,18 @@ $(function(){
     saveConfig();
   }
 
+  /**
+   * Displays the dropdown menu clicked
+   * @param  {Dropdown Menu} cbo - The Dropdown Menu to display
+   */
   function displayDropdown(cbo) {
     cbo.siblings("ul").toggleClass("show");
   }
 
+  /**
+   * Checks to see if you can delete the current profile.
+   * Stops the user from deleting the Default profile.
+   */
   function checkCanDeleteProfile()
   {
     if(cboProfile.text() == "Default")
@@ -337,6 +366,9 @@ $(function(){
       btnDeleteProfile.removeClass("disabled");
   }
 
+  /**
+   * Deletes the current selected profile from the config.
+   */
   function deleteCurrentProfile() {
     var liProfiles = ulProfiles.children("li");
     liProfiles.each(function() {
@@ -352,8 +384,11 @@ $(function(){
     setProfile(liProfiles.first());
   }
 
-  function checkCanCreateProfile()
-  {
+  /**
+   * Checks to see if we can create a profile with the name in the textbox.
+   * Stops the user from creating a duplicate or an empty.
+   */
+  function checkCanCreateProfile() {
     var newProfile = txtProfileName.val();
     btnCreateProfile.removeClass("disabled");
     for(var i in mainConfig.profiles)
@@ -367,17 +402,23 @@ $(function(){
     }
   }
 
+  /**
+   * Creates a new profile with the name in the Profile name textbox then
+   * clears the textbox.
+   */
   function createProfile() {
     ipcRenderer.send('create-profile', txtProfileName.val());
     txtProfileName.val("");
   }
 
+  /**
+   * Checks to see if the application can attempt to connect to Beam or not.
+   */
   function canConnect() {
     var username = txtUsername.val();
     var password = txtPassword.val();
     //var channel = txtChannel.val();
     var channel = txtUsername.val();
-
     if(username === "" || password === "" || channel === "")
     {
       btnConnect.addClass("disabled");
@@ -392,11 +433,19 @@ $(function(){
   /*################ Functions END ################*/
 
   /*################## Event Listeners ##################*/
+  /**
+   * Called when the config has been loading in the backend and needs to be
+   * loaded in the front end, then checks to see if config is good enough
+   * to connect.
+   */
   ipcRenderer.on('load-config', function(event, config) {
     loadConfig(config);
     canConnect();
   });
 
+  /**
+   * Called when there is a Connection Status update.
+   */
   ipcRenderer.on('connection-status', function(event, status, args){
     if(status == "Error")
       lblConStatus.text(args.error !== null ? "Error - " + args.error : "Error - Unknown");
@@ -423,6 +472,10 @@ $(function(){
       btnConnect.text("Connecting...");
   });
 
+
+  /**
+   * Called when a tactile is pushed to trigger the playing of a sound.
+   */
   ipcRenderer.on('play-sound', function(event, id){
     var audio = $(sounds[id]);
     playAudio(audio);

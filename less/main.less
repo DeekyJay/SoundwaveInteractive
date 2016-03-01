@@ -171,7 +171,7 @@ a {
     height: 100%;
     margin: 0;
   }
-  #settings {
+  #status {
     display: flex;
   }
 }
@@ -192,9 +192,7 @@ a {
     }
     &:last-child {
       >span {
-
         padding: 10px;
-
         width: 150px;
         text-align: center;
       }
@@ -387,7 +385,6 @@ a {
     top: 9px;
   }
   .dropdown-menu {
-    display: inline-block;
     display: none;
     position: absolute;
     top: 100%;
@@ -429,6 +426,44 @@ a {
   }
   .show {
     display: inline-block;
+  }
+}
+
+#about {
+  .flexy;
+  align-items: baseline;
+  >div{
+    text-align: center;
+    .title {
+      font-size: 25px;
+      margin-bottom: 3px;
+      color: white;
+      margin-top: 10px;
+    }
+    .hr {
+      @spacing: 10px;
+      font-size: 15px;
+      color: #D2D2D2;
+      margin-left: @spacing * 2;
+      margin-top: 0;
+      letter-spacing: @spacing;
+      line-height: 10px;
+    }
+    .subtitle {
+      font-size: 20px;
+      margin-bottom: 3px;
+      margin-top: 15px;
+      color: white;
+    }
+    >div {
+      margin: 4px;
+      font-size: 16px;
+      color: grey;
+      img {
+        width: 45px;
+        cursor: pointer;
+      }
+    }
   }
 }
 
