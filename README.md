@@ -15,7 +15,7 @@ The Interactive App on Beam has yet to be published and I am looking for suggest
 on different states I should have to allow for different global cooldowns and spark costs.
 
 ## Screenshots
-![Beam Soundly Interactive](http://i.imgur.com/4FQp6as.png)
+![Beam Soundly Interactive](http://i.imgur.com/pLPzVeB.png)
 
 ## License
 The MIT License (MIT)
