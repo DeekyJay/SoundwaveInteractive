@@ -1,9 +1,12 @@
 window.$ = window.jQuery = require('jquery');
 var Open = require('open');
+var remote = require('remote');
+var BrowserWindow = remote.require('browser-window');
 $(function() {
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&& UI &&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
   /*################## Elements ##################*/
+  var btnClose = $("#btnClose");
   /*** Navigation Button Elements ***/
   var btnStatus = $('#btnStatus');
   var btnBoard = $('#btnBoard');
@@ -54,6 +57,10 @@ $(function() {
     }
   });
 
+  btnClose.click(function() {
+    var window = BrowserWindow.getFocusedWindow();
+     window.close();
+  });
   /*** Navigation Button Events ***/
   btnStatus.click(function() {showTab(tabStatus, btnStatus);});
   btnBoard.click(function() {showTab(tabSound, btnBoard);});

@@ -26,6 +26,23 @@ body {
   -webkit-user-select: none;
   cursor: default;
 }
+#window-btns {
+  -webkit-app-region: no-drag;
+  display: flex;
+  padding-left: 15px;
+  font-size: 35px;
+  color: grey;
+}
+#window-btns > div {
+  padding: 5px 5px;
+}
+#window-btns > div:hover {
+  color: white;
+  cursor: pointer;
+}
+#window-btns #btnMinimize {
+  margin-top: 5px;
+}
 a {
   display: block;
   text-decoration: none;
@@ -68,6 +85,7 @@ a {
   background-color: #2E3136;
 }
 #nav > span {
+  -webkit-app-region: drag;
   text-align: center;
   display: block;
   font-size: 20px;
@@ -117,6 +135,7 @@ a {
   align-self: center;
 }
 #title {
+  -webkit-app-region: drag;
   display: flex;
   width: 770px;
   height: 49px;
@@ -127,6 +146,7 @@ a {
   align-self: center;
   padding-left: 20px;
   font-size: 20px;
+  width: 800px;
 }
 #content {
   display: inline-block;

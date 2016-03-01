@@ -22,7 +22,8 @@ function createWindow () {
     //y: 54,
     //center: true,
     fullscreenable: false,
-    resizable: false
+    resizable: false,
+    frame: false
   });
 
   //mainWindow.setMaximizable(false);

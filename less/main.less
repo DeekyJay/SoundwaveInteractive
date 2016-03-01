@@ -46,6 +46,26 @@ html, body {
   cursor: default;
 }
 
+#window-btns {
+  -webkit-app-region: no-drag;
+  display: flex;
+  padding-left: 15px;
+  font-size: 35px;
+  color: grey;
+  >div {
+    padding: 5px 5px;
+    &:hover {
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  #btnMinimize {
+    margin-top: 5px;
+  }
+}
+
+
 a {
   display: block;
   text-decoration: none;
@@ -98,6 +118,7 @@ a {
   float: left;
   background-color: @bg-nav-color;
   >span {
+    -webkit-app-region: drag;
     text-align: center;
     display: block;
     font-size: 20px;
@@ -147,6 +168,7 @@ a {
 }
 
 #title {
+  -webkit-app-region: drag;
   display: flex;
   width: @tlwidth;
   height: @htitle - 1px;
@@ -156,7 +178,7 @@ a {
     align-self: center;
     padding-left: 20px;
     font-size: 20px;
-    //font-weight: bold;
+    width: 800px;
   }
 }
 
