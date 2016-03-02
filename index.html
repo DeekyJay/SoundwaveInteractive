@@ -33,10 +33,10 @@
         </div>
       </div>
       <div id="title">
-        <span>Sound Board</span>
+        <span>Status</span>
         <div id="window-btns">
-          <div id="btnMinimize">–</div>
-          <div id="btnClose">✕</div>
+          <div id="btnMinimize"><span>–</span></div>
+          <div id="btnClose"><span>x</span></div>
         </div>
       </div>
       <div id="content">
@@ -62,7 +62,7 @@
                 placeholder="Title"
                 maxlength="10" />
               <span class="button" id="btnEditTitle">Save</span>
-              <span class="cancel-button" id="btnEditCancel">✕</span>
+              <span class="cancel-button" id="btnEditCancel">X</span>
             </div>
           </div>
           <div id="sounds">
@@ -72,56 +72,56 @@
                   <span>•••••</span>
                   <audio></audio>
                   <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 2</a></span>
                   <span>•••••</span>
 									<audio></audio>
                   <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 3</a></span>
                   <span>•••••</span>
 									<audio></audio>
                   <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 4</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 5</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 6</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 7</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 8</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
             </div>
             <div class="row">
@@ -130,56 +130,56 @@
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 10</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 11</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 12</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 13</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 14</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 15</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
               <div class="sound">
                   <span><a href="#">Sound 16</a></span>
                   <span>•••••</span>
 									<audio></audio>
                    <span><div class="img-play" ></div></span>
-                  <span>Load</span>
+                  <span class="button" >Load</span>
               </div>
             </div>
           </div>
@@ -210,18 +210,11 @@
                 id="txtProfileName"
                 placeholder="Profile"
                 maxlength="16" />
-              <span id="btnCreateProfile" class="button disabled" >Create</span>
-              <span id="btnClearCreate" class="cancel-button" >Clear</span>
+              <div id="btnCreateProfile" class="button disabled" >Create</div>
+              <div id="btnClearCreate" class="clear-button" >Clear</div>
             </div>
             <div>
-              <span>Profile</span>
-              <div class="dropdown">
-                <span id="cboProfile" class="button dropdown-toggle">Default
-                <span class="caret"></span></span>
-                <ul id="ulProfiles" class="dropdown-menu">
-                </ul>
-              </div>
-              <span id="btnDeleteProfile" class="cancel-button" >✕</span>
+              <div>Profile</div><div class="dropdown"><span id="cboProfile" class="button dropdown-toggle">Default<span class="caret"></span></span><ul id="ulProfiles" class="dropdown-menu"></ul></div><div id="btnDeleteProfile" class="cancel-button" >X</div>
             </div>
           </div>
         </div>

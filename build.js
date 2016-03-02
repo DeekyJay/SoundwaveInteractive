@@ -2,9 +2,11 @@ var packager = require('electron-packager');
 var packageData = require('./package.json');
 
 packager({
-    all:true,
+    //all:true,
+    platform: "win32",
+    arch: "x64",
     asar:true,
-    name:"Beam Soundly Interactive",
+    name:"BeamSoundlyInteractive",
     version:"0.36.8",
     dir: './',
     out: './build/',
