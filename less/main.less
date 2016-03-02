@@ -28,8 +28,6 @@
 @font-face {
   font-family: Ubuntu;
   src: url('../fonts/Ubuntu-L.ttf');
-  font-weight: lighter;
-  font-style: normal;
 }
 
 @font-face {
@@ -48,18 +46,26 @@ html, body {
   height: 400px;
   width: @twidth;
   font-family: Ubuntu;
+  font-weight: normal;
+  -webkit-font-smoothing: none;
   -webkit-user-select: none;
   cursor: default;
+  //border: 1px solid black;
 }
 
 #window-btns {
+  font-family: UbuntuMono;
   -webkit-app-region: no-drag;
   display: flex;
-  padding-left: 15px;
+  margin-right: 5px;
   font-size: 35px;
+  line-height: 30px;
+  padding-bottom: 5px;
   color: grey;
+  vertical-align: middle;
+  .flexy;
   >div {
-    padding: 5px 5px;
+    margin: 0 5px;
     &:hover {
       color: white;
       cursor: pointer;
@@ -67,7 +73,11 @@ html, body {
   }
 
   #btnMinimize {
-    margin-top: 5px;
+    margin-top: 13px;
+  }
+
+  #btnClose {
+
   }
 }
 
@@ -85,10 +95,23 @@ a {
   &:hover {
     background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
     cursor: pointer;
+    color: #8C8C8C;
   }
 }
 
 .cancel-button {
+  font-family: UbuntuMono;
+  background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
+  //font-weight: bold;
+  border-radius: 5px;
+  &:hover {
+    background: linear-gradient(to bottom, #3d3c3d 0%, #4b4b4b 100%);
+    cursor: pointer;
+    color: #8C8C8C;
+  }
+}
+
+.clear-button {
   background: linear-gradient(to bottom, #9d9d9d 0%, #4b4b4b 100%);
   //font-weight: bold;
   border-radius: 5px;
@@ -199,7 +222,7 @@ a {
     height: 100%;
     margin: 0;
   }
-  #status {
+  #settings {
     display: flex;
   }
 }
@@ -287,15 +310,6 @@ a {
           cursor: pointer;
         }
       }
-      &:last-child {
-        border-radius: @brad;
-        background: linear-gradient(to bottom, #528dcc 0%, #315c82 100%);
-        line-height: @lline;
-        cursor: pointer;
-        &:hover {
-          background: linear-gradient(to bottom, #3b4f82 0%, #183663 100%);
-        }
-      }
     }
   }
 }
@@ -306,7 +320,7 @@ a {
   position: fixed;
   width: @tlwidth;
   height: 349px;
-  background-color: rgba(41, 41, 41, 0.90);
+  background-color: rgba(37, 39, 53, 0.9);
   >div {
     .flexy;
     height: 38px;
@@ -328,7 +342,7 @@ a {
       margin: 0 5px;
       padding: 2px 20px;
       &:last-child {
-         padding: 2px 12px;
+         padding: 2px 15px;
          font-size: 20px;
       }
     }
@@ -337,12 +351,15 @@ a {
 
 #settings {
   .flexy;
+  >div {
+    width: 400px;
+  }
   >div>div {
     .flexy;
-    padding: 2px 0;
-    >span,>input {
+    height: 34px;
+
+    >div,>input {
       margin: 0 5px;
-      line-height: 28px;
       border-radius: 5px;
     }
     >input {
@@ -351,30 +368,40 @@ a {
       height: 28px;
       padding: 0 7px;
     }
-    >span {
-      &:nth-last-child(2) {
-        padding: 0 20px;
-      }
-      &:last-child {
-        padding: 0 15px;
-      }
-    }
     &:nth-child(-n+2)>span {
       width: 75px;
       text-align: right;
       padding: 0 0;
     }
+
+    &:nth-last-child(2) {
+      >div {
+        width: 80px;
+        height: 28px;
+        .flexy;
+      }
+    }
+
     &:last-child {
+      margin-top: 5px;
       height: 150px;
-      align-items: baseline;
-      >span {
+      display: flex;
+      align-items:flex-start;
+      >div {
         &:first-child {
           width: 50px;
-        }
-        &:last-child {
-        padding: 0px 10px;
+          display: inline-block;
+          height: 30px;
+          line-height: 30px;
         }
       }
+     >.cancel-button {
+       width: 30px;
+       height: 30px;
+       line-height: 30px;
+       text-align: center;
+       display: inline-block;
+     }
     }
   }
   >div>span {
@@ -390,11 +417,11 @@ a {
 
 .dropdown {
   display: inline-flex;
-  width: 245px;
+  width: 246px;
+  height: 30px;
   position: relative;
   .dropdown-toggle {
-    margin: 0 5px;
-    padding: 3px 10px;
+    padding: 5px 10px;
     text-align: left;
     width: 100%;
   }
@@ -418,21 +445,18 @@ a {
     top: 100%;
     left: 0;
     z-index: 1000;
-    //display: none;
     float: left;
-    min-width: 233px;
+    min-width: 246px;
     max-height: 120px;
     overflow: auto;
     padding: 0;
-    margin: 2px 5px 0;
+    margin: 4px 0 0;
     font-size: 14px;
     text-align: left;
     list-style: none;
     //background-color: #fff;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0,0,0,.15);
     border-radius: 5px;
     -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
     box-shadow: 0 6px 12px rgba(0,0,0,.175);

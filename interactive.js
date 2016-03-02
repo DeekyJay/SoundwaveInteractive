@@ -135,7 +135,7 @@ function Interactive(electron) {
         }
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
-          cooldown: 5000,
+          cooldown: 15000,
           fired: isFired,
           progress: prog
         });
@@ -250,7 +250,7 @@ function Interactive(electron) {
    * Stops the connection to Beam.
    */
   function stop () {
-    if(running === true)
+    if(running === true && robot !== null)
     {
       logger.log("Closing Connection");
       robot.close();

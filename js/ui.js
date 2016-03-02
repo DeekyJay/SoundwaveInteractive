@@ -6,7 +6,8 @@ $(function() {
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&& UI &&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
   /*################## Elements ##################*/
-  var btnClose = $("#btnClose");
+  var btnClose = $('#btnClose');
+  var btnMinimize = $('#btnMinimize');
   /*** Navigation Button Elements ***/
   var btnStatus = $('#btnStatus');
   var btnBoard = $('#btnBoard');
@@ -60,6 +61,11 @@ $(function() {
   btnClose.click(function() {
     var window = BrowserWindow.getFocusedWindow();
      window.close();
+  });
+
+  btnMinimize.click(function() {
+    var window = BrowserWindow.getFocusedWindow();
+    window.minimize();
   });
   /*** Navigation Button Events ***/
   btnStatus.click(function() {showTab(tabStatus, btnStatus);});
@@ -283,6 +289,7 @@ $(function() {
     btnSoundTitles.each(function(index){
       i = index;
       var curTitle = $(this);
+      console.log(curTitle);
       var curAudio = $(sounds[i]);
       var curSound = currentProfile.sounds[i];
       if(curTitle.text() === curTitle.attr('default'))
@@ -330,13 +337,16 @@ $(function() {
    * @param {Profile} li - The profile to set.
    */
   function setProfile(li) {
+    console.log(li);
     if(ulProfiles.hasClass("show"))
       ulProfiles.toggleClass("show");
     cboProfile.html(li.text() + "<span class='caret'></span>");
     var currentProfile;
+    console.log(mainConfig.profiles);
     for(var i in mainConfig.profiles){
       if(li.attr('pid') == i)
       {
+        console.log(i);
         currentProfile = mainConfig.profiles[i];
         cboProfile.attr('pid', i);
         break;
@@ -375,7 +385,7 @@ $(function() {
    */
   function checkCanDeleteProfile()
   {
-    if(cboProfile.text() == "Default")
+    if(cboProfile.text().toLowerCase() == "default")
       btnDeleteProfile.addClass("disabled");
     else
       btnDeleteProfile.removeClass("disabled");
@@ -409,7 +419,8 @@ $(function() {
     for(var i in mainConfig.profiles)
     {
       var curProfile = mainConfig.profiles[i];
-      if(curProfile.profile == newProfile || newProfile === "")
+      if(curProfile.profile.toLowerCase() == newProfile.toLowerCase() ||
+        newProfile === "")
       {
         btnCreateProfile.addClass("disabled");
         break;
@@ -424,6 +435,7 @@ $(function() {
   function createProfile() {
     ipcRenderer.send('create-profile', txtProfileName.val());
     txtProfileName.val("");
+    btnCreateProfile.addClass("disabled");
   }
 
   /**
