@@ -289,7 +289,6 @@ $(function() {
     btnSoundTitles.each(function(index){
       i = index;
       var curTitle = $(this);
-      console.log(curTitle);
       var curAudio = $(sounds[i]);
       var curSound = currentProfile.sounds[i];
       if(curTitle.text() === curTitle.attr('default'))
@@ -337,16 +336,13 @@ $(function() {
    * @param {Profile} li - The profile to set.
    */
   function setProfile(li) {
-    console.log(li);
     if(ulProfiles.hasClass("show"))
       ulProfiles.toggleClass("show");
     cboProfile.html(li.text() + "<span class='caret'></span>");
     var currentProfile;
-    console.log(mainConfig.profiles);
     for(var i in mainConfig.profiles){
       if(li.attr('pid') == i)
       {
-        console.log(i);
         currentProfile = mainConfig.profiles[i];
         cboProfile.attr('pid', i);
         break;
