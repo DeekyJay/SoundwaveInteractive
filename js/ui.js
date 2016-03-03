@@ -512,6 +512,10 @@ $(function() {
 
 
   ipcRenderer.on('shutdown', function(event) {
+    ipcRenderer.removeAllListeners('play-sound');
+    ipcRenderer.removeAllListeners('connection-status');
+    ipcRenderer.removeAllListeners('load-config');
+    ipcRenderer.removeAllListeners('shutdown');
     var window = BrowserWindow.getFocusedWindow();
     window.close();
   });

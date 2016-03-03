@@ -250,7 +250,7 @@ function Interactive(electron) {
    * Stops the connection to Beam.
    */
   function stop () {
-    if(running === true && robot !== null)
+    if(robot !== null)
     {
       logger.log("Closing Connection");
       robot.close();
@@ -265,8 +265,8 @@ function Interactive(electron) {
       running = true;
     }
     else {
-      stop();
       running = false;
+      stop();
     }
   });
 
@@ -286,9 +286,20 @@ function Interactive(electron) {
   });
 
   ipcMain.on('shutdown', function(event){
+    running = false;
     stop();
     sender.send('shutdown');
+    removeEventListeners();
   });
+
+  function removeEventListeners() {
+    ipcMain.removeAllListeners('shutdown');
+    ipcMain.removeAllListeners('create-profile');
+    ipcMain.removeAllListeners('delete-profile');
+    ipcMain.removeAllListeners('update-config');
+    ipcMain.removeAllListeners('toggle-connection');
+    ipcMain.removeAllListeners('initialize');
+  }
 }
 
 module.exports = Interactive;
