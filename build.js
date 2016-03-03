@@ -10,7 +10,7 @@ packager({
     version:"0.36.8",
     dir: './',
     out: './build/',
-    ignore: "build/",
+    ignore: "node_modules/(electron-packager|electron-prebuilt)",
     "app-version":packageData.version,
     "version-string": {
         "CompanyName":"Derek Jensen",
