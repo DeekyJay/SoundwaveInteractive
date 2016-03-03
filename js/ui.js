@@ -59,8 +59,7 @@ $(function() {
   });
 
   btnClose.click(function() {
-    var window = BrowserWindow.getFocusedWindow();
-     window.close();
+    ipcRenderer.send('shutdown');
   });
 
   btnMinimize.click(function() {
@@ -509,6 +508,12 @@ $(function() {
       audio[0].src = audio[0].src;
     }
     playAudio(audio);
+  });
+
+
+  ipcRenderer.on('shutdown', function(event) {
+    var window = BrowserWindow.getFocusedWindow();
+    window.close();
   });
   /*################ Event Listeners END ################*/
 
