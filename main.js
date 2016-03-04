@@ -45,7 +45,6 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    console.log("Closed and Nulled");
   });
 
   mainWindow.show();
@@ -61,8 +60,4 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow();
   }
-});
-
-app.on('will-quit', function(event) {
-  console.log("Planning to Quit");
 });
