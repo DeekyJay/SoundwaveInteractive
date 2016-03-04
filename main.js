@@ -23,7 +23,7 @@ function createWindow () {
     fullscreenable: false,
     resizable: false,
     frame: false,
-    icon: 'fav.png',
+    icon: __dirname + '/fav.png',
     show: false
   });
 

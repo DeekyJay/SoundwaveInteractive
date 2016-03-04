@@ -2,19 +2,21 @@ var packager = require('electron-packager');
 var packageData = require('./package.json');
 
 packager({
-    //all:true,
-    platform: "win32",
-    arch: "x64",
+    platform: plat,
+    arch: "all",
     asar:true,
     name:"BeamSoundlyInteractive",
     version:"0.36.8",
+    icon: './fav',
     dir: './',
     out: './build/',
-    ignore: "node_modules/(electron-packager|electron-prebuilt)",
+    ignore: 'build/',
     "app-version":packageData.version,
     "version-string": {
         "CompanyName":"Derek Jensen",
         "LegalCopyright": "© "+new Date().getUTCFullYear() + " Derek Jensen",
+	      "FileDescription":"Beam Soundly Interactive",
+	      "OriginalFilename":"BeamSoundlyInteractive.exe",
         "ProductName":"Beam Soundly Interactive",
         "InternalName":"Beam Soundly Interactive"
     }
