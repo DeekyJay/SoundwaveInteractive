@@ -1,4 +1,4 @@
-function Interactive(electron) {
+function Interactive(electron, mainWindow) {
   var ipcMain = electron.ipcMain;
   var app = electron.app;
   var Beam = require('beam-client-node');
@@ -11,12 +11,13 @@ function Interactive(electron) {
   var logger = new Logger("Tetris");
   var beam = new Beam();
   var robot = null;
-  var sender = null;
+  var window = mainWindow;
+  var sender = mainWindow.webContents;
   var running = false;
 
-  ipcMain.on('initialize', function(event){
+  ipcMain.once('initialize', function(event){
     logger.log("IPCMain and IPCRenderer Talking . . .");
-    sender = event.sender;
+    //sender = event.sender;
     sender.send('load-config', config);
   });
 
@@ -286,20 +287,10 @@ function Interactive(electron) {
   });
 
   ipcMain.on('shutdown', function(event){
+    logger.log("Shutting Down");
     running = false;
     stop();
-    sender.send('shutdown');
-    removeEventListeners();
   });
-
-  function removeEventListeners() {
-    ipcMain.removeAllListeners('shutdown');
-    ipcMain.removeAllListeners('create-profile');
-    ipcMain.removeAllListeners('delete-profile');
-    ipcMain.removeAllListeners('update-config');
-    ipcMain.removeAllListeners('toggle-connection');
-    ipcMain.removeAllListeners('initialize');
-  }
 }
 
 module.exports = Interactive;

@@ -6,9 +6,8 @@ var electron = require('electron');
 var app = electron.app;
 // Module to create native browser window.
 var BrowserWindow = electron.BrowserWindow;
+var ipcMain = electron.ipcMain;
 
-
-var interactive = new Interactive(electron);
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow;
@@ -23,17 +22,20 @@ function createWindow () {
     //center: true,
     fullscreenable: false,
     resizable: false,
-    frame: false
+    frame: false,
+    show: false
   });
+
+  var interactive = new Interactive(electron, mainWindow);
 
   //mainWindow.setMaximizable(false);
   mainWindow.setResizable(false);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
-
+  //mainWindow.loadURL("https://github.com");
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   logger.log("UserData Path: " + app.getPath("userData"));
 
@@ -43,12 +45,10 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    app.quit();
+    console.log("Closed and Nulled");
   });
 
-  mainWindow.on('move', function() {
-    //logger.log("Window Position: " + mainWindow.getPosition());
-  });
+  mainWindow.show();
 }
 
 // This method will be called when Electron has finished
@@ -61,4 +61,8 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+app.on('will-quit', function(event) {
+  console.log("Planning to Quit");
 });
