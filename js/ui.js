@@ -1,7 +1,9 @@
 window.$ = window.jQuery = require('jquery');
 var Open = require('open');
-var remote = require('remote');
-var BrowserWindow = remote.require('browser-window');
+var remote = require('electron').remote;
+var BrowserWindow = remote.BrowserWindow;
+var ipcRenderer = require('electron').ipcRenderer;
+var dialog = remote.dialog;
 $(function() {
   //&&&&&&&&&&&&&&&&&&&&&&&&&&&& UI &&&&&&&&&&&&&&&&&&&&&&&&&&&&//
 
@@ -60,6 +62,10 @@ $(function() {
 
   btnClose.click(function() {
     ipcRenderer.send('shutdown');
+    console.log("Closing...");
+    ipcRenderer.removeAllListeners();
+    var window = BrowserWindow.getFocusedWindow();
+    window.close();
   });
 
   btnMinimize.click(function() {
@@ -143,12 +149,6 @@ $(function() {
   //&&&&&&&&&&&&&&&&&&&&&&&&&& UI END &&&&&&&&&&&&&&&&&&&&&&&&&&//
 
   //&&&&&&&&&&&&&&&&&&&&&&& Funtionality &&&&&&&&&&&&&&&&&&&&&&&//
-
-  /*################## Declares ##################*/
-  var ipcRenderer = require('electron').ipcRenderer;
-  var remote = require('remote');
-  var dialog = remote.dialog;
-  /*################ Declares END ################*/
 
   /*################## Variables ##################*/
   var boolConnect = false;
@@ -508,16 +508,6 @@ $(function() {
       audio[0].src = audio[0].src;
     }
     playAudio(audio);
-  });
-
-
-  ipcRenderer.on('shutdown', function(event) {
-    ipcRenderer.removeAllListeners('play-sound');
-    ipcRenderer.removeAllListeners('connection-status');
-    ipcRenderer.removeAllListeners('load-config');
-    ipcRenderer.removeAllListeners('shutdown');
-    var window = BrowserWindow.getFocusedWindow();
-    window.close();
   });
   /*################ Event Listeners END ################*/
 
