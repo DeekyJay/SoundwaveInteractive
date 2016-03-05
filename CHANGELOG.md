@@ -3,7 +3,7 @@
 [Full Changelog](https://github.com/Leviathan5/BeamSoundlyInteractive/compare/0.5.0...0.5.1)
 
 **Features**
- * Allow modification of version and sharecode.
+ * Allow modification of version, share code, and cooldown in generated version.json
 
 **Bugfixes**
  * None
