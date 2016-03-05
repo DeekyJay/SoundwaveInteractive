@@ -6,16 +6,16 @@ Not all the interactive streams on Beam have to be playing a game!
 Want to get your viewers interacting with you while you stream?
 Let them spice up the stream by triggering sound effects of your choice!
 
-## Installation
-There are currently no releases available but if you wanted, you could
-clone or fork this repo and compile the code from scratch. Beam Soundly Interactive
-is built with node.js and electron! Checkout the package.json file for dependencies!
+## Download
+Go [here](https://github.com/Leviathan5/BeamSoundlyInteractive/releases) to download the latest release.
 
-The Interactive App on Beam has yet to be published and I am looking for suggestions
-on different states I should have to allow for different global cooldowns and spark costs.
+## Installation
+* Extract the zip.
+* Run!
 
 ## Screenshots
-![Beam Soundly Interactive](http://i.imgur.com/pLPzVeB.png)
+![Beam Soundly Interactive Sound Board](http://i.imgur.com/pLPzVeB.png)
+![Beam Soundly Interactive Status](http://i.imgur.com/XZF8OhF.png)
 
 ## License
 The MIT License (MIT)
