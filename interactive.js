@@ -45,7 +45,7 @@ function Interactive(electron, mainWindow) {
     if(!config) {
       throw new Error('The config file is missing, Please create a config file.');
     }
-    if(!config.version) {
+    if(!config.app.version && !config.app.code) {
       throw new Error('Missing version id and share code.');
     }
     var required = ["channel","password","username"];
@@ -100,12 +100,13 @@ function Interactive(electron, mainWindow) {
   * @param {string} channelID - the versionID of the Beam Interactive application
   * @param {string} versionId - the shareID of the Beam Interactive application
   */
-  function requestInteractive(channelID, versionId) {
+  function requestInteractive(channelID, versionId, shareCode) {
     return beam.request('PUT', 'channels/'+channelID,
       { body :
         {
           interactive: true,
-          tetrisGameId: versionId
+          tetrisGameId: versionId,
+          tetrisShareCode: shareCode
         },
         json:true
       }
@@ -136,7 +137,7 @@ function Interactive(electron, mainWindow) {
         }
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
-          cooldown: 15000,
+          cooldown: config.app.cooldown,
           fired: isFired,
           progress: prog
         });
@@ -202,7 +203,7 @@ function Interactive(electron, mainWindow) {
       password: config.auth.password
     }).attempt()
     .then(function() {
-      return requestInteractive(id, config.version, config.code);
+      return requestInteractive(id, config.app.version, config.app.code);
     }).then(function(res) {
       if(res.body.tetrisGameId === 'You don\'t have access to that.')
       {
@@ -290,6 +291,7 @@ function Interactive(electron, mainWindow) {
     logger.log("Shutting Down");
     running = false;
     stop();
+    robot = null;
   });
 }
 
