@@ -14,7 +14,7 @@ Go [here](https://github.com/Leviathan5/BeamSoundlyInteractive/releases) to down
 * Run!
 
 ## Screenshots
-![Beam Soundly Interactive Sound Board](http://i.imgur.com/pLPzVeB.png)
+![Beam Soundly Interactive Sound Board](http://i.imgur.com/HOTeKFw.png)
 ![Beam Soundly Interactive Status](http://i.imgur.com/XZF8OhF.png)
 
 ## License
