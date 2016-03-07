@@ -36,7 +36,7 @@ function createWindow () {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   //mainWindow.loadURL("https://github.com");
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   logger.log("UserData Path: " + app.getPath("userData"));
 

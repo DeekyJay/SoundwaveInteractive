@@ -33,7 +33,7 @@ $(function() {
   var btnEditTitle = $('#btnEditTitle');
   var btnEditCancel = $('#btnEditCancel');
   /*** Sound Board Elements ***/
-  var sounds = $('.sound>audio');
+  var sounds = [];
   var btnSoundTitles = $('.sound>span:first-child');
   var btnPlays = $('.img-play');
   var btnLoads = $(".sound>span:last-child");
@@ -62,7 +62,6 @@ $(function() {
 
   btnClose.click(function() {
     ipcRenderer.send('shutdown');
-    console.log("Closing...");
     ipcRenderer.removeAllListeners();
     var window = BrowserWindow.getFocusedWindow();
     window.close();
@@ -80,17 +79,12 @@ $(function() {
   /*** Status Button Events ***/
   btnConnect.click(function() {toggleConnection();});
   /*** Sound Board Button Events ***/
-  btnLoads.each(function() {
-    $(this).click(function() {loadAudioFile($(this));});
+  btnLoads.each(function(index) {
+    $(this).click(function() {loadAudioFile(index);});
   });
 
-  btnPlays.each(function() {
-    var audio = $(this).parent().parent().children('audio');
-    var btnPlay = audio.siblings("span").children(".img-play");
-     $(this).click(function() {playAudio(audio);});
-     audio.on('ended', function(){
-        btnPlay.removeClass("playing");
-     });
+  btnPlays.each(function(index) {
+     $(this).click(function() {playAudio(index);});
    });
 
   btnSoundTitles.each(function(i) {
@@ -199,7 +193,7 @@ $(function() {
    * Sets the Audio SRC for playback.
    * @param  {button} audio - The load button for the sound
    */
-  function loadAudioFile(audio) {
+  function loadAudioFile(id) {
     dialog.showOpenDialog(
       {
         filters: [
@@ -209,7 +203,9 @@ $(function() {
       function(fileNames) {
         if (fileNames === undefined) return;
         var fileName = fileNames[0];
-        audio.parent().children('audio').attr('src', fileName);
+        sounds[id] = new Howl({ urls: [fileName], onend: function() {
+          $(btnPlays[id]).removeClass("playing");
+        }});
         saveConfig();
       });
   }
@@ -218,18 +214,22 @@ $(function() {
    * Plays the current audio passed in.
    * @param  {button} play - The audio to play
    */
-  function playAudio(play) {
-    var btnPlay = play.siblings("span").children(".img-play");
+  function playAudio(id) {
+    var audio = sounds[id];
+    var btnPlay = $(btnPlays[id]);
     if(!btnPlay.hasClass("playing"))
     {
       btnPlay.addClass("playing");
-      play.trigger('play');
+      audio.play();
     }
     else {
       btnPlay.removeClass("playing");
-      play.trigger('pause');
-      play[0].src = play[0].src;
+      audio.stop();
     }
+  }
+
+  function stopAudio(id) {
+    $(btnPlays[id]).removeClass("playing");
   }
 
   /**
@@ -288,13 +288,13 @@ $(function() {
     btnSoundTitles.each(function(index){
       i = index;
       var curTitle = $(this);
-      var curAudio = $(sounds[i]);
+      var curAudio = sounds[i];
       var curSound = currentProfile.sounds[i];
       if(curTitle.text() === curTitle.attr('default'))
         curSound.title = "";
       else
         curSound.title = curTitle.text();
-      curSound.url = curAudio.attr('src');
+      curSound.url = curAudio.urls()[0];
     });
     ipcRenderer.send('update-config', mainConfig);
   }
@@ -347,8 +347,8 @@ $(function() {
         break;
       }
     }
-    for(var j in currentProfile.sounds)
-    {
+    sounds = [];
+    currentProfile.sounds.forEach(function(obj, j){
       var currentSound = currentProfile.sounds[j];
       var curTitle = $(btnSoundTitles[j]);
       if(currentSound.title !== "")
@@ -360,8 +360,9 @@ $(function() {
         curTitle.text(curTitle.attr('default'));
         curTitle.attr('name', curTitle.attr('default'));
       }
-      $(sounds[j]).attr('src', currentSound.url);
-    }
+      var how = new Howl({urls: [currentSound.url], onend: function(){stopAudio(j);}});
+      sounds.push(how);
+    });
     checkCanDeleteProfile();
     saveConfig();
   }
@@ -499,15 +500,14 @@ $(function() {
    * Called when a tactile is pushed to trigger the playing of a sound.
    */
   ipcRenderer.on('play-sound', function(event, id){
-    var audio = $(sounds[id]);
-    var btnPlay = audio.siblings("span").children(".img-play");
+    var audio = sounds[id];
+    var btnPlay = $(btnPlays[id]);
     if(btnPlay.hasClass("playing"))
     {
       btnPlay.removeClass("playing");
-      audio.trigger('pause');
-      audio[0].src = audio[0].src;
+      audio.stop();
     }
-    playAudio(audio);
+    playAudio(id);
   });
   /*################ Event Listeners END ################*/
 
