@@ -3,7 +3,7 @@ function Interactive(electron, mainWindow) {
   var app = electron.app;
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
-  var Packets = require('beam-interactive-node/dist/robot/packets');
+  var Packets = require('beam-interactive-node/dist/robot/packets').default;
 
   var Config = require('./lib/Config');
   var config = new Config(app.getPath("userData"));
@@ -135,9 +135,19 @@ function Interactive(electron, mainWindow) {
                   tac.pressFrequency + ", Release: " + tac.releaseFrequency + ", Connected: " + report.users.connected);
           sender.send('play-sound', tac.id);
         }
+        var curCooldown;
+        for(var i in config.profiles)
+        {
+          if(config.profiles[i].name == config.auth.last)
+          {
+            curCooldown = config.profiles[i].cooldown;
+            break;
+          }
+        }
+
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
-          cooldown: config.app.cooldown,
+          cooldown: curCooldown,
           fired: isFired,
           progress: prog
         });
@@ -185,8 +195,8 @@ function Interactive(electron, mainWindow) {
       logger.log(err);
       if(err.code === 'ECONNRESET')
         sender.send('connection-status', 'Error', {error: "Connection Reset"});
-      else {
-
+      else if(err.code === 'ETIMEDOUT') {
+        sender.send('connection-status', 'Error', {error: "Timeout"});
       }
     });
   }
@@ -245,6 +255,8 @@ function Interactive(electron, mainWindow) {
           logger.log(e);
           if(e.code == "EAI_AGAIN")
             sender.send('connection-status', 'Error', {error: 'No Connection'});
+          else if(e.code == "ETIMEDOUT")
+            sender.send('connection-status', 'Error', {error: 'Timeout'});
       });
   }
 

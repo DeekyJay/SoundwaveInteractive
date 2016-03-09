@@ -140,7 +140,7 @@ a {
 
 #main  {
   height: 100%;
-  min-height: 400px;
+  min-height: 450px;
   min-width: 1020px;
 }
 
@@ -383,33 +383,14 @@ a {
       width: 150px;
       height: 28px;
       padding: 0 7px;
+      &.error {
+        border: 1px solid red;
+      }
     }
     &:nth-child(-n+2)>span {
       width: 75px;
       text-align: right;
       padding: 0 0;
-    }
-
-    &:last-child {
-      margin-top: 5px;
-      height: 150px;
-      display: flex;
-      align-items:flex-start;
-      >div {
-        &:first-child {
-          width: 50px;
-          display: inline-block;
-          height: 30px;
-          line-height: 30px;
-        }
-      }
-     >.cancel-button {
-       width: 30px;
-       height: 30px;
-       line-height: 30px;
-       text-align: center;
-       display: inline-block;
-     }
     }
   }
   #create-profile {
@@ -418,6 +399,28 @@ a {
       height: 28px;
       .flexy;
     }
+  }
+
+  #select-profile {
+    margin-top: 5px;
+    //height: 150px;
+    display: flex;
+    align-items:flex-start;
+    >div {
+      &:first-child {
+        width: 50px;
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+   >.cancel-button {
+     width: 30px;
+     height: 30px;
+     line-height: 30px;
+     text-align: center;
+     display: inline-block;
+   }
   }
   >div>span {
     display: block;

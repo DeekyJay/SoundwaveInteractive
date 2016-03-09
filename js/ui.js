@@ -47,6 +47,7 @@ $(function() {
   var cboProfile = $('#cboProfile');
   var ulProfiles = $('#ulProfiles');
   var btnDeleteProfile = $('#btnDeleteProfile');
+  var txtCooldown = $('#txtCooldown');
   /*** About Elements ***/
   var btnGitHub = $('#btnGitHub');
   /*################ Elements END ################*/
@@ -136,6 +137,9 @@ $(function() {
     checkCanCreateProfile();
     if(e.keyCode == 13 &&
       !btnCreateProfile.hasClass("disabled")) createProfile();
+  });
+  txtCooldown.keyup(function(){
+    checkIsValidCooldown();
   });
 
   /*################ Key Events END ################*/
@@ -284,6 +288,7 @@ $(function() {
 
     var curProId = cboProfile.attr('pid');
     var currentProfile = mainConfig.profiles[curProId];
+    currentProfile.cooldown = txtCooldown.val();
 
     btnSoundTitles.each(function(index){
       i = index;
@@ -347,6 +352,7 @@ $(function() {
         break;
       }
     }
+    txtCooldown.val(currentProfile.cooldown);
     sounds = [];
     currentProfile.sounds.forEach(function(obj, j){
       var currentSound = currentProfile.sounds[j];
@@ -363,6 +369,13 @@ $(function() {
       var how = new Howl({urls: [currentSound.url], onend: function(){stopAudio(j);}});
       sounds.push(how);
     });
+
+    if(boolConnect)
+    {
+      btnConnect.click();
+      setTimeout(function(){ btnConnect.click();}, 500);
+    }
+
     checkCanDeleteProfile();
     saveConfig();
   }
@@ -451,6 +464,21 @@ $(function() {
     {
       btnConnect.removeClass("disabled");
       boolCanToggle = true;
+    }
+  }
+
+  function checkIsValidCooldown() {
+    var cooldown = txtCooldown.val();
+    console.log(cooldown);
+    var pat = new RegExp(/^\d+$/);
+    console.log(pat.test(cooldown) && Number(cooldown) >= 0 && Number(cooldown) <= 240000);
+    if(pat.test(cooldown) && Number(cooldown) >= 0 && Number(cooldown) <= 240000)
+    {
+      txtCooldown.removeClass('error');
+      saveConfig();
+    }
+    else {
+      txtCooldown.addClass('error');
     }
   }
   /*################ Functions END ################*/
