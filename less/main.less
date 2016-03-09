@@ -239,7 +239,7 @@ a {
     height: 100%;
     margin: 0;
   }
-  #soundboard {
+  #settings {
     display: flex;
   }
 }
@@ -249,14 +249,11 @@ a {
   height: 100%;
   >div>div {
     width: 100%;
+    font-size: 22px;
     .flexy;
     span {
       margin: 5px;
       margin-bottom: 10px;
-      font-size: 22px;
-      &:first-child {
-        //font-weight: bold;
-      }
     }
     &:last-child {
       >span {
@@ -284,7 +281,6 @@ a {
     @brad: 3px;
     margin: 0.5%;
     width: ~'calc(90% / 8)';
-    height: 130px;
     max-width: 125px;
     text-align: center;
     span {
@@ -307,32 +303,31 @@ a {
           cursor: pointer;
         }
       }
-      &:nth-child(2) {
-        display: block;
-        width: 100%;
-        @spacing: 10px;
-        font-size: 15px;
-        color: #D2D2D2;
-        margin-left: @spacing / 2;
-        letter-spacing: @spacing;
-        line-height: 10px;
-      }
       &:nth-last-child(2) {
         display: flex;
         margin-top: @mmarg;
         margin-bottom: @mmarg;
         justify-content: center;
-        div {
-          height: 45px;
-          width: 50px;
-          cursor: pointer;
-        }
-      }
-      &:last-child {
-        height: 20px;
       }
     }
   }
+}
+
+.hr {
+  display: block;
+  //width: 100%;
+  @spacing: 10px;
+  font-size: 15px;
+  color: #D2D2D2;
+  margin-left: @spacing;
+  letter-spacing: @spacing;
+  line-height: 10px;
+}
+
+.img-play {
+  height: 45px;
+  width: 50px;
+  cursor: pointer;
 }
 
 #editSoundTitleOverlay {
@@ -395,14 +390,6 @@ a {
       padding: 0 0;
     }
 
-    &:nth-last-child(2) {
-      >div {
-        width: 80px;
-        height: 28px;
-        .flexy;
-      }
-    }
-
     &:last-child {
       margin-top: 5px;
       height: 150px;
@@ -423,6 +410,13 @@ a {
        text-align: center;
        display: inline-block;
      }
+    }
+  }
+  #create-profile {
+    >div {
+      width: 80px;
+      height: 28px;
+      .flexy;
     }
   }
   >div>span {
@@ -558,4 +552,25 @@ a {
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+@media screen {
+  @media (min-height: 450px) and (min-width: 1250px) {
+    #status>div>div {
+      font-size: 30px;
+    }
+    .sound *{
+      font-size: 1.25em;
+    }
+
+    .img-play {
+      width: 60px;
+      height: 70px;
+    }
+
+    .hr {
+      margin-left: 10px;
+
+    }
+  }
 }

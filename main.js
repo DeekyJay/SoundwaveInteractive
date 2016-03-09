@@ -21,7 +21,7 @@ function createWindow () {
     //y: 54,
     //center: true,
     fullscreenable: false,
-    resizable: false,
+    //resizable: false,
     frame: false,
     icon: __dirname + '/fav.png',
     show: false
@@ -30,7 +30,7 @@ function createWindow () {
   var interactive = new Interactive(electron, mainWindow);
 
   //mainWindow.setMaximizable(false);
-  mainWindow.setResizable(false);
+  //mainWindow.setResizable(false);
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
