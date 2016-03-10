@@ -48,6 +48,7 @@ $(function() {
   var ulProfiles = $('#ulProfiles');
   var btnDeleteProfile = $('#btnDeleteProfile');
   var txtCooldown = $('#txtCooldown');
+  var chkGlobal = $('#chkGlobal');
   /*** About Elements ***/
   var btnGitHub = $('#btnGitHub');
   /*################ Elements END ################*/
@@ -106,6 +107,10 @@ $(function() {
   btnDeleteProfile.click(function() {
     if(!btnDeleteProfile.hasClass("disabled")) deleteCurrentProfile();}
   );
+  chkGlobal.click(function() {
+    if(checkIsValidCooldown())
+      saveConfig();
+    });
   /*** About Button Events ***/
   btnGitHub.click(function() {
     Open("https://github.com/Leviathan5");
@@ -139,7 +144,8 @@ $(function() {
       !btnCreateProfile.hasClass("disabled")) createProfile();
   });
   txtCooldown.keyup(function(){
-    checkIsValidCooldown();
+    if(checkIsValidCooldown())
+      saveConfig();
   });
 
   /*################ Key Events END ################*/
@@ -288,8 +294,8 @@ $(function() {
 
     var curProId = cboProfile.attr('pid');
     var currentProfile = mainConfig.profiles[curProId];
-    currentProfile.cooldown = txtCooldown.val();
-
+    currentProfile.cooldown = Number(txtCooldown.val());
+    currentProfile.global = document.getElementById('chkGlobal').checked;
     btnSoundTitles.each(function(index){
       i = index;
       var curTitle = $(this);
@@ -353,6 +359,12 @@ $(function() {
       }
     }
     txtCooldown.val(currentProfile.cooldown);
+
+    if(currentProfile.global)
+      document.getElementById('chkGlobal').checked = true;
+    else
+      document.getElementById('chkGlobal').checked = false;
+
     sounds = [];
     currentProfile.sounds.forEach(function(obj, j){
       var currentSound = currentProfile.sounds[j];
@@ -469,16 +481,16 @@ $(function() {
 
   function checkIsValidCooldown() {
     var cooldown = txtCooldown.val();
-    console.log(cooldown);
     var pat = new RegExp(/^\d+$/);
     console.log(pat.test(cooldown) && Number(cooldown) >= 0 && Number(cooldown) <= 240000);
     if(pat.test(cooldown) && Number(cooldown) >= 0 && Number(cooldown) <= 240000)
     {
       txtCooldown.removeClass('error');
-      saveConfig();
+      return true;
     }
     else {
       txtCooldown.addClass('error');
+      return false;
     }
   }
   /*################ Functions END ################*/

@@ -378,7 +378,7 @@ a {
       margin: 0 5px;
       border-radius: 5px;
     }
-    >input {
+    >input[type='text'], >input[type='password'] {
       .darkinput(16px);
       width: 150px;
       height: 28px;
@@ -534,6 +534,24 @@ a {
         cursor: pointer;
       }
     }
+  }
+}
+
+input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  margin-left: 20px !important;
+  -webkit-appearance: none;
+  background: #1B1B1B;
+  border: 1px solid #3D3D3E;
+  outline: none;
+  &:checked:before {
+    font-weight: bold;
+    color: white;
+    content: '\2713';
+    -webkit-margin-start: 0;
+    margin-left: 2px;
+    font-size: 1.45em;
   }
 }
 

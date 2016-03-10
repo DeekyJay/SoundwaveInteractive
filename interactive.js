@@ -136,29 +136,34 @@ function Interactive(electron, mainWindow) {
           sender.send('play-sound', tac.id);
         }
         var curCooldown;
+        var global;
         for(var i in config.profiles)
         {
-          if(config.profiles[i].name == config.auth.last)
+          if(config.profiles[i].profile == config.auth.last)
           {
+            global = config.profiles[i].global;
             curCooldown = config.profiles[i].cooldown;
             break;
           }
         }
+        if(global)
+        {
+          var tactile = new Packets.ProgressUpdate.TactileUpdate({
+            id: tac.id,
+            cooldown: curCooldown,
+            fired: isFired,
+            progress: prog
+          });
+          tactileResults.push(tactile);
+        }
 
-        var tactile = new Packets.ProgressUpdate.TactileUpdate({
-          id: tac.id,
-          cooldown: curCooldown,
-          fired: isFired,
-          progress: prog
-        });
-        tactileResults.push(tactile);
       });
       var progress = {
         tactile: tactileResults,
         joystick: [],
         state: "default"
       };
-      if(isUpdate)
+      if(isUpdate && global)
       {
         //logger.log(report.tactile);
         //logger.log(progress);
