@@ -28,7 +28,8 @@
     "beam-interactive-node": "^0.2.0",
     "fs-extra": "^0.26.5",
     "jquery": "^2.2.1",
-    "open": "0.0.5"
+    "open": "0.0.5",
+    "wsabi-client-bacon": "^0.1.4"
   },
   "devDependencies": {
     "electron-packager": "^5.2.1",
