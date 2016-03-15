@@ -1,5 +1,6 @@
 # Beam Soundly Interactive
 The Interactive Sound Board for Beam
+#### Like this project and want to support me? [Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z8UAZK3MYS6MA)
 
 ## Description
 Not all the interactive streams on Beam have to be playing a game!
