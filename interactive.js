@@ -21,6 +21,27 @@ function Interactive(electron, mainWindow) {
     sender.send('load-config', config);
   });
 
+  function updateBeamApp() {
+    beam.use('password', {
+      username: config.auth.username,
+      password: config.auth.password
+    }).attempt()
+    .then(function() {
+      return beam.channel.getChannel(config.auth.username);
+    })
+    .then(function(res){
+      return beam.game.ownedGames(res.user.id);
+    })
+    .then(function(res){
+      res.forEach(function(game) {
+        if(game.name == "BeamSoundlyInteractive Soundboard")
+        {
+          
+        }
+      });
+    })
+  }
+
   /**
    * Gets the Channel ID from the Channel's Name
    */
@@ -293,6 +314,8 @@ function Interactive(electron, mainWindow) {
     config.auth = newConfig.auth;
     config.profiles = newConfig.profiles;
     config.save();
+    updateBeamApp();
+
   });
 
   ipcMain.on('delete-profile', function(event, deleteProfile){
