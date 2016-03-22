@@ -21,25 +21,204 @@ function Interactive(electron, mainWindow) {
     sender.send('load-config', config);
   });
 
+  /**
+   * Gets the UserID by a username based on their channel.
+   * @param  {String} username
+   * @return {Promise}
+   */
+  function getUserId(username) {
+    return beam.channel.getChannel(username)
+      .then(function(res) {
+        return res.user.id;
+      });
+  }
+
+  /**
+   * Gets the Sound Board game from a user
+   * @param  {Number} userid
+   * @return {Promise}
+   */
+  function getGame(userid) {
+    return beam.game.ownedGames(userid)
+      .then(function(games) {
+        games.forEach(function(game) {
+          if(game.name == "BeamSoundlyInteractive Soundboard")
+          {
+            return game;
+          }
+        });
+        return null;
+      });
+  }
+
+  /**
+   * Gets the Version ID of a game the user owns
+   * @param  {Number} userId
+   * @param  {Number} gameId
+   * @return {Promise}
+   */
+  function getGameVersionId(userId, gameId) {
+    return beam.game.ownedGameVersions(userId, gameId)
+    .then(function(res) {
+      logger.log(res[0]);
+      return res[0].versions[0].id;
+    });
+  }
+
+  /**
+   * Updates a version of the game so the buttons are the same as the current
+   * profile selected by the user.
+   * @param  {Number} versionId
+   * @param  {Number} gameId
+   * @return {Promise}
+   */
+  function updateVersion(versionId, gId) {
+    var board = createBoard();
+    var data = {
+      gameId : gId,
+      controls : {
+        reportInterval: 100,
+        tactiles: createTactiles()
+      }
+    };
+    return beam.game.updateVersion(versionId, data);
+  }
+
+  /**
+   * Creates the new board based on the profile sounds.
+   * @return {Object}
+   */
+  function createBoard() {
+    var currentProfile;
+    config.profiles.some(function(profile) {
+        if(profile.profile == config.auth.last)
+        {
+          currentProfile = profile;
+          return true;
+        }
+        return false;
+    });
+
+    var board = [[]];
+
+    currentProfile.sounds.forEach(function(sound) {
+      board[0][0].push({key: sound.title, cost: 0, cooldown: currentProfile.cooldown});
+    });
+
+    return board;
+  }
+
+  /**
+   * Create a single tactile
+   * [link]
+   * @param  {Object} tactile
+   * @return {Object}
+   */
+  function createTactile(tactile) {
+	var tactileObj = {
+		id: tactile.id,
+		type: 'tactiles',
+		text: tactile.key,
+		help: tactile.key,
+		blueprint: [
+			{
+				width: tactile.width,
+				height: tactile.height,
+				grid: 'large',
+				state: 'default',
+				x: (tactile.column > 0) ? tactile.column * tactile.width : tactile.column,
+				y: tactile.row
+			}
+		],
+		analysis: {
+			holding: true,
+			frequency: true
+		},
+		cost: {
+			press: {
+				cost: tactile.cost
+			}
+		},
+		cooldown: {
+			press: (tactile.cooldown)? tactile.cooldown : 0
+		}
+	};
+	return tactileObj;
+}
+
+  /**
+   * Creates tactiles for a board
+   * @param  {Object} board
+   * @return {Object}
+   */
+  function createTactiles(board) {
+    var length = board.length;
+  	var i = 0;
+  	var id = 0;
+  	var tactiles = [];
+  	var tactile;
+  	while (i < length) {
+  		var row = board[i];
+  		var innerLength = row.length;
+  		var j = 0;
+  		while (j < innerLength) {
+  			tactile = row[j];
+  			tactile.column = j;
+  			tactile.row = i*2;
+  			tactile.width = 2;
+  			tactile.height = 2;
+  			tactile.id = id;
+  			tactiles.push(createTactile(tactile));
+  			id++;
+  			j++;
+  		}
+  		i++;
+  	}
+  	return tactiles;
+  }
+
   function updateBeamApp() {
+    var userId;
+    var gId;
     beam.use('password', {
       username: config.auth.username,
       password: config.auth.password
     }).attempt()
     .then(function() {
-      return beam.channel.getChannel(config.auth.username);
+      return getUserId(config.auth.username);
     })
-    .then(function(res){
-      return beam.game.ownedGames(res.user.id);
+    .then(function(id){
+      userId = id;
+      return getGame(id);
     })
-    .then(function(res){
-      res.forEach(function(game) {
-        if(game.name == "BeamSoundlyInteractive Soundboard")
-        {
-          
-        }
-      });
+    .then(function(game){
+      if(game === undefined)
+      {
+        var data = {
+          ownerId : userId,
+          name : "BeamSoundlyInteractive Soundboard",
+          description : "Auto-generated Sound Board Custom to your profiles!",
+          installation: null
+        };
+
+        return beam.game.create(data)
+          .then(function(newGame) {
+            return newGame.id;
+          });
+      }
+      return game.id;
     })
+    .then(function(gameId) {
+      gId = gameId;
+      return getGameVersionId(userId, gameId);
+    })
+    .then(function(versionId) {
+      return updateVersion(versionId, gId);
+    })
+    .catch(function(err) {
+      logger.log(err);
+      sender.send('connection-status', 'Error', {error: err.message});
+    });
   }
 
   /**
