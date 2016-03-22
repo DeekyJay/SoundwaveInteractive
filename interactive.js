@@ -178,6 +178,7 @@ function Interactive(electron, mainWindow) {
   }
 
   function updateBeamApp() {
+    logger.log("Updating Beam App");
     var userId;
     var gId;
     beam.use('password', {
