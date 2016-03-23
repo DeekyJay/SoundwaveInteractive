@@ -301,9 +301,9 @@ $(function() {
       var curTitle = $(this);
       var curAudio = sounds[i];
       var curSound = currentProfile.sounds[i];
-      if(curTitle.text() === curTitle.attr('default'))
-        curSound.title = "";
-      else
+      // if(curTitle.text() === curTitle.attr('default'))
+      //   curSound.title = "";
+      // else
         curSound.title = curTitle.text();
       curSound.url = curAudio.urls()[0];
     });

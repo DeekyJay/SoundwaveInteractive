@@ -29,7 +29,13 @@ function Interactive(electron, mainWindow) {
   function getUserId(username) {
     return beam.channel.getChannel(username)
       .then(function(res) {
-        return res.user.id;
+        if(res.body.userId === undefined)
+        {
+          //logger.log(res.body);
+          sender.send('connection-status', 'Error', {error:'Invalid User'});
+          return null;
+        }
+        return res.body.userId;
       });
   }
 
@@ -40,14 +46,13 @@ function Interactive(electron, mainWindow) {
    */
   function getGame(userid) {
     return beam.game.ownedGames(userid)
-      .then(function(games) {
-        games.forEach(function(game) {
+      .then(function(res) {
+        var g;
+        res.body.forEach(function(game) {
           if(game.name == "BeamSoundlyInteractive Soundboard")
-          {
-            return game;
-          }
+            g = game;
         });
-        return null;
+        return g;
       });
   }
 
@@ -60,8 +65,13 @@ function Interactive(electron, mainWindow) {
   function getGameVersionId(userId, gameId) {
     return beam.game.ownedGameVersions(userId, gameId)
     .then(function(res) {
-      logger.log(res[0]);
-      return res[0].versions[0].id;
+      if(res.body === undefined)
+      {
+        //logger.log(res.body);
+        sender.send('connection-status', 'Error', {error:'Invalid Game'});
+        return null;
+      }
+      return res.body[0].versions[0].id;
     });
   }
 
@@ -78,9 +88,10 @@ function Interactive(electron, mainWindow) {
       gameId : gId,
       controls : {
         reportInterval: 100,
-        tactiles: createTactiles()
+        tactiles: createTactiles(board)
       }
     };
+    logger.log(JSON.stringify(data));
     return beam.game.updateVersion(versionId, data);
   }
 
@@ -99,12 +110,13 @@ function Interactive(electron, mainWindow) {
         return false;
     });
 
-    var board = [[]];
-
-    currentProfile.sounds.forEach(function(sound) {
-      board[0][0].push({key: sound.title, cost: 0, cooldown: currentProfile.cooldown});
+    var board = [[],[]];
+    currentProfile.sounds.forEach(function(sound, index) {
+      if(index <= 7)
+        board[0].push({key: sound.title, cost: 0, cooldown: currentProfile.cooldown});
+      else
+        board[1].push({key: sound.title, cost: 0, cooldown: currentProfile.cooldown});
     });
-
     return board;
   }
 
@@ -186,15 +198,18 @@ function Interactive(electron, mainWindow) {
       password: config.auth.password
     }).attempt()
     .then(function() {
+      logger.log("Getting User ID");
       return getUserId(config.auth.username);
     })
     .then(function(id){
+      logger.log("Getting Game from User " + id);
       userId = id;
       return getGame(id);
     })
     .then(function(game){
       if(game === undefined)
       {
+        logger.log("Creating Game");
         var data = {
           ownerId : userId,
           name : "BeamSoundlyInteractive Soundboard",
@@ -210,14 +225,16 @@ function Interactive(electron, mainWindow) {
       return game.id;
     })
     .then(function(gameId) {
+      logger.log("Getting Game Version");
       gId = gameId;
       return getGameVersionId(userId, gameId);
     })
     .then(function(versionId) {
+      logger.log("Update Version");
       return updateVersion(versionId, gId);
     })
     .catch(function(err) {
-      logger.log(err);
+      console.log(err);
       sender.send('connection-status', 'Error', {error: err.message});
     });
   }
