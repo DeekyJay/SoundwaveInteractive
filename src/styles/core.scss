@@ -1,0 +1,40 @@
+:global {
+  @import 'base';
+  @import 'vendor/normalize';
+  @import 'containers/Header';
+  @import 'containers/NavBall';
+  @import 'containers/Contents';
+  @import 'containers/SoundList';
+  @import 'views/LoginView';
+  @import 'views/BoardView';
+
+  // Some best-practice CSS that's useful for most apps
+  // Just remove them if they're not what you want
+  html, body {
+    background: $bg;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    user-select: none;
+    color: white;
+  }
+  .loading {
+    background: $loading 0 0 no-repeat;
+    background-size: 100%;
+    height: 250px;
+    width: 250px;
+    margin: 0 auto;
+  }
+  .main-app-content {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+  }
+  .main_app-layout {
+    height: calc(100% - 75px);
+    position: relative;
+  }
+}
+/* Make standard style for this app */

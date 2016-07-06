@@ -1,4 +1,4 @@
-# Beam Soundly Interactive
+# SoundwaveInteractive
 The Interactive Sound Board for Beam
 #### Like this project and want to support me? [Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6DFKBUF4QQU9C)
 

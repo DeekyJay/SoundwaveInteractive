@@ -1,0 +1,30 @@
+.login-container {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  .login-content {
+    font-size: 32px;
+    margin: 0 auto;
+  }
+  .login-text {
+    margin-bottom: 20px;
+  }
+  .login-button {
+    padding: 10px 25px;
+    font-size: 24px;
+    border-radius: 4px;
+    display: inline-block;
+    margin: auto 0;
+    cursor: pointer;
+    background: -webkit-linear-gradient(-45deg, #77aeff 0%,#461c9a 100%);
+    &:hover {
+      background: -webkit-linear-gradient(-45deg, #9fc5ff 0%,#713cdc 100%);
+    }
+  }
+  .login-minor-text {
+    font-size: 20px;
+    color: $minor;
+  }
+}

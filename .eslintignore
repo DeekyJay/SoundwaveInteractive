@@ -1,0 +1,13 @@
+blueprints/**/files/**
+coverage/**
+node_modules/**
+electron/
+script/
+test_electron/
+build/
+dist/**
+*.spec.js
+src/index.html
+src/app.config.js
+/config/**
+/test/**

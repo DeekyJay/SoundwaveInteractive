@@ -1,67 +1,66 @@
-var Interactive = require('./interactive');
-var Logger = require('./lib/Logger');
-var logger = new Logger("Main");
-var electron = require('electron');
-// Module to control application life.
-var app = electron.app;
-// Module to create native browser window.
-var BrowserWindow = electron.BrowserWindow;
-var ipcMain = electron.ipcMain;
+'use strict'
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-var mainWindow;
+// import electron from 'electron'
+const electron = require('electron')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
+const crashReporter = electron.crashReporter
+const nativeImage = electron.nativeImage
+const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
+let mainWindow = null
 
-function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 1020,
-    height: 450,
-    minWidth: 1020,
-    minHeight: 450,
-    //x: 920,
-    //y: 54,
-    //center: true,
-    fullscreenable: false,
-    //resizable: false,
-    frame: false,
-    icon: __dirname + '/fav.png',
-    show: false
-  });
+crashReporter.start({
+  productName: 'SoundwaveInteractive',
+  companyName: 'SoundwaveInteractive',
+  submitURL: '',
+  autoSubmit: true
+})
 
-  var interactive = new Interactive(electron, mainWindow);
-
-  //mainWindow.setMaximizable(false);
-  //mainWindow.setResizable(false);
-
-  // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-  //mainWindow.loadURL("https://github.com");
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  logger.log("UserData Path: " + app.getPath("userData"));
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-    app.quit();
-  });
-
-  mainWindow.show();
+if (process.env.NODE_ENV === 'development') {
+  require('electron-debug')()
+  require('babel-register')
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-app.on('ready', createWindow);
+require('babel-polyfill')
 
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
+const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
+/**
+ * Load squirrel handlers
+ */
+
+const windowsEvents = require(requirePath + '/squirrel/WindowsEvents')
+if (windowsEvents.handleStartup(app)) {
+  return
+}
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('ready', () => {
+  mainWindow = new BrowserWindow({
+    width: 1140,
+    height: 760,
+    minWidth: 1024,
+    minHeight: 720,
+    title: 'Soundwave Interactive',
+    frame: false,
+    icon: appIcon
+  })
+
+  process.env.NODE_ENV === 'development' ? mainWindow.loadURL(`file://${__dirname}/src/index.html`)
+    : mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
+
+  // Load IPC handler
+  require('./utils/ipcHandler')
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+    app.quit()
+  })
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.openDevTools()
   }
-});
+})

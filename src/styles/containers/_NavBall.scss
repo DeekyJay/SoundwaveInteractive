@@ -1,0 +1,108 @@
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+
+@mixin animation($str) {
+  -webkit-animation: #{$str};
+  -moz-animation: #{$str};
+  -ms-animation: #{$str};
+  -o-animation: #{$str};
+  animation: #{$str};
+}
+
+@include keyframes(slide-down) {
+  0% { opacity: 1; }
+  90% { opacity: 0; }
+}
+
+@keyframes pulse {
+    from { box-shadow: 0px 0px 50px -10px rgba(255,255,255,0); }
+    25% { box-shadow: 0px 0px 50px -10px rgba(255,255,255,0.25); }
+    50% { box-shadow: 0px 0px 50px -10px rgba(255,255,255,0.5); }
+    75% { box-shadow: 0px 0px 50px -10px rgba(255,255,255,0.75); }
+    to { box-shadow: 0px 0px 50px -10px rgba(255,255,255,1); }
+}
+
+
+.navball-container {
+  height: 100%;
+  width: 100px;
+  position: relative;
+  .navball {
+    background: -webkit-linear-gradient(-90deg,#77aeff,#461c9a);
+    height: 175px;
+    border-radius: 175px;
+    width: 175px;
+    margin-left: -125.5px;
+    box-shadow: inset 0 0 6px 0 hsla(0,0%,100%,.5);
+    position: relative;
+    transition: margin-left 0.5s;
+    top: calc(50% - 87.5px);
+  }
+  &:hover {
+    .navball {
+      margin-left: -107.5px;
+      transition: margin-left 0.5s;
+    }
+  }
+}
+
+.nav-item {
+  width: 45px;
+  // width: 170px;
+  height: 45px;
+  background: $nav-bg;
+  border-radius: 25px;
+  position: absolute;
+  z-index: 1;
+  font-size: 22px;
+  line-height: 2.2;
+  box-shadow: 0px 0px 50px -10px rgba(255,255,255,1);
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.5s;
+  span {
+    float: left;
+    margin-left: 12px;
+  }
+  .nav-item-text {
+    font-size: 20px;
+    padding-right: 10px;
+    opacity: 0;
+    transition: opacity 0.1s linear 0s;
+  }
+  &:hover {
+    width: 170px;
+    transition: width 0.5s;
+    .nav-item-text {
+      opacity: 1;
+      transition: opacity 0.5s linear 0.1s;
+    }
+  }
+  &.board {
+    top: 0;
+    left: 130px;
+  }
+  &.settings {
+    top: 65px;
+    left: 155px;
+  }
+  &.about {
+    bottom: 0;
+    left: 130px;
+  }
+}

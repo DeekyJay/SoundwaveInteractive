@@ -1,0 +1,73 @@
+.header-container {
+  background: url('../styles/images/header.png') 0 0 no-repeat;
+  background-size: 100% 100%;
+  width: 100%;
+  height: 75px;
+  .logo {
+    background: url('../styles/images/logo.png') 0 0 no-repeat;
+    background-size: auto 100%;
+    height: 75px;
+    width: 228px;
+  }
+  .dead-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    -webkit-app-region: drag;
+  }
+  .user-container {
+    position: absolute;
+    top: 5px;
+    right: 115px;
+    .user-image-container {
+      display: inline-block;
+      width: 45px;
+      height: 45px;
+      border-radius: 50px;
+      background: $nav-bg;
+      float: left;
+      margin-right: 10px;
+      margin-top: 8px;
+      font-size: 26px;
+      text-align: center;
+      line-height: 2;
+      position: relative;
+      img {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 50px;
+      }
+    }
+    .user-text {
+      display: inline-block;
+      margin-top: 12px;
+      .user-logout {
+        color: $nav-bg;
+        cursor: pointer;
+        text-align: left;
+      }
+    }
+  }
+  .window-actions {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    .action {
+      display: inline-block;
+      margin-left: 5px;
+      height: 30px;
+      width: 30px;
+      position: relative;
+      cursor: pointer;
+      color: $table-bg;
+      font-size: 18px;
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}
