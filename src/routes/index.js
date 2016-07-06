@@ -9,7 +9,6 @@ import { UserAuthWrapper } from 'redux-auth-wrapper'
 // very easy to navigate to files regardless of how deeply nested
 // your current file is.
 import MainAppLayout from 'layouts/MainAppLayout/MainAppLayout'
-import '../styles/core.scss'
 
 import LoginView from 'views/LoginView/LoginView'
 import BoardView from 'views/BoardView/BoardView'
