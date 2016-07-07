@@ -5,6 +5,7 @@ import ReduxToastr from 'redux-toastr'
 import { bindActionCreators } from 'redux'
 import storage from 'electron-json-storage'
 import { actions as authActions } from '../redux/modules/Authentication'
+import { actions as soundActions } from '../redux/modules/Sounds'
 
 /* istanbul ignore next */
 class Root extends React.Component {
@@ -12,7 +13,8 @@ class Root extends React.Component {
     history: PropTypes.object.isRequired,
     routes: PropTypes.element.isRequired,
     store: PropTypes.object.isRequired,
-    authActions: PropTypes.object.isRequired
+    authActions: PropTypes.object.isRequired,
+    soundActions: PropTypes.object.isRequired
   };
 
   get content () {
@@ -38,16 +40,23 @@ class Root extends React.Component {
     }
   }
 
-  componentWillMount () {
+  initializeModule = (file, actionsKey) => {
     new Promise((resolve, reject) => {
-      storage.get('tokens', (error, tokens) => {
+      storage.get(file, (error, data) => {
         if (error) reject(error)
-        resolve(tokens)
+        resolve(data)
       })
     })
-    .then(tokens => {
-      this.props.authActions.initialize(tokens)
+    .then(data => {
+      console.log(data)
+      if (data && this.props[actionsKey]) this.props[actionsKey].initialize(data)
+      else throw new Error('Could not find ' + actionsKey + ' in props.')
     })
+  }
+
+  componentWillMount () {
+    this.initializeModule('tokens', 'authActions')
+    this.initializeModule('sounds', 'soundActions')
   }
 
   render () {
@@ -73,6 +82,7 @@ const mapStateToProps = (state) => ({
 
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch) => ({
-  authActions: bindActionCreators(authActions, dispatch)
+  authActions: bindActionCreators(authActions, dispatch),
+  soundActions: bindActionCreators(soundActions, dispatch)
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Root)

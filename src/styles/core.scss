@@ -20,6 +20,19 @@
     user-select: none;
     color: white;
   }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+		background: transparent;
+		margin-left: -8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: none;
+		background-color: #596bb9;
+  }
+
   .loading {
     background: $loading 0 0 no-repeat;
     background-size: 100%;
@@ -35,6 +48,26 @@
   .main_app-layout {
     height: calc(100% - 75px);
     position: relative;
+  }
+  .redux-toastr {
+    width: 400px;
+    .toastr {
+      border-radius: 80px;
+      &.warning {
+        background: #56678a;
+      }
+      .icon-holder {
+        position: absolute;
+        top: 26px;
+        left: 15px;
+        font-size: 24px;
+      }
+      .close {
+        position: absolute;
+        top: 30px;
+        right: 10px;
+      }
+    }
   }
 }
 /* Make standard style for this app */

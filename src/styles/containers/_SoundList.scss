@@ -31,27 +31,6 @@
       border-bottom: 1px solid $table-border;
       border-top: 1px solid $table-border;
     }
-    .sound-list-col-header {
-      display: inline-block;
-      font-size: 18px;
-      padding-top: 5px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid $table-border;
-      &.cooldown {
-        flex: 0.3;
-        text-align: center;
-      }
-      &.name {
-        flex: 1;
-        border-left: 2px solid $table-border;
-        border-right: 2px solid $table-border;
-        padding-left: 10px;
-      }
-      &.folder {
-        flex: 0.3;
-        text-align: center;
-      }
-    }
     .sound-list-items {
       flex: 1;
       display: flex;
@@ -79,14 +58,14 @@
         }
       }
     }
+    .drop-zone {
+      width: 100%;
+      align-self: center;
+    }
     .sound-list-no-sounds {
       width: 100%;
       flex: 1;
       display: flex;
-      .drop-zone {
-        align-self: center;
-        width: 100%;
-      }
       span {
         width: 100%;
         display: block;
@@ -94,6 +73,9 @@
         margin: 5px 0;
         color: $minor;
       }
+    }
+    .has-sounds-container {
+      width: 100%;
     }
   }
 }
@@ -107,4 +89,41 @@
   padding-bottom: 5px;
   padding-top: 5px;
   outline: none;
+}
+
+.sound-item-container {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  cursor: default;
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.sound-list-col-header {
+  display: inline-block;
+  font-size: 18px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid $table-border;
+  border-bottom: 1px solid $table-border;
+  background: $table-bg;
+  text-overflow: ellipsis;
+  white-space: pre;
+  overflow: hidden;
+  &.cooldown {
+    flex: 0.3;
+    text-align: center;
+    border-left: 1px solid $table-border;
+  }
+  &.name {
+    flex: 1;
+    padding-left: 10px;
+  }
+  &.folder {
+    flex: 0.3;
+    text-align: center;
+    border-right: 1px solid $table-border;
+  }
 }

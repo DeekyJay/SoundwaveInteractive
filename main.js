@@ -49,6 +49,10 @@ app.on('ready', () => {
     icon: appIcon
   })
 
+  mainWindow.webContents.on('will-navigate', ev => {
+    ev.preventDefault()
+  })
+
   process.env.NODE_ENV === 'development' ? mainWindow.loadURL(`file://${__dirname}/src/index.html`)
     : mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
 

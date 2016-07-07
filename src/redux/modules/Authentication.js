@@ -16,7 +16,9 @@ export const constants = {
 }
 
 function checkStatus (beamAuth) {
-  console.log(beamAuth.isAuthenticated())
+  console.log(beamAuth.isAuthenticated()
+  ? '########### User is Authenticated ###########'
+  : '########### User Auth FAILED ###########')
   return beamAuth.isAuthenticated()
 }
 
