@@ -6,24 +6,47 @@ import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
+import howler from 'howler'
+import { toastr } from 'redux-toastr'
 
-const SortableItem = SortableElement(({sound, soundActions}) => <SoundItem sound={sound} soundActions={soundActions} />)
-
-const SortableList = SortableContainer(({items, soundActions}) => {
+const SortableItem = SortableElement(({index, sound, soundActions, selectSound}) => {
+  return (<SoundItem index={index} sound={sound} soundActions={soundActions} selectSound={selectSound} />)
+})
+const SortableList = SortableContainer(({ items, soundActions, selectSound }) => {
   return (
     <span>
       {items.map((value, index) =>
-        <SortableItem key={`item-${index}`} index={index} sound={value} soundActions={soundActions} />
+        <SortableItem key={`item-${index}`} index={index}
+          sound={value} soundActions={soundActions} selectSound={selectSound} />
       )}
     </span>
   )
 })
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 export class SoundList extends React.Component {
 
   static propTypes = {
     soundActions: PropTypes.object.isRequired,
     sounds: PropTypes.array.isRequired
+  }
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      dragMode: false,
+      editId: null,
+      isPlaying: false,
+      howl: null,
+      sound: null,
+      edit_inputs: {
+        cooldown: '',
+        name: ''
+      }
+    }
   }
 
   handleDrop = (files) => {
@@ -34,17 +57,109 @@ export class SoundList extends React.Component {
     this.refs.dropzone.open()
   }
 
-  addFolder = () => {
+  onSortStart = ({node, index, collection}, e) => {
+    console.log(node.className)
+    this.setState({ ...this.state, dragMode: true })
   }
 
   onSortMove = (e) => {
   }
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
-    console.log(e)
-    console.log(document.elementFromPoint(e.x, e.y))
-    const sortedSounds = arrayMove(this.props.sounds, oldIndex, newIndex)
-    this.props.soundActions.sortSounds(sortedSounds)
+    const name = document.elementFromPoint(e.x, e.y).className
+    const currentSound = this.props.sounds[oldIndex]
+    const { sound } = this.state
+    switch (name) {
+      case 'sicon-pencil':
+      case 'sound-list-action edit drag':
+        this.setState({
+          ...this.state,
+          editId: currentSound.id,
+          edit_inputs: {
+            cooldown: currentSound.cooldown,
+            name: currentSound.name
+          }
+        })
+        break
+      case 'sicon-trash':
+      case 'sound-list-action trash drag':
+        this.props.soundActions.removeSound(oldIndex)
+        if (sound && currentSound.id === sound.id) {
+          if (this.state.howl) this.state.howl.stop()
+          this.setState({ ...this.state, isPlaying: false, howl: null, sound: null })
+        }
+        break
+      default:
+        const sortedSounds = arrayMove(this.props.sounds, oldIndex, newIndex)
+        this.props.soundActions.sortSounds(sortedSounds)
+    }
+    this.setState({ ...this.state, dragMode: false })
+  }
+
+  selectSound = (sound) => {
+    const { howl } = this.state
+    if (howl) howl.stop()
+    if (!this.state.sound || this.state.sound.id !== sound.id) {
+      this.setState({ ...this.state, sound: sound, howl: null, isPlaying: false })
+    } else {
+      this.setState({ ...this.state, sound: null, howl: null, isPlaying: false })
+    }
+  }
+
+  playSound = () => {
+    const { sound, howl } = this.state
+    if (sound) {
+      const howl = new Howl({
+        urls: [sound.path],
+        buffer: true,
+        onend: () => {
+          this.setState({ ...this.state, isPlaying: false, howl: null })
+        }
+      })
+      this.setState({ ...this.state, isPlaying: true, howl: howl }, () => {
+        this.state.howl.play()
+      })
+    }
+  }
+
+  stopSound = () => {
+    const { howl } = this.state
+    if (howl) {
+      this.setState({ ...this.state, isPlaying: false }, () => {
+        howl.stop()
+      })
+    }
+  }
+
+  updateValue = (e) => {
+    this.setState({
+      ...this.state,
+      edit_inputs: {
+        ...this.state.edit_inputs,
+        [e.target.name]: e.target.value
+      }
+    })
+  }
+
+  editSound = () => {
+    const { editId, edit_inputs: { cooldown, name } } = this.state
+    if (!isNumeric(cooldown) || parseInt(cooldown) < 0) {
+      toastr.error('Edit Error', 'Cooldown must be a number 0 or greater.')
+      return
+    }
+    this.props.soundActions.editSound(editId, cooldown, name)
+    this.cancelEdit()
+  }
+
+  cancelEdit = () => {
+    this.setState({
+      ...this.state,
+      editId: null,
+      edit_inputs: {
+        cooldown: '',
+        name: ''
+      }
+    })
   }
 
   render () {
@@ -52,6 +167,13 @@ export class SoundList extends React.Component {
       sounds,
       soundActions
     } = this.props
+    const {
+      dragMode,
+      isPlaying,
+      sound,
+      editId,
+      edit_inputs
+    } = this.state
 
     return (
       <div className='sound-list-container'>
@@ -83,9 +205,13 @@ export class SoundList extends React.Component {
                 <SortableList
                   items={sounds}
                   soundActions={soundActions}
+                  selectSound={this.selectSound}
+                  selectedSound={this.sound}
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
-                  pressDelay={200} />
+                  onSortStart={this.onSortStart}
+                  hideSortableGhost
+                  pressDelay={150} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi' />
               </div>
@@ -93,19 +219,65 @@ export class SoundList extends React.Component {
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi'>
                   <span>{'You currently don\'t have any sounds.'}</span>
-                  <span>{'To add a sound, drag it here.'}</span>
-                  <span>{'You can also import a folder of sounds down below.'}</span>
+                  <span>{'To add sounds, drag them here.'}</span>
                 </Dropzone>
               </div>}
+            {editId
+              ? <div className='edit-sound-container'>
+                <div className='form-input'>
+                  <div className='form-label'>Cooldown</div>
+                  <input
+                    type='text'
+                    name='cooldown'
+                    onChange={this.updateValue}
+                    autofocus
+                    value={edit_inputs.cooldown}
+                    placeholder='Cooldown' />
+                </div>
+                <div className='form-input'>
+                  <div className='form-label'>Name</div>
+                  <input
+                    type='text'
+                    name='name'
+                    onChange={this.updateValue}
+                    value={edit_inputs.name}
+                    autofocus
+                    placeholder='Name' />
+                </div>
+                <button type='button' className='btn btn-primary' onClick={this.editSound}>
+                  Save
+                </button>
+                <button type='button' className='btn btn-secondary' onClick={this.cancelEdit}>
+                  Cancel
+                </button>
+              </div>
+              : null}
           </div>
+          {sound
+            ? <div className='sound-list-player'>
+                <div className='sound-list-player-name'>
+                  {sound.name}
+                </div>
+              {!isPlaying
+                ? <div className='sound-list-player-action play' onClick={this.playSound}>
+                  <span className='sicon-play'></span>
+                </div>
+                : <div className='sound-list-player-action stop' onClick={this.stopSound}>
+                  <span className='square'></span>
+                </div>}
+              </div>
+            : null}
           <div className='sound-list-actions'>
-            <div className='sound-list-action edit' data-tip='Edit Selected Sound'>
+            <div className={`sound-list-action edit ${dragMode ? 'drag' : ''}`}
+              data-tip='Drag a sound here to edit it'>
               <span className='sicon-pencil'></span>
             </div>
-            <div className='sound-list-action folder' data-tip='Add Sound From Folder' onClick={this.addFolder}>
-              <span className='sicon-addfolder'></span>
+            <div className={`sound-list-action trash ${dragMode ? 'drag' : ''}`}
+              data-tip='Drag a sound here to delete it' onClick={this.addFolder}>
+              <span className='sicon-trash'></span>
             </div>
-            <div className='sound-list-action add' data-tip='Add Sound' onClick={this.addSound}>
+            <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}
+              data-tip='Add Sound' onClick={this.addSound}>
               <span className='sicon-add'></span>
             </div>
           </div>

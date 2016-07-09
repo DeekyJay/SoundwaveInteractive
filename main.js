@@ -46,7 +46,13 @@ app.on('ready', () => {
     minHeight: 720,
     title: 'Soundwave Interactive',
     frame: false,
-    icon: appIcon
+    icon: appIcon,
+    show: false
+  })
+
+  // Emitted when the window is loaded and ready to be shown.
+  mainWindow.on('ready-to-show', function () {
+    mainWindow.show()
   })
 
   mainWindow.webContents.on('will-navigate', ev => {

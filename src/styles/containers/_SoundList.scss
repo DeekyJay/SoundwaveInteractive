@@ -34,6 +34,73 @@
     .sound-list-items {
       flex: 1;
       display: flex;
+      overflow: auto;
+      position: relative;
+      .sound-item-container {
+        background: none;
+        opacity: 1;
+        &:hover {
+          background: rgba(0, 0, 0, 0.2);
+        }
+      }
+      .edit-sound-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background: rgba(99, 112, 171, 0.8);
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        .form-input {
+          display: flex;
+          flex-direction: column;
+          margin: 20px;
+          font-size: 20px;
+          input {
+            border-radius: 2px;
+            outline: none;
+            box-shadow: none;
+            padding-left: 4px;
+            background: #3f477a;
+            border: 1px solid #7478d4;
+          }
+        }
+        .btn {
+          margin: 5px 20px;
+        }
+      }
+    }
+    .sound-list-player {
+      display: flex;
+      justify-content: center;
+      background: $col-bg;
+      border-bottom-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-top: 1px solid $table-border;
+      font-size: 20px;
+      .sound-list-player-name {
+        align-self: center;
+        flex: 1;
+        margin-left: 10px;
+        text-overflow: ellipsis;
+        white-space: pre;
+        overflow: hidden;
+      }
+      .sound-list-player-action {
+        padding: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+        margin-right: 5px;
+        .square {
+          background: white;
+          display: inline-block;
+          height: 20px;
+          width: 20px;
+          border-radius: 1px;
+        }
+      }
     }
     .sound-list-actions {
       display: flex;
@@ -52,15 +119,26 @@
         &:hover {
           background: rgba(0, 0, 0, 0.2);
         }
-        &.folder {
+        &.edit {
+          cursor: default;
+        }
+        &.trash {
           border-left: 2px solid $table-border;
           border-right: 2px solid $table-border;
+          cursor: default;
+        }
+        &.drag {
+          box-shadow: inset 0 0 6px 0 hsla(0,0%,100%,.5);
+        }
+        &.disabled {
+          opacity: 0.3;
         }
       }
     }
     .drop-zone {
       width: 100%;
       align-self: center;
+      flex: 1;
     }
     .sound-list-no-sounds {
       width: 100%;
@@ -76,6 +154,9 @@
     }
     .has-sounds-container {
       width: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
   }
 }
@@ -96,6 +177,8 @@
   width: 100%;
   height: 40px;
   cursor: default;
+  opacity: 0.7;
+  background: $table-bg;
   &:hover {
     background: rgba(0, 0, 0, 0.2);
   }
@@ -108,7 +191,7 @@
   padding-bottom: 5px;
   border-top: 1px solid $table-border;
   border-bottom: 1px solid $table-border;
-  background: $table-bg;
+  // background: $table-bg;
   text-overflow: ellipsis;
   white-space: pre;
   overflow: hidden;

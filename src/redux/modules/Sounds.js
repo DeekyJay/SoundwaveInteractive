@@ -1,12 +1,13 @@
 import storage from 'electron-json-storage'
 import { toastr } from 'redux-toastr'
 import _ from 'lodash'
+import cuid from 'cuid'
 // Constants
 export const constants = {
   INITIALIZE: 'INITIALIZE',
   LOAD_SOUNDS: 'LOAD_SOUNDS',
   ADD_SOUNDS: 'ADD_SOUNDS',
-  REMOVE_SOUNDS: 'REMOVE_SOUNDS',
+  REMOVE_SOUND: 'REMOVE_SOUND',
   EDIT_SOUND: 'EDIT_SOUND',
   CLEAR_ALL_SOUNDS: 'CLEAR_ALL_SOUNDS',
   ADD_FOLDER_SOUNDS: 'ADD_FOLDER_SOUNDS',
@@ -44,7 +45,7 @@ export const actions = {
           } else {
             name = file.name
           }
-          sounds.push({ name: name, path: file.path, cooldown: state.sounds.default_cooldown })
+          sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown })
         } else {
           toastr.warning('Duplicate Detected',
             file.path + ' already exists in your library.')
@@ -60,6 +61,35 @@ export const actions = {
     return {
       type: constants.SORT_SOUNDS,
       payload: { sounds: sounds }
+    }
+  },
+  removeSound: (index) => {
+    return (dispatch, getState) => {
+      const { sounds: { sounds } } = getState()
+      const newSounds = Object.assign([], sounds)
+      const removedSound = newSounds.splice(index, 1)
+      toastr.success(removedSound[0].name + ' Removed!')
+      dispatch({
+        type: constants.REMOVE_SOUND,
+        payload: { sounds: newSounds }
+      })
+    }
+  },
+  editSound: (id, cooldown, name) => {
+    return (dispatch, getState) => {
+      const { sounds: { sounds } } = getState()
+      const newSounds = Object.assign([], sounds)
+      newSounds.map((sound) => {
+        if (sound.id === id) {
+          sound.cooldown = cooldown
+          sound.name = name
+        }
+      })
+      toastr.success('Sound Updated!')
+      dispatch({
+        type: constants.EDIT_SOUND,
+        payload: { sounds: newSounds }
+      })
     }
   }
 }
@@ -80,6 +110,20 @@ const ACTION_HANDLERS = {
     }
   },
   SORT_SOUNDS: (state, actions) => {
+    const { payload: { sounds } } = actions
+    return {
+      ...state,
+      sounds: sounds
+    }
+  },
+  REMOVE_SOUND: (state, actions) => {
+    const { payload: { sounds } } = actions
+    return {
+      ...state,
+      sounds: sounds
+    }
+  },
+  EDIT_SOUND: (state, actions) => {
     const { payload: { sounds } } = actions
     return {
       ...state,

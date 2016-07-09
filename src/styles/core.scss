@@ -53,20 +53,72 @@
     width: 400px;
     .toastr {
       border-radius: 80px;
+      display: flex;
+      .message-holder {
+        flex: 1;
+        align-self: center;
+        margin-left: 10px;
+      }
       &.warning {
         background: #56678a;
       }
+      &.success {
+        background:#7e66b8;
+      }
       .icon-holder {
-        position: absolute;
-        top: 26px;
-        left: 15px;
         font-size: 24px;
+        margin-left: 10px;
+        align-self: center;
       }
       .close {
-        position: absolute;
-        top: 30px;
-        right: 10px;
+        margin-right: 10px;
       }
+    }
+  }
+
+  .react-context-menu {
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 16px;
+    color: #373a3c;
+    text-align: left;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    outline: none;
+  }
+
+  .btn {
+    border: none;
+    outline: none;
+    color: white;
+    &:focus {
+      outline: none;
+    }
+    &:active {
+      outline: none;
+    }
+    &:focus:active {
+      outline: none;
+    }
+  }
+  .btn-primary {
+    background: $nav-bg;
+    &:hover {
+      background: $nav-bg-hover;
+    }
+    &:focus:active {
+      background-color: $nav-bg-focus;
+    }
+  }
+  .btn-secondary {
+    background: #7a8086;
+    &:hover {
+      background: #868e95;
+      color: inherit;
     }
   }
 }
