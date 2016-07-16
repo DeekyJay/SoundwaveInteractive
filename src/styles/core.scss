@@ -5,6 +5,8 @@
   @import 'containers/NavBall';
   @import 'containers/Contents';
   @import 'containers/SoundList';
+  @import 'containers/ProfileList';
+  @import 'containers/BoardEditor';
   @import 'views/LoginView';
   @import 'views/BoardView';
 
@@ -19,6 +21,7 @@
     overflow: hidden;
     user-select: none;
     color: white;
+    cursor: default;
   }
 
   ::-webkit-scrollbar {

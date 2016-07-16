@@ -5,26 +5,28 @@ import { actions as soundActions } from '../redux/modules/Sounds'
 import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
-import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
-import howler from 'howler'
+import { SortableContainer, SortableElement } from 'react-sortable-hoc'
+import { Howl } from 'howler'
 import { toastr } from 'redux-toastr'
 
-const SortableItem = SortableElement(({index, sound, soundActions, selectSound}) => {
-  return (<SoundItem index={index} sound={sound} soundActions={soundActions} selectSound={selectSound} />)
+const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound}) => {
+  return (<SoundItem index={index} sound={sound} soundActions={soundActions}
+    selectSound={selectSound} selectedSound={selectedSound} />)
 })
-const SortableList = SortableContainer(({ items, soundActions, selectSound }) => {
+const SortableList = SortableContainer(({ items, soundActions, selectSound, selectedSound }) => {
   return (
     <span>
       {items.map((value, index) =>
         <SortableItem key={`item-${index}`} index={index}
-          sound={value} soundActions={soundActions} selectSound={selectSound} />
+          sound={value} soundActions={soundActions} selectSound={selectSound}
+          selectedSound={selectedSound} />
       )}
     </span>
   )
 })
 
-function isNumeric(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+function isNumeric (n) {
+  return !isNaN(parseFloat(n)) && isFinite(n)
 }
 
 export class SoundList extends React.Component {
@@ -66,34 +68,34 @@ export class SoundList extends React.Component {
   }
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
-    const name = document.elementFromPoint(e.x, e.y).className
-    const currentSound = this.props.sounds[oldIndex]
-    const { sound } = this.state
-    switch (name) {
-      case 'sicon-pencil':
-      case 'sound-list-action edit drag':
-        this.setState({
-          ...this.state,
-          editId: currentSound.id,
-          edit_inputs: {
-            cooldown: currentSound.cooldown,
-            name: currentSound.name
+    this.setState({ ...this.state, dragMode: false }, () => {
+      const name = document.elementFromPoint(e.x, e.y).className
+      const currentSound = this.props.sounds[oldIndex]
+      const { sound } = this.state
+      switch (name) {
+        case 'sicon-pencil':
+        case 'sound-list-action edit drag':
+          this.setState({
+            ...this.state,
+            editId: currentSound.id,
+            edit_inputs: {
+              cooldown: currentSound.cooldown,
+              name: currentSound.name
+            }
+          })
+          break
+        case 'sicon-trash':
+        case 'sound-list-action trash drag':
+          this.props.soundActions.removeSound(oldIndex)
+          if (sound && currentSound.id === sound.id) {
+            if (this.state.howl) this.state.howl.stop()
+            this.setState({ ...this.state, isPlaying: false, howl: null, sound: null })
           }
-        })
-        break
-      case 'sicon-trash':
-      case 'sound-list-action trash drag':
-        this.props.soundActions.removeSound(oldIndex)
-        if (sound && currentSound.id === sound.id) {
-          if (this.state.howl) this.state.howl.stop()
-          this.setState({ ...this.state, isPlaying: false, howl: null, sound: null })
-        }
-        break
-      default:
-        const sortedSounds = arrayMove(this.props.sounds, oldIndex, newIndex)
-        this.props.soundActions.sortSounds(sortedSounds)
-    }
-    this.setState({ ...this.state, dragMode: false })
+          break
+        default:
+          this.props.soundActions.sortSounds(oldIndex, newIndex)
+      }
+    })
   }
 
   selectSound = (sound) => {
@@ -107,7 +109,7 @@ export class SoundList extends React.Component {
   }
 
   playSound = () => {
-    const { sound, howl } = this.state
+    const { sound } = this.state
     if (sound) {
       const howl = new Howl({
         urls: [sound.path],
@@ -206,12 +208,11 @@ export class SoundList extends React.Component {
                   items={sounds}
                   soundActions={soundActions}
                   selectSound={this.selectSound}
-                  selectedSound={this.sound}
+                  selectedSound={sound}
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
-                  hideSortableGhost
-                  pressDelay={150} />
+                  pressDelay={100} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi' />
               </div>
@@ -230,7 +231,7 @@ export class SoundList extends React.Component {
                     type='text'
                     name='cooldown'
                     onChange={this.updateValue}
-                    autofocus
+                    autoFocus
                     value={edit_inputs.cooldown}
                     placeholder='Cooldown' />
                 </div>
@@ -241,7 +242,7 @@ export class SoundList extends React.Component {
                     name='name'
                     onChange={this.updateValue}
                     value={edit_inputs.name}
-                    autofocus
+                    autoFocus
                     placeholder='Name' />
                 </div>
                 <button type='button' className='btn btn-primary' onClick={this.editSound}>
@@ -255,9 +256,9 @@ export class SoundList extends React.Component {
           </div>
           {sound
             ? <div className='sound-list-player'>
-                <div className='sound-list-player-name'>
-                  {sound.name}
-                </div>
+              <div className='sound-list-player-name'>
+                {sound.name}
+              </div>
               {!isPlaying
                 ? <div className='sound-list-player-action play' onClick={this.playSound}>
                   <span className='sicon-play'></span>
@@ -265,7 +266,7 @@ export class SoundList extends React.Component {
                 : <div className='sound-list-player-action stop' onClick={this.stopSound}>
                   <span className='square'></span>
                 </div>}
-              </div>
+            </div>
             : null}
           <div className='sound-list-actions'>
             <div className={`sound-list-action edit ${dragMode ? 'drag' : ''}`}
@@ -273,7 +274,7 @@ export class SoundList extends React.Component {
               <span className='sicon-pencil'></span>
             </div>
             <div className={`sound-list-action trash ${dragMode ? 'drag' : ''}`}
-              data-tip='Drag a sound here to delete it' onClick={this.addFolder}>
+              data-tip='Drag a sound here to delete it'>
               <span className='sicon-trash'></span>
             </div>
             <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}

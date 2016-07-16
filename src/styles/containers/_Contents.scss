@@ -23,5 +23,15 @@
   .content-body {
     height: calc(100% - 68px);
     margin: 10px 20px 20px 20px;
+    .content-left {
+      height: 100%;
+      width: 29%;
+      float: left;
+    }
+    .content-right {
+      height: 100%;
+      width: 69%;
+      float: right;
+    }
   }
 }

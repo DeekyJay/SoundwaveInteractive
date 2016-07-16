@@ -4,9 +4,11 @@ const { shell } = remote
 
 export class SoundItem extends React.Component {
   static propTypes = {
+    index: PropTypes.number.isRequired,
     sound: PropTypes.object.isRequired,
     soundActions: PropTypes.object.isRequired,
-    selectSound: PropTypes.func.isRequired
+    selectSound: PropTypes.func.isRequired,
+    selectedSound: PropTypes.object.isRequired
   }
 
   openFileLocation = () => {
@@ -19,7 +21,7 @@ export class SoundItem extends React.Component {
 
   render () {
     const { index, sound, selectedSound } = this.props
-    const isSelected = sound.id === selectedSound
+    const isSelected = selectedSound && sound.id === selectedSound.id
     return (
       <div key={index} className={`sound-item-container ${isSelected ? 'selected' : ''}`}
         onClick={this.selectSound}>

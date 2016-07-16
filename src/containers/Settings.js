@@ -11,7 +11,6 @@ export class Settings extends React.Component {
   }
 
   isActive = () => {
-    console.log('Test')
     return this.props.ui.active === 'settings' ? ' active' : ''
   }
 

@@ -2,15 +2,16 @@ import storage from 'electron-json-storage'
 import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
+import { arrayMove } from 'react-sortable-hoc'
+
 // Constants
 export const constants = {
-  INITIALIZE: 'INITIALIZE',
+  SOUNDS_INITIALIZE: 'SOUNDS_INITIALIZE',
   LOAD_SOUNDS: 'LOAD_SOUNDS',
   ADD_SOUNDS: 'ADD_SOUNDS',
   REMOVE_SOUND: 'REMOVE_SOUND',
   EDIT_SOUND: 'EDIT_SOUND',
   CLEAR_ALL_SOUNDS: 'CLEAR_ALL_SOUNDS',
-  ADD_FOLDER_SOUNDS: 'ADD_FOLDER_SOUNDS',
   SORT_SOUNDS: 'SORT_SOUNDS'
 }
 
@@ -24,7 +25,7 @@ const syncStorageWithState = (state) => {
 export const actions = {
   initialize: (data) => {
     return {
-      type: constants.INITIALIZE,
+      type: constants.SOUNDS_INITIALIZE,
       payload: { loadedState: data }
     }
   },
@@ -57,10 +58,14 @@ export const actions = {
       })
     }
   },
-  sortSounds: (sounds) => {
-    return {
-      type: constants.SORT_SOUNDS,
-      payload: { sounds: sounds }
+  sortSounds: (oldIndex, newIndex) => {
+    return (dispatch, getState) => {
+      const { sounds: { sounds } } = getState()
+      const sortedSounds = arrayMove(sounds, oldIndex, newIndex)
+      dispatch({
+        type: constants.SORT_SOUNDS,
+        payload: { sounds: sortedSounds }
+      })
     }
   },
   removeSound: (index) => {
@@ -91,11 +96,16 @@ export const actions = {
         payload: { sounds: newSounds }
       })
     }
+  },
+  clearAllSounds: () => {
+    return {
+      type: constants.CLEAR_ALL_SOUNDS
+    }
   }
 }
 // Action handlers
 const ACTION_HANDLERS = {
-  INITIALIZE: (state, actions) => {
+  SOUNDS_INITIALIZE: (state, actions) => {
     const { payload: { loadedState } } = actions
     return {
       ...state,
@@ -128,6 +138,12 @@ const ACTION_HANDLERS = {
     return {
       ...state,
       sounds: sounds
+    }
+  },
+  CLEAR_ALL_SOUNDS: (state) => {
+    return {
+      ...state,
+      sounds: []
     }
   }
 }

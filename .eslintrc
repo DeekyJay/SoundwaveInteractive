@@ -4,8 +4,12 @@
     "standard",
     "standard-react"
   ],
+  "ecmaFeatures": {
+        "jsx": true
+  },
   "plugins" : [
-    "flow-vars"
+    "flow-vars",
+    "react"
   ],
   "env"     : {
     "browser" : true

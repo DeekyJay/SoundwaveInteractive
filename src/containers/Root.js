@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux'
 import storage from 'electron-json-storage'
 import { actions as authActions } from '../redux/modules/Authentication'
 import { actions as soundActions } from '../redux/modules/Sounds'
+import { actions as profileActions } from '../redux/modules/Profiles'
 
 /* istanbul ignore next */
 class Root extends React.Component {
@@ -14,7 +15,8 @@ class Root extends React.Component {
     routes: PropTypes.element.isRequired,
     store: PropTypes.object.isRequired,
     authActions: PropTypes.object.isRequired,
-    soundActions: PropTypes.object.isRequired
+    soundActions: PropTypes.object.isRequired,
+    profileActions: PropTypes.object.isRequired
   };
 
   get content () {
@@ -41,6 +43,7 @@ class Root extends React.Component {
   }
 
   initializeModule = (file, actionsKey) => {
+    console.log('Initializing ' + file)
     new Promise((resolve, reject) => {
       storage.get(file, (error, data) => {
         if (error) reject(error)
@@ -57,6 +60,7 @@ class Root extends React.Component {
   componentWillMount () {
     this.initializeModule('tokens', 'authActions')
     this.initializeModule('sounds', 'soundActions')
+    this.initializeModule('profiles', 'profileActions')
   }
 
   render () {
@@ -83,6 +87,7 @@ const mapStateToProps = (state) => ({
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch) => ({
   authActions: bindActionCreators(authActions, dispatch),
-  soundActions: bindActionCreators(soundActions, dispatch)
+  soundActions: bindActionCreators(soundActions, dispatch),
+  profileActions: bindActionCreators(profileActions, dispatch)
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Root)

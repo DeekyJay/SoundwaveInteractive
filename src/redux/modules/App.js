@@ -19,11 +19,12 @@ export const actions = {
     }
   },
   maximize: (flag) => {
+    console.log(flag)
     if (flag || !mainWindow.isMaximized()) mainWindow.maximize()
     else mainWindow.unmaximize()
     return {
       type: constants.MAXIMIZE,
-      payload: { maximized: mainWindow.isMaximized()}
+      payload: { maximized: mainWindow.isMaximized() }
     }
   },
   close: () => {
@@ -40,11 +41,20 @@ export const actions = {
       type: constants.FULLSCREEN,
       payload: { fullscreen: mainWindow.isFullScreen() }
     }
+  },
+  alwaysOnTop: (flag) => {
+    flag
+      ? mainWindow.setAlwaysOnTop(flag)
+      : mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+    return {
+      type: constants.ALWAYS_ON_TOP,
+      payload: { alwaysOnTop: mainWindow.isAlwaysOnTop() }
+    }
   }
 }
 // Action handlers
 const ACTION_HANDLERS = {
-  MINIMIZE: (sate) => {
+  MINIMIZE: (state) => {
     return {
       ...state
     }
@@ -81,7 +91,7 @@ export const initialState = {
   window: {
     maximized: mainWindow.isMaximized(),
     fullscreen: mainWindow.isFullScreen(),
-    alwaysOnTop: false
+    alwaysOnTop: mainWindow.isAlwaysOnTop()
   }
 }
 export default function (state = initialState, action) {

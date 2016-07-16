@@ -42,8 +42,8 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: 1140,
     height: 760,
-    minWidth: 1024,
-    minHeight: 720,
+    minWidth: 1140,
+    minHeight: 760,
     title: 'Soundwave Interactive',
     frame: false,
     icon: appIcon,

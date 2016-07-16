@@ -38,7 +38,8 @@ export class LoginView extends React.Component {
 /* istanbul ignore next */
 const mapStateToProps = (state) => ({
   isWaitingForOAuth: state.auth.isWaitingForOAuth,
-  initialized: state.auth.initialized
+  initialized: state.auth.initialized,
+  isAuthenticated: state.auth.isAuthenticated
 })
 
 /* istanbul ignore next */

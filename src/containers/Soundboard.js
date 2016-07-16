@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { actions as uiActions } from '../redux/modules/UI'
 import SoundList from '../containers/SoundList'
 import ProfileList from '../containers/ProfileList'
+import BoardEditor from '../containers/BoardEditor'
 
 export class Soundboard extends React.Component {
 
@@ -21,8 +22,13 @@ export class Soundboard extends React.Component {
       <div className={'content-container ' + this.isActive() + ' soundboard'}>
         <div className='content-header'>Soundboard</div>
         <div className='content-body'>
-          <SoundList />
-          <ProfileList />
+          <div className='content-left'>
+            <SoundList />
+          </div>
+          <div className='content-right'>
+            <BoardEditor />
+            <ProfileList />
+          </div>
         </div>
       </div>
     )

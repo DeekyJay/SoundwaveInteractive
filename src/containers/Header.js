@@ -14,16 +14,23 @@ export class Header extends React.Component {
     appActions: PropTypes.object.isRequired
   }
 
+  minimize = () => {
+    this.props.appActions.minimize()
+  }
+
+  maximize = () => {
+    this.props.appActions.maximize()
+  }
+
+  close = () => {
+    this.props.appActions.close()
+  }
+
   render () {
     const {
       isAuthenticated, username, avatarUrl,
       authActions: {
         logout
-      },
-      appActions: {
-        minimize,
-        maximize,
-        close
       }
     } = this.props
     return (
@@ -43,13 +50,13 @@ export class Header extends React.Component {
           </div>
           : null}
         <div className='window-actions'>
-          <div className='action minimize' onClick={minimize}>
+          <div className='action minimize' onClick={this.minimize}>
             <span className='sicon-dash'></span>
           </div>
-          <div className='action maximize' onClick={maximize}>
+          <div className='action maximize' onClick={this.maximize}>
             <span className='sicon-grow'></span>
           </div>
-          <div className='action exit' onClick={close}>
+          <div className='action exit' onClick={this.close}>
             <span className='sicon-cross'></span>
           </div>
         </div>
