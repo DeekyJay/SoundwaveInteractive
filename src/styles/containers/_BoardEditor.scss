@@ -11,6 +11,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    .no-game {
+      font-size: 18px;
+      color: gray;
+      .add-game-container {
+        margin: 20px;
+        text-align: center;
+        .add-game {
+          padding: 10px;
+          background: $col-bg;
+          border-radius: 2px;
+          color: white;
+          cursor: pointer;
+        }
+      }
+    }
     .board-size-selector {
       .board-size {
         display: inline-block;

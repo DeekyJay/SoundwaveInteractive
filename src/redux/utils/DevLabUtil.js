@@ -13,6 +13,16 @@ const createProfile = function (id, name) {
   return profile
 }
 
+const createGame = function () {
+  const board = {
+    reportInterval: 50,
+    tactiles: renderTactiles(),
+    joysticks: [],
+    screens: []
+  }
+  return board
+}
+
 function renderTactiles () {
   let tactiles = []
   for (let i = 0; i < 16; i++) {
@@ -90,6 +100,7 @@ function getGridButton (i) {
 
 export default {
   createProfile,
+  createGame,
   makeGrid,
   getGridButton
 }

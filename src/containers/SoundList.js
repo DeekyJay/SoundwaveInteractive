@@ -71,29 +71,47 @@ export class SoundList extends React.Component {
     this.setState({ ...this.state, dragMode: false }, () => {
       const name = document.elementFromPoint(e.x, e.y).className
       const currentSound = this.props.sounds[oldIndex]
-      const { sound } = this.state
       switch (name) {
         case 'sicon-pencil':
         case 'sound-list-action edit drag':
-          this.setState({
-            ...this.state,
-            editId: currentSound.id,
-            edit_inputs: {
-              cooldown: currentSound.cooldown,
-              name: currentSound.name
-            }
-          })
+          this._edit(currentSound)
           break
         case 'sicon-trash':
         case 'sound-list-action trash drag':
-          this.props.soundActions.removeSound(oldIndex)
-          if (sound && currentSound.id === sound.id) {
-            if (this.state.howl) this.state.howl.stop()
-            this.setState({ ...this.state, isPlaying: false, howl: null, sound: null })
-          }
+          this._delete(currentSound, oldIndex)
           break
         default:
           this.props.soundActions.sortSounds(oldIndex, newIndex)
+      }
+    })
+  }
+
+  _delete = (currentSound, oldIndex) => {
+    const { sound } = this.state
+    let s
+    let i
+    if (!currentSound) s = sound
+    if ((oldIndex === null ||
+      oldIndex === undefined) &&
+      (typeof oldIndex) === Number) i = this.props.sounds.findIndex(sound => sound.id === s.id)
+    else i = oldIndex
+    this.props.soundActions.removeSound(i)
+    if (sound && s.id === sound.id) {
+      if (this.state.howl) this.state.howl.stop()
+      this.setState({ ...this.state, isPlaying: false, howl: null, sound: null })
+    }
+  }
+
+  _edit = (sound) => {
+    let s
+    if (!sound) s = this.state.sound
+    else s = sound
+    this.setState({
+      ...this.state,
+      editId: s.id,
+      edit_inputs: {
+        cooldown: s.cooldown,
+        name: s.name
       }
     })
   }
@@ -164,6 +182,18 @@ export class SoundList extends React.Component {
     })
   }
 
+  handlePress = (e) => {
+    if (e.key === 'Enter') this.editSound()
+  }
+
+  setupEdit = () => {
+    this._edit()
+  }
+
+  clickDelete = () => {
+    this._delete()
+  }
+
   render () {
     const {
       sounds,
@@ -231,6 +261,7 @@ export class SoundList extends React.Component {
                     type='text'
                     name='cooldown'
                     onChange={this.updateValue}
+                    onKeyPress={this.handlePress}
                     autoFocus
                     value={edit_inputs.cooldown}
                     placeholder='Cooldown' />
@@ -241,6 +272,7 @@ export class SoundList extends React.Component {
                     type='text'
                     name='name'
                     onChange={this.updateValue}
+                    onKeyPress={this.handlePress}
                     value={edit_inputs.name}
                     autoFocus
                     placeholder='Name' />
@@ -270,11 +302,13 @@ export class SoundList extends React.Component {
             : null}
           <div className='sound-list-actions'>
             <div className={`sound-list-action edit ${dragMode ? 'drag' : ''}`}
-              data-tip='Drag a sound here to edit it'>
+              data-tip='Drag a sound here to edit it'
+              onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
             </div>
             <div className={`sound-list-action trash ${dragMode ? 'drag' : ''}`}
-              data-tip='Drag a sound here to delete it'>
+              data-tip='Drag a sound here to delete it'
+              onClick={this.clickDelete}>
               <span className='sicon-trash'></span>
             </div>
             <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}

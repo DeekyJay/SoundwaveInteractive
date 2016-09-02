@@ -6,6 +6,7 @@ import ProfileItem from '../components/ProfileItem/ProfileItem'
 import ReactToolTip from 'react-tooltip'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { toastr } from 'redux-toastr'
+import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, profile, profileActions, selectProfile, selectedProfile}) => {
   return (<ProfileItem index={index} profile={profile}
@@ -55,17 +56,12 @@ export class ProfileList extends React.Component {
   onSortEnd = ({ oldIndex, newIndex }, e) => {
     const name = document.elementFromPoint(e.x, e.y).className
     const currentProfile = this.props.profiles[oldIndex]
+    console.log(currentProfile)
     const { profileId } = this.props
     switch (name) {
       case 'sicon-pencil':
       case 'profile-list-action edit drag':
-        this.setState({
-          ...this.state,
-          editId: currentProfile.id,
-          edit_inputs: {
-            name: currentProfile.name
-          }
-        })
+        this._edit(currentProfile)
         break
       case 'sicon-trash':
       case 'profile-list-action trash drag':
@@ -79,6 +75,20 @@ export class ProfileList extends React.Component {
         this.props.profileActions.sortProfiles(oldIndex, newIndex)
     }
     this.setState({ ...this.state, dragMode: false })
+  }
+
+  _edit = (profile) => {
+    const { profiles, profileId } = this.props
+    let p
+    if (!profile) p = _.find(profiles, p => p.id === profileId)
+    else p = profile
+    this.setState({
+      ...this.state,
+      editId: p.id,
+      edit_inputs: {
+        name: p.name
+      }
+    })
   }
 
   selectProfile = (profileId) => {
@@ -121,6 +131,14 @@ export class ProfileList extends React.Component {
         [e.target.name]: e.target.value
       }
     })
+  }
+
+  handlePress = (e) => {
+    if (e.key === 'Enter') this.saveProfile()
+  }
+
+  setupEdit = () => {
+    this._edit()
   }
 
   render () {
@@ -179,6 +197,7 @@ export class ProfileList extends React.Component {
                     name='name'
                     onChange={this.updateValue}
                     value={edit_inputs.name}
+                    onKeyPress={this.handlePress}
                     autoFocus
                     placeholder='Name' />
                 </div>
@@ -193,7 +212,8 @@ export class ProfileList extends React.Component {
           </div>
           <div className='profile-list-actions'>
             <div className={`profile-list-action edit ${dragMode ? 'drag' : ''}`}
-              data-tip='Drag a profile here to edit the name'>
+              data-tip='Drag a profile here to edit the name'
+              onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
             </div>
             <div className={`profile-list-action trash ${dragMode ? 'drag' : ''}`}

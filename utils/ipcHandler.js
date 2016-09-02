@@ -11,7 +11,7 @@ var config = {
   useBasicAuthorizationHeader: false,
   redirect_uri: 'http://soundwave.pewf.co'
 }
-const scopes = ['user:details:self', 'tetris:robot:self', 'tetris:manage:self']
+const scopes = ['user:details:self', 'interactive:robot:self', 'interactive:manage:self']
 
 const windowParams = {
   alwaysOnTop: true,

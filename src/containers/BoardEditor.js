@@ -14,6 +14,7 @@ const smallGrid = DevLabUtil.makeGrid(6, 8)
 export class BoardEditor extends React.Component {
 
   static propTypes = {
+    hasSoundBoardGame: PropTypes.bool.isRequired,
     board: PropTypes.object.isRequired,
     boardActions: PropTypes.object.isRequired,
     profileId: PropTypes.string.isRequired,
@@ -30,12 +31,18 @@ export class BoardEditor extends React.Component {
   }
 
   componentWillReceiveProps (props) {
-    this.setState({
-      ...this.state,
-      large_grid: props.board.large_grid,
-      medium_grid: props.board.medium_grid,
-      small_grid: props.board.small_grid
-    })
+    // if (!_.isEqual(this.props, props)) {
+    //   this.setState({
+    //     ...this.state,
+    //     large_grid: props.board.large_grid,
+    //     medium_grid: props.board.medium_grid,
+    //     small_grid: props.board.small_grid
+    //   })
+    // }
+  }
+
+  createGame = () => {
+    this.props.boardActions.createGame()
   }
 
   showBoard = (board) => {
@@ -57,6 +64,7 @@ export class BoardEditor extends React.Component {
   }
   render () {
     const {
+      hasSoundBoardGame,
       profiles,
       profileId,
       board: {
@@ -68,9 +76,15 @@ export class BoardEditor extends React.Component {
       <div className='board-editor-container'>
         <div className='board-editor-title'>Interactive Board{profile ? ' | ' + profile.name : null}</div>
         <div className='board-editor'>
-        {!selected_board
-          ? this.renderSelector()
-          : this.renderBoard()}
+        {hasSoundBoardGame
+          ? null
+          : <div className='no-game'>
+            Looks like you don't have a soundboard game in the Beam Dev Labs.
+            <div className='add-game-container'>
+              <span className='add-game' onClick={this.createGame}>Create Soundboard</span>
+            </div>
+          </div>
+        }
         </div>
       </div>
     )
@@ -130,7 +144,7 @@ export class BoardEditor extends React.Component {
             margin={[5, 5]}
             onDragStop={this.onDragStop}
             onResizeStop={this.onResizeStop}
-            verticalCompact={true}>
+            verticalCompact>
             {
               this.state.large_grid.map((button) => {
                 return (

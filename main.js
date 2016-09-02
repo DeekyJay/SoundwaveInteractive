@@ -33,7 +33,7 @@ const windowsEvents = require(requirePath + '/squirrel/WindowsEvents')
 if (windowsEvents.handleStartup(app)) {
   return
 }
-
+app.disableHardwareAcceleration()
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })

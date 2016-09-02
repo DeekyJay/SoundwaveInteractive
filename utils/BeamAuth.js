@@ -4,7 +4,7 @@ import authWindow from './OAuthWindow';
 import storage from 'electron-json-storage';
 import beam from '../beam';
 
-const scopes = ['user:details:self', 'tetris:robot:self', 'tetris:manage:self'];
+const scopes = ['user:details:self', 'interactive:robot:self', 'interactive:manage:self'];
 const id = '5f1e2c8924559bd5b7c29d2cb69cae163d4658b1642142cc';
 const oAuthOpts = {
 	clientId: id

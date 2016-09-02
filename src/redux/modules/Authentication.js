@@ -63,9 +63,9 @@ export const actions = {
           }
         })
       } else {
-        const res = setTokens(beam_auth, tokens)
-        beam_auth = res.beam_auth
-        tokens = res.tokens
+        setTokens(beam_auth, tokens)
+        // beam_auth = res.beam_auth
+        // tokens = res.tokens
         getUserInfo(beam)
         .then(response => {
           const user = response.body
@@ -92,10 +92,9 @@ export const actions = {
     return (dispatch) => {
       const beam = new Beam()
       let beamAuth = beam.use('oauth', oAuthOpts)
+      console.log(beamAuth)
       if (tokens.access && tokens.refresh && tokens.expires) {
-        const res = setTokens(beamAuth, tokens)
-        beamAuth = res.beam_auth
-        tokens = res.tokens
+        setTokens(beamAuth, tokens)
         if (tokens.refresh && !checkStatus(beamAuth)) {
           beamAuth.refresh()
           .then(response => {
@@ -112,6 +111,7 @@ export const actions = {
           dispatch(push('/'))
         })
       }
+      console.log(beamAuth)
       dispatch({
         type: constants.INITIALIZE,
         payload: {

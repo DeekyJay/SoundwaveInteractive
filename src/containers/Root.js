@@ -51,7 +51,6 @@ class Root extends React.Component {
       })
     })
     .then(data => {
-      console.log(data)
       if (data && this.props[actionsKey]) this.props[actionsKey].initialize(data)
       else throw new Error('Could not find ' + actionsKey + ' in props.')
     })
