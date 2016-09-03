@@ -458,7 +458,8 @@ function Interactive(electron, mainWindow) {
       initHandshake(id, res);
     }).catch(function(err) {
       logger.log(err);
-      sender.send('connection-status', 'Error', {error: err.message});
+      sender.send('connection-status', 'Error', {error: err.message.body && err.message.body.message ?
+        err.message.body.message : err.message });
     });
   }
 
