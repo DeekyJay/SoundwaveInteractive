@@ -320,9 +320,9 @@ $(function() {
         curSound.title = curTitle.text();
       curSound.url = curAudio.urls()[0];
     });
-    let data = mainConfig
+    var data = mainConfig;
     if (mainConfig.auth.code && mainConfig.auth.code.length) {
-      data.isTwo = true
+      data.isTwo = true;
     }
     ipcRenderer.send('update-config', data);
   }

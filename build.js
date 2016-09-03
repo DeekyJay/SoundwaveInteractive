@@ -3,7 +3,7 @@ var packageData = require('./package.json');
 
 packager({
     platform: 'win32',
-    arch: "all",
+    arch: "x64",
     asar:true,
     name:"BeamSoundlyInteractive",
     version:"0.36.8",
