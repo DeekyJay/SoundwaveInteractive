@@ -170,6 +170,9 @@ a {
   display: block;
   align-self: center;
 }
+#nav .mini-social img {
+  padding: 20px;
+}
 #title {
   -webkit-app-region: drag;
   display: flex;

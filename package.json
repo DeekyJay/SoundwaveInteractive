@@ -1,6 +1,6 @@
 {
   "name": "beam-soundly-interactive",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Interactive Sound Board for Beam",
   "main": "main.js",
   "scripts": {
@@ -24,8 +24,8 @@
     "interactive"
   ],
   "dependencies": {
-    "beam-client-node": "^0.3.0",
-    "beam-interactive-node": "^0.2.0",
+    "beam-client-node": "^0.7.1",
+    "beam-interactive-node": "^0.3.2",
     "fs-extra": "^0.26.5",
     "jquery": "^2.2.1",
     "open": "0.0.5",

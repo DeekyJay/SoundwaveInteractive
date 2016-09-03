@@ -2,7 +2,7 @@ var packager = require('electron-packager');
 var packageData = require('./package.json');
 
 packager({
-    platform: plat,
+    platform: 'win32',
     arch: "all",
     asar:true,
     name:"BeamSoundlyInteractive",

@@ -40,6 +40,7 @@ $(function() {
   /*** Settings Elements ***/
   var txtUsername = $('#txtUsername');
   var txtPassword = $('#txtPassword');
+  var txtCode = $('#txtCode');
   //var txtChannel = $('#txtChannel');
   var txtProfileName = $('#txtProfileName');
   var btnCreateProfile = $('#btnCreateProfile');
@@ -51,6 +52,9 @@ $(function() {
   var chkGlobal = $('#chkGlobal');
   /*** About Elements ***/
   var btnGitHub = $('#btnGitHub');
+  var btnTwitter = $('#btnTwitter');
+  var btnBeam = $('#btnBeam');
+  var btnBeamLink = $('#btnBeamLink');
   /*################ Elements END ################*/
 
   /*################## Click Events ##################*/
@@ -115,6 +119,15 @@ $(function() {
   btnGitHub.click(function() {
     Open("https://github.com/Leviathan5");
   });
+  btnTwitter.click(function() {
+    Open("https://twitter.com/JJBroBrams");
+  });
+  btnBeam.click(function() {
+    Open("https://beam.pro/Leviathan5");
+  });
+  btnBeamLink.click(function() {
+    Open("https://beam.pro/Leviathan5");
+  });
   /*################ Click Events END ################*/
 
   /*################## Hover Events ##################*/
@@ -137,7 +150,7 @@ $(function() {
   /*** Settings Key Events ***/
   txtUsername.keyup(function() {saveConfig(); canConnect();});
   txtPassword.keyup(function() {saveConfig(); canConnect();});
-  //txtChannel.keyup (function() {saveConfig(); canConnect();});
+  txtCode.keyup (function() {saveConfig(); canConnect();});
   txtProfileName.keyup(function(e){
     checkCanCreateProfile();
     if(e.keyCode == 13 &&
@@ -288,7 +301,7 @@ $(function() {
   function saveConfig() {
     mainConfig.auth.username = txtUsername.val();
     mainConfig.auth.password = txtPassword.val();
-    //mainConfig.auth.channel = txtChannel.val();
+    mainConfig.auth.code = txtCode.val();
     mainConfig.auth.channel = txtUsername.val();
     mainConfig.auth.last = cboProfile.text();
 
@@ -307,7 +320,11 @@ $(function() {
         curSound.title = curTitle.text();
       curSound.url = curAudio.urls()[0];
     });
-    ipcRenderer.send('update-config', mainConfig);
+    let data = mainConfig
+    if (mainConfig.auth.code && mainConfig.auth.code.length) {
+      data.isTwo = true
+    }
+    ipcRenderer.send('update-config', data);
   }
 
   /**
