@@ -195,7 +195,8 @@ function Interactive(electron, mainWindow) {
     var gId;
     beam.use('password', {
       username: config.auth.username,
-      password: config.auth.password
+      password: config.auth.password,
+      code: config.auth.code
     }).attempt()
     .then(function() {
       logger.log("Getting User ID");
@@ -234,8 +235,9 @@ function Interactive(electron, mainWindow) {
       return updateVersion(versionId, gId);
     })
     .catch(function(err) {
-      console.log(err);
-      sender.send('connection-status', 'Error', {error: err.message});
+      console.log(err.message);
+      sender.send('connection-status', 'Error', {error: err.message.body && err.message.body.message ?
+        err.message.body.message : err.message });
     });
   }
 
@@ -406,7 +408,7 @@ function Interactive(electron, mainWindow) {
       if(err) {
         sender.send('connection-status', 'Error', {error: "Problem Connecting"});
         logger.log("There was a problem connecting to Tetris.");
-        logger.log(err);
+        logger.log(err.body);
       }
       else {
         logger.log("Connected to Tetris.");
@@ -415,7 +417,7 @@ function Interactive(electron, mainWindow) {
     });
     robot.on('report', handleReport);
     robot.on('error', function(err){
-      logger.log(err);
+      logger.log(err.body);
       if(err.code === 'ECONNRESET')
         sender.send('connection-status', 'Error', {error: "Connection Reset"});
       else if(err.code === 'ETIMEDOUT') {
@@ -433,7 +435,8 @@ function Interactive(electron, mainWindow) {
     logger.log("ChannelID: " + id);
     beam.use('password', {
       username: config.auth.username,
-      password: config.auth.password
+      password: config.auth.password,
+      code: config.auth.code
     }).attempt()
     .then(function() {
       return requestInteractive(id, config.app.version, config.app.code);
@@ -511,8 +514,7 @@ function Interactive(electron, mainWindow) {
     config.auth = newConfig.auth;
     config.profiles = newConfig.profiles;
     config.save();
-    updateBeamApp();
-
+    if (!newConfig.isTwo) updateBeamApp();
   });
 
   ipcMain.on('delete-profile', function(event, deleteProfile){
