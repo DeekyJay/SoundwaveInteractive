@@ -2,6 +2,8 @@ import storage from 'electron-json-storage'
 import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
+import { client, auth, checkStatus, requestInteractive } from '../utils/Beam'
+console.log(client, auth)
 
 // Constants
 export const constants = {
@@ -13,14 +15,6 @@ export const constants = {
 }
 
 const DEVLAB_APP_NAME = 'Soundwave Interactive Soundboard'
-const CLIENT_ID = '5f1e2c8924559bd5b7c29d2cb69cae163d4658b1642142cc'
-
-function checkStatus (beamAuth) {
-  console.log(beamAuth.isAuthenticated()
-  ? '########### User is Authenticated ###########'
-  : '########### User Auth FAILED ###########')
-  return beamAuth.isAuthenticated()
-}
 
 // Action Creators
 export const actions = {
@@ -52,53 +46,80 @@ export const actions = {
   },
   getOwnedGames: () => {
     return (dispatch, getState) => {
-      const { auth: { beam, user } } = getState()
-      console.log(beam)
-      beam.game.ownedGames(user.id)
+      const { auth: { user } } = getState()
+      let hasSoundBoardGame, gameId, versionId
+      dispatch({type: 'GET_OWNED_GAMES_PENDING'})
+      client.game.ownedGames(user.id)
+      .then(res => {
+        console.log(res)
+        if (res.body && res.body.length) {
+          res.body.map(g => {
+            if (g.name === DEVLAB_APP_NAME) {
+              hasSoundBoardGame = true
+              gameId = g.id
+              versionId = g.versions[0].id
+            }
+          })
+        }
+        return client.request('GET', `/interactive/versions/${versionId}`)
+      })
       .then(res => {
         console.log(res)
         dispatch({
-          type: constants.GET_OWNED_GAMES,
-          payload: { ownedGames: res.body }
+          type: 'GET_OWNED_GAMES_FULFILLED',
+          payload: {
+            board: res.body.controls || [],
+            hasSoundBoardGame: hasSoundBoardGame,
+            gameId: gameId || '',
+            versionId: versionId || ''
+          }
         })
       })
-      // return {
-      //   type: constants.GET_OWNED_GAMES,
-      //   payload: beam.game.ownedGames(user.id)
-      //   .then((res) => {
-      //     console.log(res)
-      //     return (dispatch, action) => {
-      //       dispatch({...action, payload: { ownedGames: res.body }})
-      //     }
-      //   })
-      // }
+      .catch(err => {
+        console.log(err)
+        dispatch({type: 'GET_OWNED_GAMES_REJECTED'})
+      })
     }
   },
   createGame: () => {
     const game = DevLabUtil.createGame()
     return (dispatch, getState) => {
-      const { auth: { beam_auth, beam, user } } = getState()
+      const { auth: { user } } = getState()
+      dispatch({
+        type: 'CREATE_GAME_PENDING'
+      })
       const data = {
         name: DEVLAB_APP_NAME,
         description: 'Soundwave Interactive Personal Soundboard',
         installation: 'Download the app at http://soundwave.pewf.co/',
         ownerId: user.id
       }
-
-      console.log(beam_auth)
-      // .then(() => {
-      //   return beam.game.create(data)
-      // })
-      // .catch((error) => {
-      //   console.log(error)
-      // })
-      // beam.game.create(data)
-      // .then(res => {
-      //   console.log(res)
-      // })
-      // .catch(err => {
-      //   console.log(err)
-      // })
+      let gameId, versionId
+      client.game.create({ body: data, json: true })
+      .then(res => {
+        gameId = res.body.id
+        return client.game.ownedGameVersions(user.id, gameId)
+      })
+      .then(res => {
+        versionId = res.body[0].versions[0].id
+        const version = {
+          controls: game,
+          gameId: gameId
+        }
+        return client.game.updateVersion(versionId, { body: version, json: true })
+      })
+      .then(res => {
+        dispatch({
+          type: 'CREATE_GAME_FULFILLED',
+          payload: { gameId: gameId, versionId: versionId, board: game }
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        dispatch({
+          type: 'CREATE_GAME_REJECTED'
+        })
+      })
     }
   }
 }
@@ -134,10 +155,38 @@ const ACTION_HANDLERS = {
   },
   GET_OWNED_GAMES_FULFILLED: (state, actions) => {
     console.log('FULFILLED')
-    const { payload: { ownedGames } } = actions
+    const { payload: { board, hasSoundBoardGame, gameId, versionId } } = actions
     return {
       ...state,
-      ownedGames: ownedGames
+      hasSoundBoardGame: hasSoundBoardGame,
+      gameId: gameId,
+      versionId: versionId,
+      board: board
+    }
+  },
+  CREATE_GAME_FULFILLED: (state, actions) => {
+    const { payload: { gameId, versionId, board } } = actions
+    return {
+      ...state,
+      board: board,
+      gameId: gameId,
+      versionId: versionId,
+      hasSoundBoardGame: true,
+      gameCreationError: false,
+      isGameCreating: false
+    }
+  },
+  CREATE_GAME_REJECTED: (state) => {
+    return {
+      ...state,
+      isGameCreating: false,
+      gameCreationError: true
+    }
+  },
+  CREATE_GAME_PENDING: (state) => {
+    return {
+      ...state,
+      isGameCreating: true
     }
   }
 }
@@ -150,7 +199,12 @@ export const initialState = {
   small_grid: [],
   expanded: false,
   buttons_left: 100,
-  ownedGames: []
+  ownedGames: [],
+  hasSoundBoardGame: false,
+  gameId: '',
+  versionId: '',
+  isGameCreating: false,
+  gameCreationError: false
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

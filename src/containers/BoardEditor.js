@@ -64,11 +64,12 @@ export class BoardEditor extends React.Component {
   }
   render () {
     const {
-      hasSoundBoardGame,
       profiles,
       profileId,
       board: {
-        selected_board
+        selected_board,
+        isGameCreating,
+        hasSoundBoardGame
       }
     } = this.props
     const profile = _.find(profiles, (prof) => { return prof.id === profileId })
@@ -77,12 +78,16 @@ export class BoardEditor extends React.Component {
         <div className='board-editor-title'>Interactive Board{profile ? ' | ' + profile.name : null}</div>
         <div className='board-editor'>
         {hasSoundBoardGame
-          ? null
+          ? this.renderBoard()
           : <div className='no-game'>
-            Looks like you don't have a soundboard game in the Beam Dev Labs.
-            <div className='add-game-container'>
-              <span className='add-game' onClick={this.createGame}>Create Soundboard</span>
-            </div>
+            {isGameCreating
+              ? <div className='loading'></div>
+              : <span>
+                Looks like you don't have a soundboard game in the Beam Dev Labs.
+                <div className='add-game-container'>
+                  <span className='add-game' onClick={this.createGame}>Create Soundboard</span>
+                </div>
+              </span>}
           </div>
         }
         </div>
@@ -104,7 +109,7 @@ export class BoardEditor extends React.Component {
         {profileId
           ? <div className='board-editor-wrapper'>
             <div className='board-background-grid'>
-              {this.renderBackgroundGrid(selected_board)}
+              {this.renderBackgroundGrid()}
               { /* this.renderEditorGrid(selected_board, board[selected_board + '_grid'], 'grid-button') */}
               {this.renderProfileGrid(selected_board)}
             </div>
@@ -161,14 +166,24 @@ export class BoardEditor extends React.Component {
   }
 
   renderBackgroundGrid = (grid) => {
-    switch (grid) {
-      case 'large':
-        return this.renderBackgroundGridDetails(grid, 16, 30, 600, [5, 5], 'large-grid-box')
-      case 'medium':
-        return this.renderBackgroundGridDetails(grid, 9, 20, 200, [3, 3], 'large-grid-box')
-      case 'small':
-        return this.renderBackgroundGridDetails(grid, 6, 20, 200, [3, 3], 'large-grid-box')
+    return (
+      <div className='background-grid-container'>
+        <div className='background-grid-row'>
+          {this.renderColumns()}
+        </div>
+        <div className='background-grid-row'>
+          {this.renderColumns()}
+        </div>
+      </div>
+    )
+  }
+
+  renderColumns = () => {
+    let arr = []
+    for (let i = 0; i < 16; i++) {
+      arr.push(<span className='background-grid-cube' />)
     }
+    return arr
   }
 
   renderBackgroundGridDetails = (grid, cols, rowHeight, width, margin, box_class) => {

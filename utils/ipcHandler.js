@@ -9,7 +9,7 @@ var config = {
   authorizationUrl: beam.buildAddress(beam.urls.public, '/oauth/authorize'),
   tokenUrl: beam.buildAddress(beam.urls.api, '/oauth/token'),
   useBasicAuthorizationHeader: false,
-  redirect_uri: 'http://soundwave.pewf.co'
+  redirectUri: 'http://soundwave.pewf.co'
 }
 const scopes = ['user:details:self', 'interactive:robot:self', 'interactive:manage:self']
 

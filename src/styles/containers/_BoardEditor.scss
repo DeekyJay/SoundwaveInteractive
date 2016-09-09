@@ -14,6 +14,10 @@
     .no-game {
       font-size: 18px;
       color: gray;
+      .loading {
+        width: 100px;
+        height: 100px;
+      }
       .add-game-container {
         margin: 20px;
         text-align: center;
@@ -84,7 +88,7 @@
       width: 100%;
       position: relative;
       .board-editor-wrapper {
-
+        height: 100%;
       }
       .board-back {
         position: absolute;
@@ -117,7 +121,7 @@
         top: 0;
         right: 0;
         bottom: 0;
-        width: calc(100% - 625px);
+        width: 50px;
         background: $col-bg;
         font-size: 24px;
         text-align: center;
@@ -149,32 +153,17 @@
         }
       }
       .board-background-grid {
-        height: 145px;
-        width: 600px;
-        margin-left: 10px;
-        padding-top: 35px;
-        .react-grid-layout {
+        height: 100%;
+        width: calc(100% - 50px);
+        .background-grid-container {
           height: 100%;
-          position: absolute;
-          .large-grid-box {
-            background: #2c2e4a;
-            border-radius: 1px;
-            border: 2px dotted #4a4747;
-          }
-          .grid-button {
-            background: $table-bg;
-            border-radius: 2px;
-            border: 1px solid $border;
-          }
-          .react-resizable-handle {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 6px;
-            height: 6px;
-            border-right: 2px solid black;
-            border-bottom: 2px solid black;
-            cursor: se-resize;
+          .background-grid-row {
+            height: 50%;
+            .background-grid-cube {
+              width: calc(100% / 16);
+              height: 50%;
+              background: yellow;
+            }
           }
         }
       }

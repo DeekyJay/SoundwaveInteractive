@@ -1,10 +1,7 @@
 import { ipcRenderer } from 'electron'
-import Beam from 'beam-client-node'
-import storage from 'electron-json-storage'
+import { auth, checkStatus, updateTokens, getUserInfo } from '../utils/Beam'
 import { push } from 'react-router-redux'
-const oAuthOpts = {
-  clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe'
-}
+
 // Constants
 export const constants = {
   SIGN_IN: 'SIGN_IN',
@@ -15,38 +12,10 @@ export const constants = {
   SET_USER: 'SET_USER'
 }
 
-function checkStatus (beamAuth) {
-  console.log(beamAuth.isAuthenticated()
-  ? '########### User is Authenticated ###########'
-  : '########### User Auth FAILED ###########')
-  return beamAuth.isAuthenticated()
-}
-
-function getUserInfo (beam) {
-  return beam.request('GET', '/users/current')
-  .then(response => {
-    return response
-  })
-}
-
-function setTokens (beamAuth, tokens) {
-  const newTokens = {
-    access: tokens.access_token || tokens.access,
-    refresh: tokens.refresh_token || tokens.refresh,
-    expires: tokens.expires_in
-      ? Date.now() + tokens.expires_in * 1000
-      : tokens.expires
-  }
-  beamAuth.setTokens(newTokens)
-  storage.set('tokens', beamAuth.getTokens())
-  return { beam_auth: beamAuth, tokens: newTokens }
-}
-
 // Action Creators
 export const actions = {
   signIn: (tokens) => {
     return (dispatch, getState) => {
-      let { auth: { beam, beam_auth } } = getState()
       if (!tokens) {
         console.log('Open Window')
         ipcRenderer.send('auth')
@@ -63,18 +32,15 @@ export const actions = {
           }
         })
       } else {
-        setTokens(beam_auth, tokens)
-        // beam_auth = res.beam_auth
-        // tokens = res.tokens
-        getUserInfo(beam)
+        updateTokens(tokens)
+        getUserInfo()
         .then(response => {
           const user = response.body
           dispatch({
             type: constants.SIGN_IN,
             payload: {
               tokens: tokens,
-              isAuthenticated: checkStatus(beam_auth),
-              beam_auth: beam_auth,
+              isAuthenticated: checkStatus(),
               user: user,
               isWaitingForOAuth: false
             }
@@ -90,18 +56,15 @@ export const actions = {
   },
   initialize: (tokens) => {
     return (dispatch) => {
-      const beam = new Beam()
-      let beamAuth = beam.use('oauth', oAuthOpts)
-      console.log(beamAuth)
       if (tokens.access && tokens.refresh && tokens.expires) {
-        setTokens(beamAuth, tokens)
-        if (tokens.refresh && !checkStatus(beamAuth)) {
-          beamAuth.refresh()
+        updateTokens(tokens)
+        if (tokens.refresh && !checkStatus()) {
+          auth.refresh()
           .then(response => {
             console.log(response)
           })
         }
-        getUserInfo(beam)
+        getUserInfo()
         .then(response => {
           const user = response.body
           dispatch({
@@ -111,14 +74,11 @@ export const actions = {
           dispatch(push('/'))
         })
       }
-      console.log(beamAuth)
       dispatch({
         type: constants.INITIALIZE,
         payload: {
           tokens: tokens,
-          beam: beam,
-          beam_auth: beamAuth,
-          isAuthenticated: checkStatus(beamAuth)
+          isAuthenticated: checkStatus()
         }
       })
     }
@@ -160,18 +120,15 @@ const ACTION_HANDLERS = {
     }
   },
   VALIDATE_TOKEN: (state, action) => {
-    const { payload: { beam_auth, isAuthenticated } } = action
+    const { payload: { isAuthenticated } } = action
     return {
       ...state,
-      beam_auth: beam_auth,
       isAuthenticated: isAuthenticated
     }
   },
   LOGOUT: (state) => {
     return {
       ...initialState,
-      beam: state.beam,
-      beam_auth: state.beam_auth,
       initialized: true
     }
   },
@@ -189,8 +146,6 @@ export const initialState = {
   isAuthenticated: false,
   isWaitingForOAuth: false,
   tokens: '',
-  beam: null,
-  beam_auth: null,
   user: {}
 }
 

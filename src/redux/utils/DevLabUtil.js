@@ -62,8 +62,8 @@ function getBlueprintForGrid (number, grid, cols, width, height) {
     height: height,
     grid: grid,
     state: 'default',
-    x: Math.floor(number / cols) * height,
-    y: (number % cols) * width
+    x: (number % cols) * width,
+    y: Math.floor(number / cols) * height
   }
 }
 
