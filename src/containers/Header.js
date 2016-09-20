@@ -11,7 +11,8 @@ export class Header extends React.Component {
     avatarUrl: PropTypes.string,
     isAuthenticated: PropTypes.bool.isRequired,
     authActions: PropTypes.object.isRequired,
-    appActions: PropTypes.object.isRequired
+    appActions: PropTypes.object.isRequired,
+    hasUpdate: PropTypes.bool.isRequired
   }
 
   minimize = () => {
@@ -26,9 +27,13 @@ export class Header extends React.Component {
     this.props.appActions.close()
   }
 
+  updateApp = () => {
+    this.props.appActions.update()
+  }
+
   render () {
     const {
-      isAuthenticated, username, avatarUrl,
+      isAuthenticated, username, avatarUrl, hasUpdate,
       authActions: {
         logout
       }
@@ -37,6 +42,11 @@ export class Header extends React.Component {
       <div className='header-container'>
         <div className='logo'></div>
         <div className='dead-zone'></div>
+        {hasUpdate
+          ? <div className='update-container' onClick={this.updateApp}>
+            <span className='sicon-update'></span>
+          </div>
+          : null}
         {isAuthenticated
           ? <div className='user-container'>
             <div className='user-image-container'>
@@ -69,7 +79,8 @@ export class Header extends React.Component {
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   avatarUrl: state.auth.user.avatarUrl,
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  hasUpdate: state.app.hasUpdate
 })
 
 /* istanbul ignore next */

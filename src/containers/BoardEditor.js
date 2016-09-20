@@ -67,7 +67,6 @@ export class BoardEditor extends React.Component {
       profiles,
       profileId,
       board: {
-        selected_board,
         isGameCreating,
         hasSoundBoardGame
       }
@@ -100,25 +99,31 @@ export class BoardEditor extends React.Component {
       board,
       profileId,
       board: {
-        selected_board
+        large_grid
       }
     } = this.props
     const showBack = this.showBoard.bind(this, '')
     return (
-      <div className={`board ${selected_board}`}>
+      <div className='board'>
         {profileId
           ? <div className='board-editor-wrapper'>
             <div className='board-background-grid'>
-              {this.renderBackgroundGrid()}
-              { /* this.renderEditorGrid(selected_board, board[selected_board + '_grid'], 'grid-button') */}
-              {this.renderProfileGrid(selected_board)}
+              <div className='board-wrapper'>
+                {this.renderBackgroundGridDetails('large', 16, 30, 600, [4, 4], 'grid-box')}
+                {large_grid && large_grid.length
+                  ? this.renderProfileGrid(large_grid)
+                  : null}
+              </div>
             </div>
             <div className='board-actions'>
-              <div className='board-action back' data-tip='Back'
+              { /* <div className='board-action back' data-tip='Back'
                 onClick={showBack}><div className='sicon-back'></div></div>
               <div className='board-action add' data-tip='Add Button'
                 onClick={this.addButtonToBoard}>
                 <div className='sicon-round-add'></div>
+              </div> */ }
+              <div className='board-action refresh' data-tip='Refresh Layout'>
+                <div className='sicon-update'></div>
               </div>
               <div className='board-action save' data-tip='Save To Beam'>
                 <div className='sicon-round-check'></div>
@@ -135,39 +140,42 @@ export class BoardEditor extends React.Component {
     )
   }
 
-  renderProfileGrid = (selected_board) => {
-    switch (selected_board) {
-      case 'large':
-        return (
-          <ReactGridLayout
-            layout={this.state.large_grid}
-            className='profile-grid large'
-            cols={16}
-            rowHeight={30}
-            maxRows={4}
-            width={600}
-            margin={[5, 5]}
-            onDragStop={this.onDragStop}
-            onResizeStop={this.onResizeStop}
-            verticalCompact>
-            {
-              this.state.large_grid.map((button) => {
-                return (
-                  <div key={button.i} className='grid-button'>
-                    <div className='button-number'>{button.i}</div>
-                    <div className='button-name'>{button.name}</div>
-                  </div>
-                )
-              })
-            }
-          </ReactGridLayout>
-        )
-    }
+  renderProfileGrid = (large_grid) => {
+    return (
+      <ReactGridLayout
+        layout={large_grid}
+        className='profile-grid large'
+        cols={16}
+        rowHeight={30}
+        maxRows={4}
+        width={600}
+        margin={[4, 4]}
+        onDragStop={this.onDragStop}
+        onResizeStop={this.onResizeStop}
+        verticalCompact>
+        {
+          large_grid.map((button) => {
+            return (
+              <div key={button.i} className='grid-button'>
+                <div className='button-number'>#{button.i}</div>
+                <div className='button-name'>{button.name}</div>
+              </div>
+            )
+          })
+        }
+      </ReactGridLayout>
+    )
   }
 
-  renderBackgroundGrid = (grid) => {
+  renderBackgroundGrid = () => {
     return (
       <div className='background-grid-container'>
+        <div className='background-grid-row'>
+          {this.renderColumns()}
+        </div>
+        <div className='background-grid-row'>
+          {this.renderColumns()}
+        </div>
         <div className='background-grid-row'>
           {this.renderColumns()}
         </div>
@@ -226,7 +234,7 @@ export class BoardEditor extends React.Component {
           <div className='board-size-header'>Large</div>
           <div className='board-size-image large' onClick={showLarge}>
             <div className='board-grid'>
-              {this.renderBackgroundGridDetails('large', 16, 8, 180, [3, 3], 'grid-box')}
+              {this.renderBackgroundGridDetails('large', 30, 40, 600, [5, 5], 'grid-box')}
             </div>
           </div>
         </div>

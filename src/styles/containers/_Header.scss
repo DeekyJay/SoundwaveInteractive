@@ -17,6 +17,18 @@
     height: 10px;
     -webkit-app-region: drag;
   }
+  .update-container {
+    position: absolute;
+    top: 24px;
+    right: 260px;
+    font-size: 24px;
+    color: #ffffff;
+    text-shadow: 0 0 8px #01ff38;
+    cursor: pointer;
+    &:hover {
+       text-shadow: 0 0 15px #01ff38;
+    }
+  }
   .user-container {
     position: absolute;
     top: 5px;

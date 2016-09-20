@@ -14,7 +14,7 @@ const devDeps = Object.keys(pkg.devDependencies)
 const appName = argv.name || argv.n || pkg.productName
 const shouldUseAsar = argv.asar || argv.a || false
 const shouldBuildAll = argv.all || false
-
+const version = pkg.version
 const DEFAULT_OPTS = {
   dir: './',
   name: appName,
@@ -31,8 +31,6 @@ const icon = argv.icon || argv.i || 'app/app'
 if (icon) {
   DEFAULT_OPTS.icon = icon
 }
-
-const version = argv.version || argv.v
 
 if (version) {
   DEFAULT_OPTS.version = version

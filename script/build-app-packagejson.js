@@ -6,9 +6,9 @@ const path = require('path')
 // Some default values for app/package.json
 let jsonObj = {
   'name': 'SoundwaveInteractive',
-  'productName': 'SoundwaveInteractive',
-  'version': '1.0.3-beta',
-  'description': 'SoundwaveInteractive\'s Soundboard',
+  'productName': 'Soundwave Interactive',
+  'version': '1.0.5',
+  'description': 'Soundwave Interactive Soundboard',
   'author': 'Derek Jensen',
   'private': false,
   'license': 'MIT',

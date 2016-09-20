@@ -7,8 +7,19 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const crashReporter = electron.crashReporter
 const nativeImage = electron.nativeImage
+const autoUpdater = electron.autoUpdater
+const ipcMain = electron.ipcMain
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 let mainWindow = null
+const appVersion = require('./package.json').version
+
+let updateFeed = 'http://localhost:5001/updates/latest'
+
+if (process.env.NODE_ENV !== 'development') {
+  updateFeed = process.platform === 'darwin'
+    ? 'http://localhost:5001/updates/latest'
+    : 'http://localhost:5001/updates/latest'
+}
 
 crashReporter.start({
   productName: 'SoundwaveInteractive',
@@ -73,4 +84,40 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools()
   }
+})
+
+ipcMain.on('GET_VERSION', function (event) {
+  event.sender.send('GET_VERSION', null, { version: appVersion })
+})
+
+ipcMain.on('UPDATE_APP', function (event, param) {
+  const url = param.url
+  autoUpdater.on('checking-for-update', function (d) {
+    console.log('Checking For Update...')
+    console.log(d)
+  })
+
+  autoUpdater.on('update-available', function (d) {
+    console.log('Update Available..')
+    console.log(d)
+  })
+
+  autoUpdater.on('update-not-available', function (d) {
+    console.log('No Update Available..')
+    console.log(d)
+  })
+
+  autoUpdater.on('error', function (d) {
+    console.log('Update Error', d)
+  })
+
+  autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateURL) {
+    console.log(releaseName, releaseDate, updateURL)
+  })
+
+  autoUpdater.setFeedURL(url)
+
+  autoUpdater.checkForUpdates()
+
+  autoUpdater.quitAndInstall()
 })

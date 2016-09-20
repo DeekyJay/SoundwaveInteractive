@@ -1,4 +1,5 @@
-import { remote } from 'electron'
+import { remote, ipcRenderer } from 'electron'
+import fetch from '../utils/fetch'
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
 // Constants
@@ -7,7 +8,8 @@ export const constants = {
   MAXIMIZE: 'MAXIMIZE',
   CLOSE: 'CLOSE',
   FULLSCREEN: 'FULLSCREEN',
-  ALWAYS_ON_TOP: 'ALWAYS_ON_TOP'
+  ALWAYS_ON_TOP: 'ALWAYS_ON_TOP',
+  CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE'
 }
 
 // Action Creators
@@ -50,6 +52,39 @@ export const actions = {
       type: constants.ALWAYS_ON_TOP,
       payload: { alwaysOnTop: mainWindow.isAlwaysOnTop() }
     }
+  },
+  checkForUpdate: () => {
+    return (dispatch) => {
+      ipcRenderer.send('GET_VERSION')
+      ipcRenderer.once('GET_VERSION', (event, err, result) => {
+        const version = result.version
+        fetch.get(`http://localhost:5001/updates/latest?v=${version}`)
+        .then(res => {
+          console.log(res)
+          dispatch({
+            type: 'CHECK_FOR_UPDATE',
+            payload: {
+              hasUpdate: !!res.url,
+              url: res.url || null
+            }
+          })
+        })
+      })
+    }
+  },
+  update: () => {
+    return (dispatch, getState) => {
+      const { app: { url } } = getState()
+      ipcRenderer.send('UPDATE_APP', { url: url })
+      ipcRenderer.once('UPDATE_APP', (event, err, result) => {
+        dispatch({
+          type: 'UPDATE_APP',
+          payload: {
+            isUpdating: !!result.isUpdating
+          }
+        })
+      })
+    }
   }
 }
 // Action handlers
@@ -84,6 +119,13 @@ const ACTION_HANDLERS = {
       ...state,
       ...payload
     }
+  },
+  CHECK_FOR_UPDATE: (state, action) => {
+    const { payload } = action
+    return {
+      ...state,
+      ...payload
+    }
   }
 }
 // Reducer
@@ -92,7 +134,9 @@ export const initialState = {
     maximized: mainWindow.isMaximized(),
     fullscreen: mainWindow.isFullScreen(),
     alwaysOnTop: mainWindow.isAlwaysOnTop()
-  }
+  },
+  hasUpdate: false,
+  url: null
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

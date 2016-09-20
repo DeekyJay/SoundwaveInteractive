@@ -14,6 +14,30 @@ export const constants = {
   GET_OWNED_GAMES: 'GET_OWNED_GAMES'
 }
 
+const getGridFromTactiles = (tactiles) => {
+  let large_grid = []
+  if (tactiles && tactiles.length) {
+    tactiles.map(tactile => {
+      // Grabbing the first blueprint -- Will it always be the large grid?
+      const blueprint = tactile.blueprint[0]
+      delete blueprint['grid']
+      delete blueprint['state']
+      large_grid.push({
+        w: blueprint.width,
+        h: blueprint.height,
+        maxW: blueprint.width,
+        maxH: blueprint.height,
+        x: blueprint.x,
+        y: blueprint.y,
+        name: tactile.text,
+        i: String(tactile.id),
+        static: true
+      })
+    })
+  }
+  return large_grid
+}
+
 const DEVLAB_APP_NAME = 'Soundwave Interactive Soundboard'
 
 // Action Creators
@@ -64,14 +88,46 @@ export const actions = {
         return client.request('GET', `/interactive/versions/${versionId}`)
       })
       .then(res => {
+        let game = res.body
+        let valid = true
+        let newtactiles = []
+        if (game.controls && game.controls.tactiles) {
+          newtactiles = Object.assign([], game.controls.tactiles)
+          newtactiles.map(t => {
+            let isAnalysis = t.analysis && t.analysis.holding && t.analysis.frequency
+            if (!isAnalysis) {
+              valid = false
+              t.analysis = {
+                holding: true,
+                frequency: true
+              }
+            }
+          })
+        }
+        if (!valid) {
+          game.controls.tactiles = newtactiles
+          return client.request('PUT', `/interactive/versions/${versionId}`, {
+            body: game,
+            json: true
+          })
+          .then(r => {
+            return r
+          })
+        } else {
+          return res
+        }
+      })
+      .then(res => {
         console.log(res)
+        const large_grid = getGridFromTactiles(res.body.controls.tactiles)
         dispatch({
           type: 'GET_OWNED_GAMES_FULFILLED',
           payload: {
             board: res.body.controls || [],
             hasSoundBoardGame: hasSoundBoardGame,
             gameId: gameId || '',
-            versionId: versionId || ''
+            versionId: versionId || '',
+            large_grid: large_grid
           }
         })
       })
@@ -155,13 +211,14 @@ const ACTION_HANDLERS = {
   },
   GET_OWNED_GAMES_FULFILLED: (state, actions) => {
     console.log('FULFILLED')
-    const { payload: { board, hasSoundBoardGame, gameId, versionId } } = actions
+    const { payload: { board, hasSoundBoardGame, gameId, versionId, large_grid } } = actions
     return {
       ...state,
       hasSoundBoardGame: hasSoundBoardGame,
       gameId: gameId,
       versionId: versionId,
-      board: board
+      board: board,
+      large_grid: large_grid
     }
   },
   CREATE_GAME_FULFILLED: (state, actions) => {

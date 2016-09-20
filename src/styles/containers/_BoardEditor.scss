@@ -142,7 +142,7 @@
           justify-content: center;
           align-items: center;
           &.back {
-            border: none;
+          border: none;
           }
           &.save {
             border: none;
@@ -155,14 +155,44 @@
       .board-background-grid {
         height: 100%;
         width: calc(100% - 50px);
+        display: flex;
+        justify-content: center;
         .background-grid-container {
           height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
           .background-grid-row {
-            height: 50%;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             .background-grid-cube {
-              width: calc(100% / 16);
-              height: 50%;
-              background: yellow;
+              background: #32365e;
+              display: inline-block;
+              width: 30px;
+              margin: 3px;
+              height: 30px;
+              border: 2px dashed #5b6692;
+            }
+          }
+        }
+        .board-wrapper {
+          width: 608px;
+          .react-grid-layout {
+            position: absolute;
+            top: 30px;
+            .react-grid-item {
+              &.grid-box {
+                background: #32365e;
+                border: 2px dashed #5b6692;
+                border-radius: 2px;
+              }
+              &.grid-button {
+                background: #464b7a;
+                border-radius: 2px;
+                padding: 2px;
+              }
             }
           }
         }
