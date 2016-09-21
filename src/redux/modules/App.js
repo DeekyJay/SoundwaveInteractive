@@ -57,8 +57,8 @@ export const actions = {
     return (dispatch) => {
       ipcRenderer.send('GET_VERSION')
       ipcRenderer.once('GET_VERSION', (event, err, result) => {
-        const version = result.version
-        fetch.get(`http://localhost:5001/updates/latest?v=${version}`)
+        const {version, platform, arch} = result
+        fetch.get(`http://localhost:5001/updates/latest?v=${version}&platform=${platform}&arch=${arch}`)
         .then(res => {
           console.log(res)
           dispatch({

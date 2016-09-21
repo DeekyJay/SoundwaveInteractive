@@ -36,6 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 require('babel-polyfill')
 
 const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
+const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
 /**
  * Load squirrel handlers
  */
@@ -74,7 +75,7 @@ app.on('ready', () => {
     : mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
 
   // Load IPC handler
-  require('./utils/ipcHandler')
+  require(utilsPath + '/ipcHandler')
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -87,7 +88,7 @@ app.on('ready', () => {
 })
 
 ipcMain.on('GET_VERSION', function (event) {
-  event.sender.send('GET_VERSION', null, { version: appVersion })
+  event.sender.send('GET_VERSION', null, { version: appVersion, arch: process.arch, platform: process.platform })
 })
 
 ipcMain.on('UPDATE_APP', function (event, param) {
@@ -113,11 +114,8 @@ ipcMain.on('UPDATE_APP', function (event, param) {
 
   autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateURL) {
     console.log(releaseName, releaseDate, updateURL)
+    autoUpdater.quitAndInstall()
   })
-
   autoUpdater.setFeedURL(url)
-
   autoUpdater.checkForUpdates()
-
-  autoUpdater.quitAndInstall()
 })

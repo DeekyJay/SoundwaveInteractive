@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "1.0.5",
+  "version": "1.0.0",
   "description": "SoundwaveInteractive Beam Soundboard",
   "main": "main.js",
   "engines": {
@@ -39,7 +39,8 @@
     "dist:pre": "node script/build-app-packagejson && install-app-deps && npm run compile:prod && npm run compile:electron",
     "package-linux": "cross-env NODE_ENV=production npm run dist:pre && node script/download-node --p linux --a x64 --d && build --platform linux --arch x64",
     "package-darwin": "cross-env NODE_ENV=production npm run dist:pre && build --platform darwin --arch x64 --dist",
-    "package-win32": "cross-env NODE_ENV=production npm run dist:pre && build --platform win32 --arch x64 --dist"
+    "package-win32": "cross-env NODE_ENV=production npm run dist:pre && build --platform win32 --arch x64 --dist",
+    "package-all": "cross-env NODE_ENV=production npm run dist:pre && build --platform all --arch all --dist"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -52,7 +53,7 @@
       }
     },
     "compile:electron": {
-      "command": "babel -d app/dist/electron electron",
+      "command": "babel -d app/dist/electron electron && babel -d app/dist/utils utils",
       "env": {
         "NODE_ENV": "production"
       }
