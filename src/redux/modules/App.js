@@ -12,6 +12,14 @@ export const constants = {
   CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE'
 }
 
+ipcRenderer.on('browser-window-focus', function () {
+  document.body.classList.remove('blurred')
+})
+
+ipcRenderer.on('browser-window-blur', function () {
+  document.body.classList.add('blurred')
+})
+
 // Action Creators
 export const actions = {
   minimize: () => {

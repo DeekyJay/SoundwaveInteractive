@@ -1,6 +1,6 @@
 import storage from 'electron-json-storage'
 import { toastr } from 'redux-toastr'
-// import _ from 'lodash'
+import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
@@ -13,7 +13,8 @@ export const constants = {
   EDIT_PROFILE: 'EDIT_PROFILE',
   SORT_PROFILES: 'SORT_PROFILES',
   CLEAR_ALL_PROFILES: 'CLEAR_ALL_PROFILES',
-  SELECT_PROFILE: 'SELECT_PROFILE'
+  SELECT_PROFILE: 'SELECT_PROFILE',
+  ASSIGN_SOUNDS: 'ASSIGN_SOUNDS'
 }
 
 const syncStorageWithState = (state) => {
@@ -85,6 +86,30 @@ export const actions = {
       type: constants.SELECT_PROFILE,
       payload: { profileId: profileId }
     }
+  },
+  assignSound: (index, sound) => {
+    console.log(index, sound)
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles } } = getState()
+      let newProfiles = Object.assign([], profiles)
+      let idx = 0
+      let profile = _.find(profiles, (p, i) => {
+        if (p.id === profileId) {
+          idx = i
+          return true
+        }
+      })
+      let newSounds = Object.assign([], profile.sounds)
+      newSounds[index] = sound.id
+      console.log(newSounds)
+      profile.sounds = newSounds
+      newProfiles.splice(idx, 1, profile)
+      console.log(newProfiles)
+      dispatch({
+        type: constants.ASSIGN_SOUNDS,
+        payload: { profiles: newProfiles }
+      })
+    }
   }
 }
 // Action handlers
@@ -129,6 +154,13 @@ const ACTION_HANDLERS = {
     return {
       ...state,
       profileId: profileId
+    }
+  },
+  ASSIGN_SOUNDS: (state, actions) => {
+    const { payload: { profiles } } = actions
+    return {
+      ...state,
+      profiles: profiles
     }
   }
 }

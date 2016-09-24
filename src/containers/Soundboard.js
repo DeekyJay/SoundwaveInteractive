@@ -5,6 +5,7 @@ import { actions as uiActions } from '../redux/modules/UI'
 import SoundList from '../containers/SoundList'
 import ProfileList from '../containers/ProfileList'
 import BoardEditor from '../containers/BoardEditor'
+import Connector from '../containers/Connector'
 
 export class Soundboard extends React.Component {
 
@@ -28,6 +29,7 @@ export class Soundboard extends React.Component {
           <div className='content-right'>
             <BoardEditor />
             <ProfileList />
+            <Connector />
           </div>
         </div>
       </div>

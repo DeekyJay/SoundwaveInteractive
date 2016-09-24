@@ -1,0 +1,49 @@
+.connector-container {
+  float: right;
+  width: 50%;
+  height: calc(100% - 260px);
+  margin-top: 10px;
+  display: inline-block;
+  position: relative;
+  padding-left: 5px;
+  .connector-container-title {
+    font-size: 20px;
+    height: 30px;
+  }
+  .cooldown-options-container {
+    border: 1px solid $table-border;
+    border-radius: 4px;
+    background: $table-bg;
+    .cooldown-options-title {
+      border-top-right-radius: 4px;
+      border-top-left-radius: 4px;
+      font-size: 18px;
+      margin-bottom: 5px;
+      border-bottom: 2px solid $table-border;
+      padding: 4px;
+      background: linear-gradient(180deg,#586cbc 1%,#5e65a3);
+    }
+    .cooldown-options-wrapper {
+      margin-left: 15px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      .cooldown-option {
+        font-size: 14px;
+        flex: 1;
+      }
+      .cooldown-radio {
+        width: 16px;
+        height: 16px;
+        border: 2px solid;
+        display: inline-block;
+        border-radius: 20px;
+        margin-right: 20px;
+        &.toggled {
+          background: white;
+        }
+      }
+    }
+  }
+}

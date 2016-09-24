@@ -1,0 +1,38 @@
+// Constants
+export const constants = {
+  START_INTERACTIVE: 'START_INTERACTIVE',
+  STOP_INTERACTIVE: 'STOP_INTERACTIVE',
+  SET_COOLDOWN_OPTION: 'SET_COOLDOWN_OPTION'
+}
+
+// Action Creators
+export const actions = {
+  setCooldownOption: (option) => {
+    return {
+      type: constants.SET_COOLDOWN_OPTION,
+      payload: {
+        cooldownOption: option
+      }
+    }
+  }
+}
+// Action handlers
+const ACTION_HANDLERS = {
+  SET_COOLDOWN_OPTION: (state, actions) => {
+    const { payload: { cooldownOption } } = actions
+    return {
+      ...state,
+      cooldownOption: cooldownOption
+    }
+  }
+}
+// Reducer
+export const initialState = {
+  cooldownOption: 'dynamic',
+  isConnecting: false,
+  isConnected: false
+}
+export default function (state = initialState, action) {
+  const handler = ACTION_HANDLERS[action.type]
+  return handler ? handler(state, action) : state
+}

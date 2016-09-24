@@ -19,9 +19,7 @@ const getGridFromTactiles = (tactiles) => {
   if (tactiles && tactiles.length) {
     tactiles.map(tactile => {
       // Grabbing the first blueprint -- Will it always be the large grid?
-      const blueprint = tactile.blueprint[0]
-      delete blueprint['grid']
-      delete blueprint['state']
+      const blueprint = _.find(tactile.blueprint, b => b.state === 'default' && b.grid === 'large')
       large_grid.push({
         w: blueprint.width,
         h: blueprint.height,
@@ -36,6 +34,67 @@ const getGridFromTactiles = (tactiles) => {
     })
   }
   return large_grid
+}
+
+const makeValidSoundboard = (tactiles, profiles) => {
+  tactiles = _.cloneDeep(tactiles)
+  let profilesInBoard = []
+  profiles.map(p => {
+    profilesInBoard.push(p.id)
+  })
+  profilesInBoard = _.uniq(profilesInBoard)
+  let newTactiles = []
+  tactiles.map((t, i) => {
+    const largeDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'large')
+    const mediumDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'medium')
+    const smallDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'small')
+
+    let newBlueprints = []
+    newBlueprints.push(largeDefault)
+    newBlueprints.push(mediumDefault)
+    newBlueprints.push(smallDefault)
+    profiles.map(p => {
+      if (largeDefault) {
+        let large = {}
+        if (large.width !== largeDefault.width) large.width = largeDefault.width
+        if (large.height !== largeDefault.height) large.height = largeDefault.height
+        if (large.x !== largeDefault.x) large.x = largeDefault.x
+        if (large.y !== largeDefault.y) large.y = largeDefault.y
+        large.state = p.id
+        large.grid = 'large'
+        newBlueprints.push(large)
+      }
+      if (mediumDefault) {
+        let med = {}
+        if (med.width !== mediumDefault.width) med.width = mediumDefault.width
+        if (med.height !== mediumDefault.height) med.height = mediumDefault.height
+        if (med.x !== mediumDefault.x) med.x = mediumDefault.x
+        if (med.y !== mediumDefault.y) med.y = mediumDefault.y
+        med.state = p.id
+        med.grid = 'medium'
+        newBlueprints.push(med)
+      }
+      if (smallDefault) {
+        let small = {}
+        if (small.width !== smallDefault.width) small.width = smallDefault.width
+        if (small.height !== smallDefault.height) small.height = smallDefault.height
+        if (small.x !== smallDefault.x) small.x = smallDefault.x
+        if (small.y !== smallDefault.y) small.y = smallDefault.y
+        small.state = p.id
+        small.grid = 'small'
+        newBlueprints.push(small)
+      }
+      t.text = p.sounds && p.sounds.length && p.sounds[i] ? p.sounds[i].name : 'Sound ' + (i + 1)
+    })
+    t.blueprint = newBlueprints
+    t.analysis = {
+      holding: true,
+      frequency: true
+    }
+    newTactiles.push(t)
+  })
+  console.log(newTactiles)
+  return newTactiles
 }
 
 const DEVLAB_APP_NAME = 'Soundwave Interactive Soundboard'
@@ -70,7 +129,7 @@ export const actions = {
   },
   getOwnedGames: () => {
     return (dispatch, getState) => {
-      const { auth: { user } } = getState()
+      const { auth: { user }, profiles: { profiles } } = getState()
       let hasSoundBoardGame, gameId, versionId
       dispatch({type: 'GET_OWNED_GAMES_PENDING'})
       client.game.ownedGames(user.id)
@@ -88,21 +147,18 @@ export const actions = {
         return client.request('GET', `/interactive/versions/${versionId}`)
       })
       .then(res => {
+        console.log(res)
         let game = res.body
         let valid = true
         let newtactiles = []
         if (game.controls && game.controls.tactiles) {
-          newtactiles = Object.assign([], game.controls.tactiles)
-          newtactiles.map(t => {
-            let isAnalysis = t.analysis && t.analysis.holding && t.analysis.frequency
-            if (!isAnalysis) {
-              valid = false
-              t.analysis = {
-                holding: true,
-                frequency: true
-              }
-            }
-          })
+          newtactiles = makeValidSoundboard(game.controls.tactiles, profiles)
+          console.log('OLD TACTILES', game.controls.tactiles)
+          console.log('NEW TACTILES', newtactiles)
+          if (!newtactiles.length || !_.isEqual(newtactiles, game.controls.tactiles)) {
+            valid = false
+            console.log('GAME IS INVALID')
+          }
         }
         if (!valid) {
           game.controls.tactiles = newtactiles
@@ -132,8 +188,8 @@ export const actions = {
         })
       })
       .catch(err => {
-        console.log(err)
         dispatch({type: 'GET_OWNED_GAMES_REJECTED'})
+        throw err
       })
     }
   },

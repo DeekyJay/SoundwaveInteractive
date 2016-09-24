@@ -8,10 +8,12 @@ import ui from './modules/UI'
 import profiles from './modules/Profiles'
 import sounds from './modules/Sounds'
 import board from './modules/Board'
+import interactive from './modules/Interactive'
 
 export default combineReducers({
   app,
   ui,
+  interactive,
   auth,
   profiles,
   sounds,

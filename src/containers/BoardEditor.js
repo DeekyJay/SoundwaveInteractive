@@ -105,7 +105,7 @@ export class BoardEditor extends React.Component {
     const showBack = this.showBoard.bind(this, '')
     return (
       <div className='board'>
-        {profileId
+        {profileId || true
           ? <div className='board-editor-wrapper'>
             <div className='board-background-grid'>
               <div className='board-wrapper'>
@@ -131,8 +131,6 @@ export class BoardEditor extends React.Component {
             </div>
           </div>
           : <div className='board-no-profile'>
-            <div className='board-back'data-tip='Back'
-              onClick={showBack}><div className='sicon-back'></div></div>
             <div className='board-select-profile'>Please Select A Profile</div>
           </div>}
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
@@ -159,6 +157,7 @@ export class BoardEditor extends React.Component {
               <div key={button.i} className='grid-button'>
                 <div className='button-number'>#{button.i}</div>
                 <div className='button-name'>{button.name}</div>
+                <span className={`tactile tactile|${button.i}`}></span>
               </div>
             )
           })

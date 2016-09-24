@@ -1,14 +1,14 @@
 const createProfile = function (id, name) {
-  const board = {
-    reportInterval: 50,
-    tactiles: renderTactiles(),
-    joysticks: [],
-    screens: []
-  }
+  // const board = {
+  //   reportInterval: 50,
+  //   tactiles: renderTactiles(),
+  //   joysticks: [],
+  //   screens: []
+  // }
   const profile = {
     id: id,
     name: name,
-    board: board
+    sounds: []
   }
   return profile
 }

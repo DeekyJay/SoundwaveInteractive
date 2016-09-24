@@ -85,6 +85,13 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools()
   }
+
+  mainWindow.on('focus', function () {
+    mainWindow.webContents.send('browser-window-focus')
+  })
+  mainWindow.on('blur', function () {
+    mainWindow.webContents.send('browser-window-blur')
+  })
 })
 
 ipcMain.on('GET_VERSION', function (event) {

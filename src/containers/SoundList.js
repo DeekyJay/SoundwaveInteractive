@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as soundActions } from '../redux/modules/Sounds'
+import { actions as profileActions } from '../redux/modules/Profiles'
 import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
@@ -33,6 +34,7 @@ export class SoundList extends React.Component {
 
   static propTypes = {
     soundActions: PropTypes.object.isRequired,
+    profileActions: PropTypes.object.isRequired,
     sounds: PropTypes.array.isRequired
   }
 
@@ -71,6 +73,12 @@ export class SoundList extends React.Component {
     this.setState({ ...this.state, dragMode: false }, () => {
       const name = document.elementFromPoint(e.x, e.y).className
       const currentSound = this.props.sounds[oldIndex]
+      console.log(name)
+      if (name.startsWith('tactile tactile|')) {
+        const index = name.split('|')[1]
+        this.props.profileActions.assignSound(index, currentSound)
+        this.props.soundActions.sortSounds(oldIndex, oldIndex)
+      }
       switch (name) {
         case 'sicon-pencil':
         case 'sound-list-action edit drag':
@@ -330,7 +338,8 @@ const mapStateToProps = (state) => ({
 
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch) => ({
-  soundActions: bindActionCreators(soundActions, dispatch)
+  soundActions: bindActionCreators(soundActions, dispatch),
+  profileActions: bindActionCreators(profileActions, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SoundList)
