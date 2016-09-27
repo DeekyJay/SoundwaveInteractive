@@ -2,8 +2,7 @@ import storage from 'electron-json-storage'
 import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
-import { client, auth, checkStatus, requestInteractive } from '../utils/Beam'
-console.log(client, auth)
+import { client } from '../utils/Beam'
 
 // Constants
 export const constants = {

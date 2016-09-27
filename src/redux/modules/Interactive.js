@@ -1,3 +1,5 @@
+
+
 // Constants
 export const constants = {
   START_INTERACTIVE: 'START_INTERACTIVE',
@@ -12,6 +14,15 @@ export const actions = {
       type: constants.SET_COOLDOWN_OPTION,
       payload: {
         cooldownOption: option
+      }
+    }
+  },
+  goInteractive: () => {
+    return (dispatch, getState) => {
+      const { interactive: { isConnected } } = getState()
+      const shouldConnect = !isConnected
+      if (shouldConnect) {
+
       }
     }
   }

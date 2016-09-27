@@ -3,6 +3,7 @@ import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import webpackTargetElectronRenderer from 'webpack-target-electron-renderer'
+require('proto-loader')
 import config from '../config'
 import _debug from 'debug'
 
@@ -145,6 +146,10 @@ webpackConfig.module.loaders = [{
 {
   test: /\.json$/,
   loader: 'json'
+},
+{
+  test: /\.proto$/,
+  loader: 'babel-loader!proto-loader'
 }]
 
 // ------------------------------------

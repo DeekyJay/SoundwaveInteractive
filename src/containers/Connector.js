@@ -17,7 +17,9 @@ export class Connector extends React.Component {
   render () {
     const {
       interactive: {
-        cooldownOption
+        cooldownOption,
+        isConnecting,
+        isConnected
       }
     } = this.props
 
@@ -51,6 +53,16 @@ export class Connector extends React.Component {
             <span className={`cooldown-radio ${cooldownOption === 'self' ? 'toggled' : ''}`}></span>
           </div>
         </div>
+        <button type='button' onClick={this.goInteractive}>
+          {isConnecting
+            ? <span>Connecting...</span>
+            : <span>
+              {isConnected
+                ? 'Disconnect'
+                : 'Connect'
+              }
+            </span>}
+        </button>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
       </div>
     )

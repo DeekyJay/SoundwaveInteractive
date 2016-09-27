@@ -12,6 +12,7 @@ const ipcMain = electron.ipcMain
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 let mainWindow = null
 const appVersion = require('./package.json').version
+const Interactive = require('beam-interactive-node')
 
 let updateFeed = 'http://localhost:5001/updates/latest'
 
