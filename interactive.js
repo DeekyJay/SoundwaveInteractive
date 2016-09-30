@@ -4,6 +4,7 @@ function Interactive(electron, mainWindow) {
   var Beam = require('beam-client-node');
   var Tetris = require('beam-interactive-node');
   var Packets = require('beam-interactive-node/dist/robot/packets').default;
+  var reconnector = require('./lib/reconnector');
 
   var Config = require('./lib/Config');
   var config = new Config(app.getPath("userData"));
@@ -397,33 +398,50 @@ function Interactive(electron, mainWindow) {
    * @param {int} id - Channel ID
    * @param {Object} res - Result of the channel join
    */
-  function initHandshake(id, res) {
-    logger.log("Authenticated with Beam. Starting Interactive Handshake.");
-    var details = res.body;
-    details.remote = details.address;
-    details.channel = id;
+  function initHandshake(id) {
+    return beam.game.join(id)
+    .then(function (details) {
+      logger.log("Authenticated with Beam. Starting Interactive Handshake.");
+      console.log('DETAILS', details)
+      details = details.body
 
-    robot = new Tetris.Robot(details);
-    robot.handshake(function(err){
-      if(err) {
-        sender.send('connection-status', 'Error', {error: "Problem Connecting"});
-        logger.log("There was a problem connecting to Tetris.");
+      robot = new Tetris.Robot({
+        remote: details.address,
+        channel: id,
+        key: details.key
+      });
+      robot.on('report', handleReport);
+      robot.on('error', function(err){
         logger.log(err.body);
-      }
-      else {
-        logger.log("Connected to Tetris.");
-        sender.send('connection-status', 'Connected');
-      }
-    });
-    robot.on('report', handleReport);
-    robot.on('error', function(err){
-      logger.log(err.body);
-      if(err.code === 'ECONNRESET')
-        sender.send('connection-status', 'Error', {error: "Connection Reset"});
-      else if(err.code === 'ETIMEDOUT') {
-        sender.send('connection-status', 'Error', {error: "Timeout"});
-      }
-    });
+        if(err.code === 'ECONNRESET')
+          sender.send('connection-status', 'Error', {error: "Connection Reset"});
+        else if(err.code === 'ETIMEDOUT') {
+          sender.send('connection-status', 'Error', {error: "Timeout"});
+        }
+      });
+      reconnector(robot, initHandshake.bind(this, id));
+
+      return robot.handshake(function(err){
+        if(err) {
+          sender.send('connection-status', 'Error', {error: "Problem Connecting"});
+          logger.log("There was a problem connecting to Tetris.");
+          logger.log(err);
+        }
+        else {
+          logger.log("Connected to Tetris.");
+          sender.send('connection-status', 'Connected');
+        }
+      });
+    })
+  }
+
+  function onInteractiveConnect(err) {
+    if (err) {
+      sender.send('connection-status', 'Error', {error: "Problem Connecting"});
+      console.log(err);
+    } else {
+      console.log('Connected to Interactive');
+    }
   }
 
   /**
@@ -452,10 +470,8 @@ function Interactive(electron, mainWindow) {
     }).then(function(controls) {
       sender.send('connection-status', "Validating Controls");
       return validateInteractiveControls(controls);
-    }).then(function() {
-      return beam.game.join(id);
     }).then(function (res) {
-      initHandshake(id, res);
+      return initHandshake(id);
     }).catch(function(err) {
       logger.log(err);
       sender.send('connection-status', 'Error', {error: err.message.body && err.message.body.message ?
@@ -504,10 +520,11 @@ function Interactive(electron, mainWindow) {
     {
       start();
       running = true;
-    }
-    else {
+    } else {
       running = false;
       stop();
+      robot = null;
+      process.exit()
     }
   });
 

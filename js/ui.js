@@ -54,6 +54,9 @@ $(function() {
   var btnGitHub = $('#btnGitHub');
   var btnTwitter = $('#btnTwitter');
   var btnBeam = $('#btnBeam');
+  var btnAboutGitHub = $('#btnAboutGitHub');
+  var btnAboutTwitter = $('#btnAboutTwitter');
+  var btnAboutBeam = $('#btnAboutBeam');
   var btnBeamLink = $('#btnBeamLink');
   /*################ Elements END ################*/
 
@@ -123,6 +126,15 @@ $(function() {
     Open("https://twitter.com/JJBroBrams");
   });
   btnBeam.click(function() {
+    Open("https://beam.pro/Leviathan5");
+  });
+  btnAboutGitHub.click(function() {
+    Open("https://github.com/Leviathan5");
+  });
+  btnAboutTwitter.click(function() {
+    Open("https://twitter.com/JJBroBrams");
+  });
+  btnAboutBeam.click(function() {
     Open("https://beam.pro/Leviathan5");
   });
   btnBeamLink.click(function() {
@@ -545,7 +557,7 @@ $(function() {
     else if(status == "Connected") {
       boolConnect = true;
       boolCanToggle = true;
-      btnConnect.text("Disconnect");
+      btnConnect.text("Close");
       btnConnect.removeClass("disabled");
     }
     else

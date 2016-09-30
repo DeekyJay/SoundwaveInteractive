@@ -283,8 +283,8 @@ a {
   align-items: center;
   display: none;
   position: fixed;
-  width: -150%;
-  height: 349px;
+  width: calc(100% - 250px);
+  height: 100%;
   background-color: rgba(37, 39, 53, 0.9);
 }
 #editSoundTitleOverlay > div {
