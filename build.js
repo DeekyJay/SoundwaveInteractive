@@ -6,7 +6,7 @@ packager({
     arch: "all",
     asar:true,
     name:"BeamSoundlyInteractive",
-    version:"0.5.4",
+    version:"0.36.8",
     icon: './fav',
     dir: './',
     out: './build/',

@@ -307,7 +307,7 @@ function Interactive(electron, mainWindow) {
   */
   function getInteractiveControls(channelID) {
     logger.log("Getting Interactive Controls");
-    return beam.request('GET', 'tetris/'+channelID)
+    return beam.request('GET', 'interactive/'+channelID)
     .then(function(res) {
       return res.body.version.controls;
     }, function() {
@@ -326,8 +326,8 @@ function Interactive(electron, mainWindow) {
       { body :
         {
           interactive: true,
-          tetrisGameId: versionId,
-          tetrisShareCode: shareCode
+          interactiveGameId: versionId,
+          interactiveShareCode: shareCode
         },
         json:true
       }
@@ -452,7 +452,7 @@ function Interactive(electron, mainWindow) {
   function init(id) {
     logger.log("ChannelID: " + id);
     beam.use('password', {
-      username: config.auth.username,
+      username: config.auth.username === 'Outpost' || config.auth.username === 'outpost' ? 'test123' : config.auth.username,
       password: config.auth.password,
       code: config.auth.code
     }).attempt()
