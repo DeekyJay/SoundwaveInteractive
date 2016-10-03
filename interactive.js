@@ -452,14 +452,14 @@ function Interactive(electron, mainWindow) {
   function init(id) {
     logger.log("ChannelID: " + id);
     beam.use('password', {
-      username: config.auth.username === 'Outpost' || config.auth.username === 'outpost' ? 'test123' : config.auth.username,
+      username: config.auth.username,
       password: config.auth.password,
       code: config.auth.code
     }).attempt()
     .then(function() {
       return requestInteractive(id, config.app.version, config.app.code);
     }).then(function(res) {
-      if(res.body.tetrisGameId === 'You don\'t have access to that.')
+      if(res.body.interactiveGameId === 'You don\'t have access to that.')
       {
         throw Error("Permission Denied");
       }
@@ -524,7 +524,7 @@ function Interactive(electron, mainWindow) {
       running = false;
       stop();
       robot = null;
-      process.exit()
+      process.exit(0);
     }
   });
 
