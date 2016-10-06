@@ -77,19 +77,19 @@ export class SoundList extends React.Component {
       if (name.startsWith('tactile tactile|')) {
         const index = name.split('|')[1]
         this.props.profileActions.assignSound(index, currentSound)
-        this.props.soundActions.sortSounds(oldIndex, oldIndex)
-      }
-      switch (name) {
-        case 'sicon-pencil':
-        case 'sound-list-action edit drag':
-          this._edit(currentSound)
-          break
-        case 'sicon-trash':
-        case 'sound-list-action trash drag':
-          this._delete(currentSound, oldIndex)
-          break
-        default:
-          this.props.soundActions.sortSounds(oldIndex, newIndex)
+      } else {
+        switch (name) {
+          case 'sicon-pencil':
+          case 'sound-list-action edit drag':
+            this._edit(currentSound)
+            break
+          case 'sicon-trash':
+          case 'sound-list-action trash drag':
+            this._delete(currentSound, oldIndex)
+            break
+          default:
+            this.props.soundActions.sortSounds(oldIndex, newIndex)
+        }
       }
     })
   }

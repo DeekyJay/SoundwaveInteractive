@@ -14,12 +14,18 @@ export class Connector extends React.Component {
     this.props.interactiveActions.setCooldownOption(option)
   }
 
+  goInteractive = () => {
+    this.props.interactiveActions.goInteractive()
+  }
+
   render () {
     const {
       interactive: {
         cooldownOption,
         isConnecting,
-        isConnected
+        isConnected,
+        useReconnect,
+        reconnectionTimeout
       }
     } = this.props
 
@@ -53,16 +59,35 @@ export class Connector extends React.Component {
             <span className={`cooldown-radio ${cooldownOption === 'self' ? 'toggled' : ''}`}></span>
           </div>
         </div>
-        <button type='button' onClick={this.goInteractive}>
-          {isConnecting
-            ? <span>Connecting...</span>
-            : <span>
-              {isConnected
-                ? 'Disconnect'
-                : 'Connect'
-              }
-            </span>}
-        </button>
+        <div className='reconnect-container'>
+          <div className='reconnect-title'>Reconnection Options</div>
+          <div
+            className='reconnect-option-wrapper'
+            onClick={this.toggleReconnect}
+            data-tip='Auto reconnect if the connection to Beam drops.'>
+            <span className='reconnect-option'>Auto Reconnect</span>
+            <span className={`checkbox ${useReconnect ? 'toggled' : ''}`}></span>
+          </div>
+          <div className='reconnect-option-wrapper'>
+            <span className='reconnect-option'>Reconnection Timeout</span>
+            <input
+              type='text'
+              value={reconnectionTimeout}
+              onChange={this.updateReconnectionTimeout} />
+          </div>
+        </div>
+        <div className='connect-container'>
+          <button type='button' onClick={this.goInteractive}>
+            {isConnecting
+              ? <span>Connecting...</span>
+              : <span>
+                {isConnected
+                  ? 'Disconnect'
+                  : 'Connect'
+                }
+              </span>}
+          </button>
+        </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
       </div>
     )

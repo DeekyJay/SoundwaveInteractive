@@ -1,55 +1,33 @@
+import Interactive from 'beam-interactive-node'
+import { default as Packets } from 'beam-interactive-node/dist/robot/packets'
+import { ipcMain as ipc } from 'electron'
 import Beam from 'beam-client-node'
-import storage from 'electron-json-storage'
-import { remote } from 'electron'
-import { actions as soundActions } from '../modules/Sounds'
-const Interactive = remote.require('beam-interactive-node')
-let Packets = remote.require('beam-interactive-node/dist/robot/packets').default
-let robot
-let running
-let store
-
-export const client = new Beam()
 const oAuthOpts = {
   clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe'
 }
-export const auth = client.use('oauth', oAuthOpts)
 
-export function checkStatus () {
-  console.log(auth.isAuthenticated()
-  ? '########### User is Authenticated ###########'
-  : '########### User Auth FAILED ###########')
-  return auth.isAuthenticated()
-}
+let robot
+let running
+let beam
+let sender
 
-export function requestInteractive (channelID, versionId) {
-  return client.request('PUT', 'channels/' + channelID,
-    {
-      body: {
-        interactive: true,
-        interactiveGameId: versionId
-      },
-      json: true
-    }
-  )
-}
+ipc.on('start', (event, { client, versionId, channelId }) => {
+  beam = setupBeamClient(client)
+  sender = event.sender
+  console.log(beam)
+  goInteractive(channelId, versionId)
+})
 
-export function getUserInfo () {
-  return client.request('GET', '/users/current')
-  .then(response => {
-    return response
-  })
-}
+ipc.on('stop', (event) => {
+  stop()
+})
 
-export function updateTokens (tokens) {
-  const newTokens = {
-    access: tokens.access_token || tokens.access,
-    refresh: tokens.refresh_token || tokens.refresh,
-    expires: tokens.expires_in
-      ? Date.now() + tokens.expires_in * 1000
-      : tokens.expires
-  }
-  auth.setTokens(newTokens)
-  storage.set('tokens', auth.getTokens())
+
+function setupBeamClient (client) {
+  beam = new Beam()
+  let auth = beam.use('oauth', oAuthOpts)
+  auth.setTokens(client.provider.tokens)
+  return beam
 }
 
 /**
@@ -57,7 +35,7 @@ export function updateTokens (tokens) {
 * @param {string} channelID - The ID of the channel
 */
 function getInteractiveControls (channelID) {
-  return client.request('GET', 'interactive/' + channelID)
+  return beam.request('GET', 'interactive/' + channelID)
   .then(res => {
     return res.body.version.controls
   }, function () {
@@ -73,6 +51,7 @@ function handleReport (report) {
   if (running) {
     var tactileResults = []
     var isUpdate = false
+    console.log(report)
     report.tactile.forEach(function (tac) {
       var isFired = false
       var prog = 0
@@ -82,7 +61,6 @@ function handleReport (report) {
         prog = 1
         console.log('Tactile: ' + tac.id + ', Press: ' +
                 tac.pressFrequency + ', Release: ' + tac.releaseFrequency + ', Connected: ' + report.users.connected)
-        store.dispatch(soundActions.playSound(tac.id))
       }
       var curCooldown
       var global
@@ -113,7 +91,7 @@ function handleReport (report) {
  * @param {Object} res - Result of the channel join
  */
 function initHandshake (id) {
-  return client.game.join(id)
+  return beam.game.join(id)
   .then(function (details) {
     console.log('Authenticated with Beam. Starting Interactive Handshake.')
     details = details.body
@@ -130,7 +108,6 @@ function initHandshake (id) {
           reject(err)
         } else {
           console.log('Connected')
-          running = true
           resolve(robot)
         }
       })
@@ -156,7 +133,19 @@ function initHandshake (id) {
   })
 }
 
-export function goInteractive (channelId, versionId) {
+function requestInteractive (channelID, versionId) {
+  return beam.request('PUT', 'channels/' + channelID,
+    {
+      body: {
+        interactive: true,
+        interactiveGameId: versionId
+      },
+      json: true
+    }
+  )
+}
+
+function goInteractive (channelId, versionId) {
   requestInteractive(channelId, versionId)
   .then(res => {
     console.log(res.body)
@@ -177,23 +166,8 @@ export function goInteractive (channelId, versionId) {
 /**
  * Stops the connection to Beam.
  */
-export function stop () {
+function stop () {
   if (robot !== null) {
     robot.close()
   }
-}
-
-export function setupStore (_store) {
-  store = _store
-}
-
-export default {
-  client,
-  auth,
-  checkStatus,
-  requestInteractive,
-  getUserInfo,
-  updateTokens,
-  goInteractive,
-  setupStore
 }

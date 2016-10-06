@@ -3,6 +3,7 @@ import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
+import { Howl } from 'howler'
 
 // Constants
 export const constants = {
@@ -12,7 +13,11 @@ export const constants = {
   REMOVE_SOUND: 'REMOVE_SOUND',
   EDIT_SOUND: 'EDIT_SOUND',
   CLEAR_ALL_SOUNDS: 'CLEAR_ALL_SOUNDS',
-  SORT_SOUNDS: 'SORT_SOUNDS'
+  SORT_SOUNDS: 'SORT_SOUNDS',
+  PLAY_SOUND_STARTED: 'PLAY_SOUND_STARTED',
+  PLAY_SOUND_ENDED: 'PLAY_SOUND_ENDED',
+  PLAY_SOUND_INTERRUPTED: 'PLAY_SOUND_INTERRUPTED',
+  PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR'
 }
 
 const syncStorageWithState = (state) => {
@@ -100,6 +105,27 @@ export const actions = {
   clearAllSounds: () => {
     return {
       type: constants.CLEAR_ALL_SOUNDS
+    }
+  },
+  playSound: (i) => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles }, sounds: { sounds } } = getState()
+      try {
+        const profile = _.find(profiles, p => p.id === profileId)
+        const soundId = profile.sounds[i]
+        const sound = _.find(sounds, s => s.id === soundId)
+        const howl = new Howl({
+          urls: [sound.path],
+          buffer: true,
+          onend: () => {
+            dispatch({ type: constants.PLAY_SOUND_ENDED })
+          }
+        })
+        howl.play()
+        dispatch({ type: constants.PLAY_SOUND_STARTED })
+      } catch (err) {
+        dispatch({ type: constants.PLAY_SOUND_ERROR })
+      }
     }
   }
 }

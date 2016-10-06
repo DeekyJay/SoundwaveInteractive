@@ -6,6 +6,7 @@ import { syncHistoryWithStore } from 'react-router-redux'
 import makeRoutes from './routes'
 import Root from './containers/Root'
 import configureStore from './redux/configureStore'
+import beam from './redux/utils/Beam'
 
 // Configure history for react-router
 const browserHistory = useRouterHistory(createHashHistory)({
@@ -26,6 +27,9 @@ const history = syncHistoryWithStore(browserHistory, store, {
 // the store to the route definitions so that routes have access to it for
 // hooks such as `onEnter`.
 const routes = makeRoutes(store)
+
+// Setup Store for Beam Utility to use.
+beam.setupStore(store)
 
 // Now that redux and react-router have been configured, we can render the
 // React application to the DOM!

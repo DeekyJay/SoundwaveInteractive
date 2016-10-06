@@ -12,7 +12,6 @@ const ipcMain = electron.ipcMain
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 let mainWindow = null
 const appVersion = require('./package.json').version
-const Interactive = require('beam-interactive-node')
 
 let updateFeed = 'http://localhost:5001/updates/latest'
 
@@ -46,7 +45,7 @@ const windowsEvents = require(requirePath + '/squirrel/WindowsEvents')
 if (windowsEvents.handleStartup(app)) {
   return
 }
-app.disableHardwareAcceleration()
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
@@ -77,6 +76,7 @@ app.on('ready', () => {
 
   // Load IPC handler
   require(utilsPath + '/ipcHandler')
+  require(utilsPath + '/interactive')
 
   mainWindow.on('closed', () => {
     mainWindow = null

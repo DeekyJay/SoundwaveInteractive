@@ -1,4 +1,4 @@
-
+import beam from '../utils/Beam'
 
 // Constants
 export const constants = {
@@ -19,10 +19,14 @@ export const actions = {
   },
   goInteractive: () => {
     return (dispatch, getState) => {
-      const { interactive: { isConnected } } = getState()
+      const { interactive: { isConnected },
+        board: { versionId },
+        auth: { user: { channel: { id } } }
+      } = getState()
       const shouldConnect = !isConnected
       if (shouldConnect) {
-
+        console.log(beam)
+        beam.goInteractive(id, versionId)
       }
     }
   }

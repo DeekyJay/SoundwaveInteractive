@@ -11,7 +11,7 @@ var config = {
   useBasicAuthorizationHeader: false,
   redirectUri: 'http://soundwave.pewf.co'
 }
-const scopes = ['user:details:self', 'interactive:robot:self', 'interactive:manage:self']
+const scopes = ['user:details:self', 'channel:update:self', 'interactive:robot:self', 'interactive:manage:self']
 
 const windowParams = {
   alwaysOnTop: true,
