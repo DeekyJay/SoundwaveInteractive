@@ -3,37 +3,42 @@
   width: 50%;
   height: calc(100% - 260px);
   margin-top: 10px;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
   position: relative;
-  padding-left: 5px;
+  padding-left: 10px;
   .connector-container-title {
     font-size: 20px;
     height: 30px;
   }
-  .cooldown-options-container {
+  .connector-options-container {
     border: 1px solid $table-border;
     border-radius: 4px;
     background: $table-bg;
-    .cooldown-options-title {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    flex: 1.5;
+    .connector-options-title {
       border-top-right-radius: 4px;
       border-top-left-radius: 4px;
       font-size: 18px;
-      margin-bottom: 5px;
       border-bottom: 2px solid $table-border;
       padding: 4px;
       background: linear-gradient(180deg,#586cbc 1%,#5e65a3);
     }
-    .cooldown-options-wrapper {
+    .connector-options-wrapper {
       margin-left: 15px;
-      height: 30px;
+      height: 25px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      .cooldown-option {
+      flex: 1;
+      .connector-option {
         font-size: 14px;
         flex: 1;
       }
-      .cooldown-radio {
+      .connector-radio {
         width: 16px;
         height: 16px;
         border: 2px solid;
@@ -44,6 +49,36 @@
           background: white;
         }
       }
+      .connector-checkbox {
+        height: 16px;
+        width: 16px;
+        border: 2px solid;
+        border-radius: 20px;
+        margin-right: 20px;
+        line-height: 0;
+        font-size: 12px;
+      }
+      .connector-input {
+        border-style: none;
+        border: 1px solid;
+        border-radius: 2px;
+        width: 50px;
+        outline: none;
+        padding-left: 5px;
+        background: #3e426b;
+        margin-right: 20px;
+      }
+    }
+  }
+  .connect-container {
+    flex: 1;
+    button {
+      height: 100%;
+      width: 100%;
+      border-radius: 4px;
+      border-style: none;
+      background: linear-gradient(135deg, #77aeff 0%,#461c9a 100%);
+      font-size: 26px;
     }
   }
 }

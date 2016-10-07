@@ -2,6 +2,7 @@ import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
 import { remote } from 'electron'
 import { actions as soundActions } from '../modules/Sounds'
+import { actions as interactiveActions } from '../modules/Interactive'
 const Interactive = remote.require('beam-interactive-node')
 let Packets = remote.require('beam-interactive-node/dist/robot/packets').default
 let robot
@@ -138,12 +139,12 @@ function initHandshake (id) {
     .then(rb => {
       console.log('LETS GO')
       rb.on('report', handleReport)
-      var count = 0
       rb.on('error', err => {
-        if (count < 10) {
-          count++
-          throw err
-        }
+        console.log(err)
+        throw err
+      })
+      rb.on('close', () => {
+        store.dispatch(interactiveActions.robotClosedEvent())
       })
     })
     .catch(err => {
@@ -157,7 +158,7 @@ function initHandshake (id) {
 }
 
 export function goInteractive (channelId, versionId) {
-  requestInteractive(channelId, versionId)
+  return requestInteractive(channelId, versionId)
   .then(res => {
     console.log(res.body)
     if (res.body.interactiveGameId === 'You don\'t have access to that.') {
@@ -171,16 +172,26 @@ export function goInteractive (channelId, versionId) {
   })
   .catch(err => {
     console.log(err)
+    store.dispatch(interactiveActions.robotClosedEvent())
   })
 }
 
 /**
  * Stops the connection to Beam.
  */
-export function stop () {
-  if (robot !== null) {
-    robot.close()
-  }
+export function stopInteractive () {
+  return new Promise((resolve, reject) => {
+    if (robot !== null) {
+      robot.on('close', () => {
+        console.log('Robot Closed')
+        resolve(true)
+      })
+      robot.on('error', (err) => {
+        reject(err)
+      })
+      robot.close()
+    }
+  })
 }
 
 export function setupStore (_store) {
@@ -195,5 +206,6 @@ export default {
   getUserInfo,
   updateTokens,
   goInteractive,
+  stopInteractive,
   setupStore
 }

@@ -8,6 +8,7 @@ import { actions as authActions } from '../redux/modules/Authentication'
 import { actions as appActions } from '../redux/modules/App'
 import { actions as soundActions } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
+import { actions as interactiveActions } from '../redux/modules/Interactive'
 
 /* istanbul ignore next */
 class Root extends React.Component {
@@ -18,7 +19,8 @@ class Root extends React.Component {
     authActions: PropTypes.object.isRequired,
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
-    appActions: PropTypes.object.isRequired
+    appActions: PropTypes.object.isRequired,
+    interactiveActions: PropTypes.object.isRequired
   };
 
   get content () {
@@ -62,6 +64,7 @@ class Root extends React.Component {
     this.initializeModule('tokens', 'authActions')
     this.initializeModule('sounds', 'soundActions')
     this.initializeModule('profiles', 'profileActions')
+    this.initializeModule('interactive', 'interactiveActions')
     this.props.appActions.checkForUpdate()
   }
 
@@ -91,6 +94,7 @@ const mapDispatchToProps = (dispatch) => ({
   authActions: bindActionCreators(authActions, dispatch),
   soundActions: bindActionCreators(soundActions, dispatch),
   profileActions: bindActionCreators(profileActions, dispatch),
-  appActions: bindActionCreators(appActions, dispatch)
+  appActions: bindActionCreators(appActions, dispatch),
+  interactiveActions: bindActionCreators(interactiveActions, dispatch)
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Root)
