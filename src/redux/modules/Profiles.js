@@ -4,6 +4,8 @@ import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
+import { actions as interactiveActions } from './Interactive'
+import { actions as boardActions } from './Board'
 
 // Constants
 export const constants = {
@@ -88,7 +90,6 @@ export const actions = {
     }
   },
   assignSound: (index, sound) => {
-    console.log(index, sound)
     return (dispatch, getState) => {
       const { profiles: { profileId, profiles } } = getState()
       let newProfiles = Object.assign([], profiles)
@@ -101,14 +102,14 @@ export const actions = {
       })
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = sound.id
-      console.log(newSounds)
       profile.sounds = newSounds
       newProfiles.splice(idx, 1, profile)
-      console.log(newProfiles)
       dispatch({
         type: constants.ASSIGN_SOUNDS,
         payload: { profiles: newProfiles }
       })
+      dispatch(boardActions.updateGame())
+      dispatch(interactiveActions.updateCooldown())
     }
   }
 }

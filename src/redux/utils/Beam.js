@@ -9,6 +9,11 @@ let robot
 let running
 let store
 
+let state = 'default'
+let cooldownType = 'static'
+let staticCooldown = 30000
+let cooldowns = []
+
 export const client = new Beam()
 const oAuthOpts = {
   clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe'
@@ -73,36 +78,41 @@ function getInteractiveControls (channelID) {
 function handleReport (report) {
   if (running) {
     var tactileResults = []
-    var isUpdate = false
+    var pressedId
     report.tactile.forEach(function (tac) {
-      var isFired = false
-      var prog = 0
       if (tac.pressFrequency > 0) {
-        isUpdate = true
-        isFired = true
-        prog = 1
+        pressedId = tac.id
         console.log('Tactile: ' + tac.id + ', Press: ' +
                 tac.pressFrequency + ', Release: ' + tac.releaseFrequency + ', Connected: ' + report.users.connected)
         store.dispatch(soundActions.playSound(tac.id))
       }
-      var curCooldown
-      var global
-      if (global) {
+    })
+    if (pressedId || pressedId === 0) {
+      report.tactile.forEach(tac => {
+        let curCool = 5000
+        switch (cooldownType) {
+          case 'static':
+            curCool = staticCooldown
+            break
+          case 'dynamic':
+            curCool = cooldowns[pressedId]
+            break
+          case 'individiual':
+            curCool = cooldowns[tac.cooldown]
+        }
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
-          cooldown: curCooldown,
-          fired: isFired,
-          progress: prog
+          cooldown: curCool,
+          fired: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId,
+          progress: tac.progress
         })
         tactileResults.push(tactile)
+      })
+      var progress = {
+        tactile: tactileResults,
+        joystick: [],
+        state: state
       }
-    })
-    var progress = {
-      tactile: tactileResults,
-      joystick: [],
-      state: 'default'
-    }
-    if (isUpdate && global) {
       robot.send(new Packets.ProgressUpdate(progress))
     }
   }
@@ -153,7 +163,6 @@ function initHandshake (id) {
       }
       throw new Error('Error connecting to Interactive', err)
     })
-    // reconnector(robot, initHandshake.bind(this, id))
   })
 }
 
@@ -198,6 +207,17 @@ export function setupStore (_store) {
   store = _store
 }
 
+export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
+  cooldownType = _cooldownType
+  staticCooldown = _staticCooldown
+  cooldowns = _cooldowns
+  console.log(cooldownType, staticCooldown, cooldowns)
+}
+
+export function setProfile (profileId) {
+  state = profileId
+}
+
 export default {
   client,
   auth,
@@ -207,5 +227,7 @@ export default {
   updateTokens,
   goInteractive,
   stopInteractive,
-  setupStore
+  setupStore,
+  setCooldown,
+  setProfile
 }

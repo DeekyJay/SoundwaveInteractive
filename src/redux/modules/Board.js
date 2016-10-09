@@ -3,6 +3,7 @@ import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
 import { client } from '../utils/Beam'
+import { actions as interactiveActions } from './Interactive'
 
 // Constants
 export const constants = {
@@ -35,7 +36,7 @@ const getGridFromTactiles = (tactiles) => {
   return large_grid
 }
 
-const makeValidSoundboard = (tactiles, profiles) => {
+const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
   tactiles = _.cloneDeep(tactiles)
   let profilesInBoard = []
   profiles.map(p => {
@@ -44,55 +45,66 @@ const makeValidSoundboard = (tactiles, profiles) => {
   profilesInBoard = _.uniq(profilesInBoard)
   let newTactiles = []
   tactiles.map((t, i) => {
-    const largeDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'large')
-    const mediumDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'medium')
-    const smallDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'small')
+    // const largeDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'large')
+    // const mediumDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'medium')
+    // const smallDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'small')
 
-    let newBlueprints = []
-    newBlueprints.push(largeDefault)
-    newBlueprints.push(mediumDefault)
-    newBlueprints.push(smallDefault)
-    profiles.map(p => {
-      if (largeDefault) {
-        let large = {}
-        if (large.width !== largeDefault.width) large.width = largeDefault.width
-        if (large.height !== largeDefault.height) large.height = largeDefault.height
-        if (large.x !== largeDefault.x) large.x = largeDefault.x
-        if (large.y !== largeDefault.y) large.y = largeDefault.y
-        large.state = p.id
-        large.grid = 'large'
-        newBlueprints.push(large)
+    // let newBlueprints = []
+    // newBlueprints.push(largeDefault)
+    // newBlueprints.push(mediumDefault)
+    // newBlueprints.push(smallDefault)
+    // profiles.map(p => {
+    //   if (largeDefault) {
+    //     let large = {}
+    //     if (large.width !== largeDefault.width) large.width = largeDefault.width
+    //     if (large.height !== largeDefault.height) large.height = largeDefault.height
+    //     if (large.x !== largeDefault.x) large.x = largeDefault.x
+    //     if (large.y !== largeDefault.y) large.y = largeDefault.y
+    //     large.state = p.id
+    //     large.grid = 'large'
+    //     newBlueprints.push(large)
+    //   }
+    //   if (mediumDefault) {
+    //     let med = {}
+    //     if (med.width !== mediumDefault.width) med.width = mediumDefault.width
+    //     if (med.height !== mediumDefault.height) med.height = mediumDefault.height
+    //     if (med.x !== mediumDefault.x) med.x = mediumDefault.x
+    //     if (med.y !== mediumDefault.y) med.y = mediumDefault.y
+    //     med.state = p.id
+    //     med.grid = 'medium'
+    //     newBlueprints.push(med)
+    //   }
+    //   if (smallDefault) {
+    //     let small = {}
+    //     if (small.width !== smallDefault.width) small.width = smallDefault.width
+    //     if (small.height !== smallDefault.height) small.height = smallDefault.height
+    //     if (small.x !== smallDefault.x) small.x = smallDefault.x
+    //     if (small.y !== smallDefault.y) small.y = smallDefault.y
+    //     small.state = p.id
+    //     small.grid = 'small'
+    //     newBlueprints.push(small)
+    //   }
+    // })
+    let text = 'Unassigned'
+    let cooldown = 0
+    const profile = _.find(profiles, p => p.id === profileId)
+    if (profile) {
+      const sound = _.find(sounds, s => s.id === profile.sounds[i])
+      if (sound) {
+        text = sound.name
+        cooldown = parseInt(sound.cooldown) * 1000
       }
-      if (mediumDefault) {
-        let med = {}
-        if (med.width !== mediumDefault.width) med.width = mediumDefault.width
-        if (med.height !== mediumDefault.height) med.height = mediumDefault.height
-        if (med.x !== mediumDefault.x) med.x = mediumDefault.x
-        if (med.y !== mediumDefault.y) med.y = mediumDefault.y
-        med.state = p.id
-        med.grid = 'medium'
-        newBlueprints.push(med)
-      }
-      if (smallDefault) {
-        let small = {}
-        if (small.width !== smallDefault.width) small.width = smallDefault.width
-        if (small.height !== smallDefault.height) small.height = smallDefault.height
-        if (small.x !== smallDefault.x) small.x = smallDefault.x
-        if (small.y !== smallDefault.y) small.y = smallDefault.y
-        small.state = p.id
-        small.grid = 'small'
-        newBlueprints.push(small)
-      }
-      t.text = p.sounds && p.sounds.length && p.sounds[i] ? p.sounds[i].name : 'Sound ' + (i + 1)
-    })
-    t.blueprint = newBlueprints
+    }
+    t.text = text
     t.analysis = {
       holding: true,
       frequency: true
     }
+    t.cooldown = {
+      press: cooldown
+    }
     newTactiles.push(t)
   })
-  console.log(newTactiles)
   return newTactiles
 }
 
@@ -128,7 +140,7 @@ export const actions = {
   },
   getOwnedGames: () => {
     return (dispatch, getState) => {
-      const { auth: { user }, profiles: { profiles } } = getState()
+      const { auth: { user }, profiles: { profiles, profileId }, sounds: { sounds } } = getState()
       let hasSoundBoardGame, gameId, versionId
       dispatch({type: 'GET_OWNED_GAMES_PENDING'})
       client.game.ownedGames(user.id)
@@ -151,9 +163,7 @@ export const actions = {
         let valid = true
         let newtactiles = []
         if (game.controls && game.controls.tactiles) {
-          newtactiles = makeValidSoundboard(game.controls.tactiles, profiles)
-          console.log('OLD TACTILES', game.controls.tactiles)
-          console.log('NEW TACTILES', newtactiles)
+          newtactiles = makeValidSoundboard(game.controls.tactiles, profiles, sounds, profileId)
           if (!newtactiles.length || !_.isEqual(newtactiles, game.controls.tactiles)) {
             valid = false
             console.log('GAME IS INVALID')
@@ -161,13 +171,12 @@ export const actions = {
         }
         if (!valid) {
           game.controls.tactiles = newtactiles
-          return client.request('PUT', `/interactive/versions/${versionId}`, {
-            body: game,
-            json: true
-          })
-          .then(r => {
-            return r
-          })
+          console.log('GET OWNED', game)
+          const version = {
+            controls: game.controls,
+            gameId: gameId
+          }
+          return client.game.updateVersion(versionId, { body: version, json: true })
         } else {
           return res
         }
@@ -230,6 +239,42 @@ export const actions = {
         dispatch({
           type: 'CREATE_GAME_REJECTED'
         })
+      })
+    }
+  },
+  updateGame: () => {
+    return (dispatch, getState) => {
+      const {
+        board: { versionId, gameId, board },
+        profiles: { profiles, profileId },
+        sounds: { sounds },
+        interactive: { isConnected }
+      } = getState()
+      dispatch({ type: 'UPDATE_GAME_PENDING' })
+      let game = {
+        controls: Object.assign({}, board),
+        gameId: gameId
+      }
+      let newtactiles = makeValidSoundboard(game.controls.tactiles, profiles, sounds, profileId)
+      game.controls.tactiles = newtactiles
+      console.log('UPDATE', game)
+      return client.game.updateVersion(versionId, {
+        body: game,
+        json: true
+      })
+      .then(r => {
+        const large_grid = getGridFromTactiles(game.controls.tactiles)
+        dispatch({ type: 'UPDATE_GAME_FULFILLED',
+          payload: { board: game.controls, large_grid: large_grid } })
+        if (isConnected) {
+          dispatch(interactiveActions.goInteractive())
+          setTimeout(() => { dispatch(interactiveActions.goInteractive()) }, 500)
+        }
+      })
+      .catch(err => {
+        dispatch({ type: 'UPDATE_GAME_REJECTED' })
+        console.log(err)
+        throw err
       })
     }
   }
@@ -300,6 +345,28 @@ const ACTION_HANDLERS = {
       ...state,
       isGameCreating: true
     }
+  },
+  UPDATE_GAME_FULFILLED: (state, actions) => {
+    const { payload: { board, large_grid } } = actions
+    return {
+      ...state,
+      board: board,
+      large_grid: large_grid,
+      isUpdating: false
+    }
+  },
+  UPDATE_GAME_PENDING: (state) => {
+    return {
+      ...state,
+      isUpdating: true
+    }
+  },
+  UPDATE_GAME_REJECTED: (state) => {
+    return {
+      ...state,
+      updateError: true,
+      isUpdating: false
+    }
   }
 }
 // Reducer
@@ -316,7 +383,9 @@ export const initialState = {
   gameId: '',
   versionId: '',
   isGameCreating: false,
-  gameCreationError: false
+  gameCreationError: false,
+  isUpdating: false,
+  updateError: false
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

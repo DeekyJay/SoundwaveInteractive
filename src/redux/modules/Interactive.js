@@ -1,5 +1,6 @@
 import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
+import _ from 'lodash'
 
 // Constants
 export const constants = {
@@ -8,13 +9,32 @@ export const constants = {
   STOP_INTERACTIVE: 'STOP_INTERACTIVE',
   SET_COOLDOWN_OPTION: 'SET_COOLDOWN_OPTION',
   TOGGLE_AUTO_RECONNECT: 'TOGGLE_AUTO_RECONNECT',
-  UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT'
+  UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT',
+  COOLDOWN_UPDATED: 'COOLDOWN_UPDATED'
 }
 
 const syncStorageWithState = (state) => {
   storage.set('interactive', state.storage, (err) => {
     if (err) throw err
   })
+}
+
+const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
+  let cooldowns = []
+  try {
+    const profile = _.find(profiles, p => p.id === id)
+    profile.sounds.map(s => {
+      const sound = _.find(sounds, so => so.id === s)
+      if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
+    })
+  } catch (err) {
+    // Something happened, set the default amount
+    for (let i = 0; i <= 50; i++) {
+      cooldowns = []
+      cooldowns.push(globalCooldown)
+    }
+  }
+  return cooldowns
 }
 
 // Action Creators
@@ -26,11 +46,23 @@ export const actions = {
     }
   },
   setCooldownOption: (option) => {
-    return {
-      type: constants.SET_COOLDOWN_OPTION,
-      payload: {
-        cooldownOption: option
-      }
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.SET_COOLDOWN_OPTION,
+        payload: {
+          cooldownOption: option
+        }
+      })
+      dispatch(actions.updateCooldown())
+    }
+  },
+  updateCooldown: () => {
+    return (dispatch, getState) => {
+      const { interactive: { storage: { cooldownOption, staticCooldown } },
+        profiles: { profiles, profileId }, sounds: { sounds } } = getState()
+      const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
+      beam.setCooldown(cooldownOption, staticCooldown, cooldowns)
+      dispatch({ type: constants.COOLDOWN_UPDATED })
     }
   },
   toggleAutoReconnect: () => {
@@ -48,7 +80,7 @@ export const actions = {
       payload: value
     }
   },
-  goInteractive: (reconnect) => {
+  goInteractive: () => {
     return (dispatch, getState) => {
       const { interactive: { isConnected },
         board: { versionId },
@@ -94,6 +126,7 @@ const ACTION_HANDLERS = {
     return {
       ...state,
       storage: {
+        ...state.storage,
         ...loadedState
       }
     }
@@ -171,6 +204,7 @@ export const initialState = {
   user_count: 0,
   storage: {
     cooldownOption: 'dynamic',
+    staticCooldown: 5000,
     useReconnect: false,
     reconnectionTimeout: 3000
   }

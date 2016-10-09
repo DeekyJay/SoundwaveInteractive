@@ -4,6 +4,7 @@ import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import { Howl } from 'howler'
+import { actions as interactiveActions } from './Interactive'
 
 // Constants
 export const constants = {
@@ -100,6 +101,7 @@ export const actions = {
         type: constants.EDIT_SOUND,
         payload: { sounds: newSounds }
       })
+      dispatch(interactiveActions.updateCooldown())
     }
   },
   clearAllSounds: () => {

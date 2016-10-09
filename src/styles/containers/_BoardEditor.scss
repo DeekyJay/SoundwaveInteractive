@@ -199,6 +199,16 @@
                   top: 0;
                   left: 0;
                 }
+                .button-number {
+                  font-size: 10px;
+                  line-height: 0.75;
+                }
+                .button-name {
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space: nowrap;
+                }
               }
             }
           }
