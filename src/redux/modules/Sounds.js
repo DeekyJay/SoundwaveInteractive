@@ -52,7 +52,8 @@ export const actions = {
           } else {
             name = file.name
           }
-          sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown })
+          sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
+            sparks: state.sounds.default_sparks })
         } else {
           toastr.warning('Duplicate Detected',
             file.path + ' already exists in your library.')
@@ -86,13 +87,14 @@ export const actions = {
       })
     }
   },
-  editSound: (id, cooldown, name) => {
+  editSound: (id, cooldown, sparks, name) => {
     return (dispatch, getState) => {
       const { sounds: { sounds } } = getState()
       const newSounds = Object.assign([], sounds)
       newSounds.map((sound) => {
         if (sound.id === id) {
           sound.cooldown = cooldown
+          sound.sparks = sparks
           sound.name = name
         }
       })
@@ -178,7 +180,8 @@ const ACTION_HANDLERS = {
 // Reducer
 export const initialState = {
   sounds: [],
-  default_cooldown: 15
+  default_cooldown: 15,
+  default_sparks: 100
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

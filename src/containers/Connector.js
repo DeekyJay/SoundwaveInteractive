@@ -41,7 +41,7 @@ export class Connector extends React.Component {
 
     const clickStatic = this.setCooldownOption.bind(this, 'static')
     const clickDynamic = this.setCooldownOption.bind(this, 'dynamic')
-    const clickIndividual = this.setCooldownOption.bind(this, 'self')
+    const clickIndividual = this.setCooldownOption.bind(this, 'individual')
     return (
       <div className='connector-container'>
         <div className='connector-container-title'>Connection</div>
@@ -66,7 +66,7 @@ export class Connector extends React.Component {
             onClick={clickIndividual}
             data-tip='No global cooldown. Only the button clicked cools down.'>
             <span className='connector-option'>Individual Cooldown</span>
-            <span className={`connector-radio ${cooldownOption === 'self' ? 'toggled' : ''}`}></span>
+            <span className={`connector-radio ${cooldownOption === 'individual' ? 'toggled' : ''}`}></span>
           </div>
         </div>
         <div className='connector-options-container'>

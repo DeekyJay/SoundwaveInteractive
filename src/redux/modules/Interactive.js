@@ -40,9 +40,12 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
 // Action Creators
 export const actions = {
   initialize: (data) => {
-    return {
-      type: constants.INTERACTIVE_INITIALIZE,
-      payload: { loadedState: data }
+    return (dispatch) => {
+      dispatch({
+        type: constants.INTERACTIVE_INITIALIZE,
+        payload: { loadedState: data }
+      })
+      dispatch(actions.updateCooldown())
     }
   },
   setCooldownOption: (option) => {

@@ -28,6 +28,9 @@ export class SoundItem extends React.Component {
         <div className='sound-list-col-header cooldown'>
           {sound.cooldown}s
         </div>
+        <div className='sound-list-col-header sparks'>
+          {sound.sparks}
+        </div>
         <div className='sound-list-col-header name'>
           {sound.name}
         </div>

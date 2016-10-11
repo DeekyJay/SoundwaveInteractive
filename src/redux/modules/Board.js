@@ -87,12 +87,14 @@ const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
     // })
     let text = 'Unassigned'
     let cooldown = 0
+    let sparks = 0
     const profile = _.find(profiles, p => p.id === profileId)
     if (profile) {
       const sound = _.find(sounds, s => s.id === profile.sounds[i])
       if (sound) {
         text = sound.name
         cooldown = parseInt(sound.cooldown) * 1000
+        sparks = parseInt(sound.sparks)
       }
     }
     t.text = text
@@ -102,6 +104,11 @@ const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
     }
     t.cooldown = {
       press: cooldown
+    }
+    t.cost = {
+      press: {
+        cost: sparks
+      }
     }
     newTactiles.push(t)
   })

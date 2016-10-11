@@ -102,7 +102,7 @@ function handleReport (report) {
         }
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
-          cooldown: curCool,
+          cooldown: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId ? curCool : 0,
           fired: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId,
           progress: tac.progress
         })

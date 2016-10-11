@@ -84,9 +84,12 @@ export const actions = {
     }
   },
   selectProfile: (profileId) => {
-    return {
-      type: constants.SELECT_PROFILE,
-      payload: { profileId: profileId }
+    return (dispatch) => {
+      dispatch({
+        type: constants.SELECT_PROFILE,
+        payload: { profileId: profileId }
+      })
+      dispatch(boardActions.updateGame())
     }
   },
   assignSound: (index, sound) => {

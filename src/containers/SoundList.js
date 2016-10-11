@@ -48,6 +48,7 @@ export class SoundList extends React.Component {
       sound: null,
       edit_inputs: {
         cooldown: '',
+        sparks: '',
         name: ''
       }
     }
@@ -119,6 +120,7 @@ export class SoundList extends React.Component {
       editId: s.id,
       edit_inputs: {
         cooldown: s.cooldown,
+        sparks: s.sparks,
         name: s.name
       }
     })
@@ -170,12 +172,16 @@ export class SoundList extends React.Component {
   }
 
   editSound = () => {
-    const { editId, edit_inputs: { cooldown, name } } = this.state
+    const { editId, edit_inputs: { cooldown, sparks, name } } = this.state
     if (!isNumeric(cooldown) || parseInt(cooldown) < 0) {
       toastr.error('Edit Error', 'Cooldown must be a number 0 or greater.')
       return
     }
-    this.props.soundActions.editSound(editId, cooldown, name)
+    if (!isNumeric(sparks) || parseInt(sparks) < 0) {
+      toastr.error('Edit Error', 'Sparks must be a number 0 or greater.')
+      return
+    }
+    this.props.soundActions.editSound(editId, cooldown, sparks, name)
     this.cancelEdit()
   }
 
@@ -185,6 +191,7 @@ export class SoundList extends React.Component {
       editId: null,
       edit_inputs: {
         cooldown: '',
+        sparks: '',
         name: ''
       }
     })
@@ -232,6 +239,9 @@ export class SoundList extends React.Component {
             <div className='sound-list-col-header cooldown' data-tip='Cooldown'>
               <span className='sicon-stopwatch'></span>
             </div>
+            <div className='sound-list-col-header sparks' data-tip='Sparks'>
+              <span className='sicon-lightning'></span>
+            </div>
             <div className='sound-list-col-header name'>
               Name
             </div>
@@ -273,6 +283,17 @@ export class SoundList extends React.Component {
                     autoFocus
                     value={edit_inputs.cooldown}
                     placeholder='Cooldown' />
+                </div>
+                <div className='form-input'>
+                  <div className='form-label'>Sparks</div>
+                  <input
+                    type='text'
+                    name='sparks'
+                    onChange={this.updateValue}
+                    onKeyPress={this.handlePress}
+                    autoFocus
+                    value={edit_inputs.sparks}
+                    placeholder='Sparks' />
                 </div>
                 <div className='form-input'>
                   <div className='form-label'>Name</div>
