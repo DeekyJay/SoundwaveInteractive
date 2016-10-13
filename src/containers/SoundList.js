@@ -226,15 +226,6 @@ export class SoundList extends React.Component {
       <div className='sound-list-container'>
         <div className='sound-list-title'>Sounds</div>
         <div className='sound-list-table'>
-          <div className='sound-list-search'>
-            <span className='sicon-search'></span>
-            <input
-              className='search-input'
-              type='text'
-              name='search'
-              placeholder='Search'
-              onChange={this.filterSounds} />
-          </div>
           <div className='sound-list-col-headers'>
             <div className='sound-list-col-header cooldown' data-tip='Cooldown'>
               <span className='sicon-stopwatch'></span>

@@ -62,6 +62,10 @@ export class BoardEditor extends React.Component {
     console.log(grid)
     this.props.boardActions.updateGrid(grid)
   }
+
+  toggleLock = () => {
+    this.props.boardActions.toggleLock()
+  }
   render () {
     const {
       profiles,
@@ -102,7 +106,6 @@ export class BoardEditor extends React.Component {
         large_grid
       }
     } = this.props
-    const showBack = this.showBoard.bind(this, '')
     return (
       <div className='board'>
         {profileId || true
@@ -115,18 +118,13 @@ export class BoardEditor extends React.Component {
                   : null}
               </div>
             </div>
+            {board.isLocked ? <div className='board-locked'></div> : null}
             <div className='board-actions'>
-              { /* <div className='board-action back' data-tip='Back'
-                onClick={showBack}><div className='sicon-back'></div></div>
-              <div className='board-action add' data-tip='Add Button'
-                onClick={this.addButtonToBoard}>
-                <div className='sicon-round-add'></div>
-              </div> */ }
-              <div className='board-action refresh' data-tip='Refresh Layout'>
-                <div className='sicon-update'></div>
+              <div className='board-action lock' data-tip='Unlock/Lock Edit Mode' onClick={this.toggleLock}>
+                <div className={board.isLocked ? 'sicon-lock' : 'sicon-unlock'}></div>
               </div>
-              <div className='board-action save' data-tip='Save To Beam'>
-                <div className='sicon-round-check'></div>
+              <div className='board-action fetch' data-tip='Load Changes from Beam'>
+                <div className='sicon-cloud-fetch'></div>
               </div>
             </div>
           </div>

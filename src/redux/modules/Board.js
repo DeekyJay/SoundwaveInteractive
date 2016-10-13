@@ -11,7 +11,8 @@ export const constants = {
   EDIT_BOARD: 'EDIT_BOARD',
   ADD_BUTTON_TO_BOARD: 'ADD_BUTTON_TO_BOARD',
   UPDATE_GRID: 'UPDATE_GRID',
-  GET_OWNED_GAMES: 'GET_OWNED_GAMES'
+  GET_OWNED_GAMES: 'GET_OWNED_GAMES',
+  TOGGLE_LOCK: 'TOGGLE_LOCK'
 }
 
 const getGridFromTactiles = (tactiles) => {
@@ -284,6 +285,11 @@ export const actions = {
         throw err
       })
     }
+  },
+  toggleLock: () => {
+    return {
+      type: constants.TOGGLE_LOCK
+    }
   }
 }
 // Action handlers
@@ -374,6 +380,12 @@ const ACTION_HANDLERS = {
       updateError: true,
       isUpdating: false
     }
+  },
+  TOGGLE_LOCK: (state) => {
+    return {
+      ...state,
+      isLocked: !state.isLocked
+    }
   }
 }
 // Reducer
@@ -384,7 +396,6 @@ export const initialState = {
   medium_grid: [],
   small_grid: [],
   expanded: false,
-  buttons_left: 100,
   ownedGames: [],
   hasSoundBoardGame: false,
   gameId: '',
@@ -392,7 +403,8 @@ export const initialState = {
   isGameCreating: false,
   gameCreationError: false,
   isUpdating: false,
-  updateError: false
+  updateError: false,
+  isLocked: false
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

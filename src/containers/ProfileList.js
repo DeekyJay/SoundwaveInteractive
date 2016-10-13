@@ -156,15 +156,6 @@ export class ProfileList extends React.Component {
       <div className='profile-list-container'>
         <div className='profile-list-title'>Profiles</div>
         <div className='profile-list-table'>
-          <div className='profile-list-search'>
-            <span className='sicon-search'></span>
-            <input
-              className='search-input'
-              type='text'
-              name='search'
-              placeholder='Search'
-              onChange={this.filterProfiles} />
-          </div>
           <div className='profile-list-col-headers'>
             <div className='profile-list-col-header name'>
               Name

@@ -216,4 +216,12 @@
       }
     }
   }
+  .board-locked {
+    background: rgba(54, 58, 93, 0.59);
+    top: 0;
+    right: 0;
+    left: 0;
+    position: absolute;
+    bottom: 0;
+  }
 }

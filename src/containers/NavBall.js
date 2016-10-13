@@ -23,7 +23,7 @@ export class NavBall extends React.Component {
             <div className='nav-item-text'>Soundboard</div>
           </div>
           <div className='nav-item settings' onClick={navigateSettings}>
-            <span className='sicon-gears'></span>
+            <span className='sicon-controls'></span>
             <div className='nav-item-text'>Settings</div>
           </div>
           <div className='nav-item about' onClick={navigateAbout}>
