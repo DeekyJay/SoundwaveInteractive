@@ -66,6 +66,11 @@ export class BoardEditor extends React.Component {
   toggleLock = () => {
     this.props.boardActions.toggleLock()
   }
+
+  getGame = () => {
+    this.props.boardActions.getOwnedGames()
+  }
+
   render () {
     const {
       profiles,
@@ -123,7 +128,7 @@ export class BoardEditor extends React.Component {
               <div className='board-action lock' data-tip='Unlock/Lock Edit Mode' onClick={this.toggleLock}>
                 <div className={board.isLocked ? 'sicon-lock' : 'sicon-unlock'}></div>
               </div>
-              <div className='board-action fetch' data-tip='Load Changes from Beam'>
+              <div className='board-action fetch' data-tip='Load Changes from Beam' onClick={this.getGame}>
                 <div className='sicon-cloud-fetch'></div>
               </div>
             </div>
