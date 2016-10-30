@@ -5,6 +5,7 @@ import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import { Howl } from 'howler'
 import { actions as interactiveActions } from './Interactive'
+import analytics from '../utils/analytics'
 
 // Constants
 export const constants = {
@@ -53,7 +54,7 @@ export const actions = {
             name = file.name
           }
           sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
-            sparks: state.sounds.default_sparks })
+            sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
         } else {
           toastr.warning('Duplicate Detected',
             file.path + ' already exists in your library.')
@@ -63,6 +64,7 @@ export const actions = {
         type: constants.ADD_SOUNDS,
         payload: { sounds: sounds }
       })
+      analytics.updateSoundCount(state.sounds.sounds.length, 1)
     }
   },
   sortSounds: (oldIndex, newIndex) => {
@@ -85,9 +87,10 @@ export const actions = {
         type: constants.REMOVE_SOUND,
         payload: { sounds: newSounds }
       })
+      analytics.updateSoundCount(sounds.length, -1)
     }
   },
-  editSound: (id, cooldown, sparks, name) => {
+  editSound: (id, cooldown, sparks, name, volume) => {
     return (dispatch, getState) => {
       const { sounds: { sounds } } = getState()
       const newSounds = Object.assign([], sounds)
@@ -96,6 +99,7 @@ export const actions = {
           sound.cooldown = cooldown
           sound.sparks = sparks
           sound.name = name
+          sound.volume = volume
         }
       })
       toastr.success('Sound Updated!')
@@ -121,11 +125,13 @@ export const actions = {
         const howl = new Howl({
           urls: [sound.path],
           buffer: true,
+          volume: parseFloat(sound.volume) * 0.01,
           onend: () => {
             dispatch({ type: constants.PLAY_SOUND_ENDED })
           }
         })
         howl.play()
+        analytics.soundPlayed()
         dispatch({ type: constants.PLAY_SOUND_STARTED })
       } catch (err) {
         dispatch({ type: constants.PLAY_SOUND_ERROR })
@@ -181,7 +187,8 @@ const ACTION_HANDLERS = {
 export const initialState = {
   sounds: [],
   default_cooldown: 15,
-  default_sparks: 100
+  default_sparks: 100,
+  default_volume: 100
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

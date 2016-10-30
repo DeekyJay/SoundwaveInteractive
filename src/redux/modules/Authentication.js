@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 import { auth, checkStatus, updateTokens, getUserInfo } from '../utils/Beam'
 import { push } from 'react-router-redux'
-
+import analytics from '../utils/analytics'
 // Constants
 export const constants = {
   SIGN_IN: 'SIGN_IN',
@@ -36,6 +36,7 @@ export const actions = {
         getUserInfo()
         .then(response => {
           const user = response.body
+          analytics.init(user.id, tokens)
           dispatch({
             type: constants.SIGN_IN,
             payload: {
@@ -67,6 +68,7 @@ export const actions = {
         getUserInfo()
         .then(response => {
           const user = response.body
+          analytics.init(user.id, tokens)
           dispatch({
             type: constants.SET_USER,
             payload: { user: user }

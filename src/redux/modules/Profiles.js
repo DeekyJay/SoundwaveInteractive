@@ -6,6 +6,7 @@ import { arrayMove } from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
 import { actions as interactiveActions } from './Interactive'
 import { actions as boardActions } from './Board'
+import analytics from '../utils/analytics'
 
 // Constants
 export const constants = {
@@ -43,6 +44,7 @@ export const actions = {
         type: constants.ADD_PROFILE,
         payload: { profiles: newProfiles }
       })
+      analytics.updateProfiles(profiles.length, 1)
     }
   },
   sortProfiles: (oldIndex, newIndex) => {
@@ -65,6 +67,7 @@ export const actions = {
         type: constants.REMOVE_PROFILE,
         payload: { profiles: newProfiles }
       })
+      analytics.updateProfiles(profiles.length, -1)
     }
   },
   editProfile: (id, name) => {

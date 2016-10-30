@@ -9,6 +9,7 @@ import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { Howl } from 'howler'
 import { toastr } from 'redux-toastr'
+import ReactSlider from 'react-slider'
 
 const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound}) => {
   return (<SoundItem index={index} sound={sound} soundActions={soundActions}
@@ -49,7 +50,8 @@ export class SoundList extends React.Component {
       edit_inputs: {
         cooldown: '',
         sparks: '',
-        name: ''
+        name: '',
+        volume: ''
       }
     }
   }
@@ -100,10 +102,9 @@ export class SoundList extends React.Component {
     let s
     let i
     if (!currentSound) s = sound
-    if ((oldIndex === null ||
-      oldIndex === undefined) &&
-      (typeof oldIndex) === Number) i = this.props.sounds.findIndex(sound => sound.id === s.id)
+    if (!oldIndex && oldIndex !== 0) i = this.props.sounds.findIndex(sound => sound.id === s.id)
     else i = oldIndex
+    console.log(i)
     this.props.soundActions.removeSound(i)
     if (sound && s.id === sound.id) {
       if (this.state.howl) this.state.howl.stop()
@@ -121,7 +122,8 @@ export class SoundList extends React.Component {
       edit_inputs: {
         cooldown: s.cooldown,
         sparks: s.sparks,
-        name: s.name
+        name: s.name,
+        volume: s.volume
       }
     })
   }
@@ -142,6 +144,7 @@ export class SoundList extends React.Component {
       const howl = new Howl({
         urls: [sound.path],
         buffer: true,
+        volume: parseFloat(sound.volume) * 0.01,
         onend: () => {
           this.setState({ ...this.state, isPlaying: false, howl: null })
         }
@@ -172,7 +175,7 @@ export class SoundList extends React.Component {
   }
 
   editSound = () => {
-    const { editId, edit_inputs: { cooldown, sparks, name } } = this.state
+    const { editId, edit_inputs: { cooldown, sparks, name, volume } } = this.state
     if (!isNumeric(cooldown) || parseInt(cooldown) < 0) {
       toastr.error('Edit Error', 'Cooldown must be a number 0 or greater.')
       return
@@ -181,7 +184,7 @@ export class SoundList extends React.Component {
       toastr.error('Edit Error', 'Sparks must be a number 0 or greater.')
       return
     }
-    this.props.soundActions.editSound(editId, cooldown, sparks, name)
+    this.props.soundActions.editSound(editId, cooldown, sparks, name, volume)
     this.cancelEdit()
   }
 
@@ -192,7 +195,8 @@ export class SoundList extends React.Component {
       edit_inputs: {
         cooldown: '',
         sparks: '',
-        name: ''
+        name: '',
+        volume: ''
       }
     })
   }
@@ -207,6 +211,10 @@ export class SoundList extends React.Component {
 
   clickDelete = () => {
     this._delete()
+  }
+
+  setVolume = (value) => {
+    this.updateValue({ target: { name: 'volume', value: value } })
   }
 
   render () {
@@ -296,6 +304,16 @@ export class SoundList extends React.Component {
                     value={edit_inputs.name}
                     autoFocus
                     placeholder='Name' />
+                </div>
+                <div className='form-input'>
+                  <div className='form-label'>Volume | <span className='volume'>{edit_inputs.volume}%</span></div>
+                  <ReactSlider
+                    min={0}
+                    max={100}
+                    step={2}
+                    defaultValue={edit_inputs.volume}
+                    className='volume-slider'
+                    onChange={this.setVolume} />
                 </div>
                 <button type='button' className='btn btn-primary' onClick={this.editSound}>
                   Save

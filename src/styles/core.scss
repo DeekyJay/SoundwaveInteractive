@@ -125,5 +125,20 @@
       color: inherit;
     }
   }
+
+  .volume-slider {
+    background: white;
+    padding: 2px;
+    border-radius: 3px;
+    margin: 5px;
+    .handle {
+      width: 15px;
+      height: 15px;
+      background: #047ffb;
+      top: -5px;
+      border-radius: 10px;
+      border: 2px solid white;
+    }
+  }
 }
 /* Make standard style for this app */

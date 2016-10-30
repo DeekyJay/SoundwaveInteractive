@@ -1,6 +1,7 @@
 import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
+import analytics from '../utils/analytics'
 
 // Constants
 export const constants = {
@@ -99,6 +100,7 @@ export const actions = {
         beam.goInteractive(id, versionId)
         .then(res => {
           dispatch({ type: 'GO_INTERACTIVE_FULFILLED' })
+          analytics.wentInteractive()
         })
         .catch(err => {
           dispatch({ type: 'GO_INTERACTIVE_REJECTED' })
