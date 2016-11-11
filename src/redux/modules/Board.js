@@ -89,16 +89,19 @@ const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
     let text = 'Unassigned'
     let cooldown = 0
     let sparks = 0
+    let help = ''
     const profile = _.find(profiles, p => p.id === profileId)
     if (profile) {
       const sound = _.find(sounds, s => s.id === profile.sounds[i])
       if (sound) {
         text = sound.name
+        help = sound.name
         cooldown = parseInt(sound.cooldown) * 1000
         sparks = parseInt(sound.sparks)
       }
     }
     t.text = text
+    t.help = help
     t.analysis = {
       holding: true,
       frequency: true

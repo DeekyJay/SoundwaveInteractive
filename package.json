@@ -93,8 +93,8 @@
     }
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Leviathan5/SoundwaveInteractive.git"
+    "url": "git+https://github.com/Leviathan5/SoundwaveInteractive.git",
+    "type": "git"
   },
   "author": "Derek Jensen",
   "license": "MIT",
@@ -114,6 +114,7 @@
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.10.0",
     "moment": "^2.13.0",
+    "node-core-audio": "github:zectbynmo/node-core-audio",
     "normalizr": "^2.0.1",
     "proto-loader": "^0.2.0",
     "protobufjs": "^5.0.1",
@@ -126,6 +127,7 @@
     "react-dom": "^15.1.0",
     "react-dropzone": "^3.5.2",
     "react-grid-layout": "^0.12.7",
+    "react-ink": "^5.1.1",
     "react-onclickoutside": "^5.2.0",
     "react-redux": "^4.0.0",
     "react-router": "^2.0.0",

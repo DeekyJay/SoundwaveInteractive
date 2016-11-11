@@ -19,6 +19,7 @@
         height: 100px;
       }
       .add-game-container {
+        position: relative;
         margin: 20px;
         text-align: center;
         .add-game {
@@ -131,6 +132,7 @@
         flex-direction: column;
         max-width: 250px;
         .board-action {
+          position: relative;
           width: 100%;
           line-height: 0;
           padding: 10px 0;
@@ -192,6 +194,9 @@
                 background: #464b7a;
                 border-radius: 2px;
                 padding: 2px;
+                &:hover {
+                  background: $board-btn-hover;
+                }
                 .tactile {
                   position: absolute;
                   height: 100%;
@@ -219,9 +224,14 @@
   .board-locked {
     background: rgba(54, 58, 93, 0.59);
     top: 0;
-    right: 0;
+    right: 50px;
     left: 0;
     position: absolute;
     bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 135px;
+    color: #222438;
   }
 }

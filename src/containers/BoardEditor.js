@@ -2,14 +2,15 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as boardActions } from '../redux/modules/Board'
+import { actions as soundActions } from '../redux/modules/Sounds'
+import { actions as profileActions } from '../redux/modules/Profiles'
 import ReactGridLayout from 'react-grid-layout'
 import ReactToolTip from 'react-tooltip'
 import DevLabUtil from '../redux/utils/DevLabUtil'
 import _ from 'lodash'
+import Ink from '../components/Ink/src'
 
 const largeGrid = DevLabUtil.makeGrid(16, 4)
-const mediumGrid = DevLabUtil.makeGrid(9, 5)
-const smallGrid = DevLabUtil.makeGrid(6, 8)
 
 export class BoardEditor extends React.Component {
 
@@ -17,28 +18,10 @@ export class BoardEditor extends React.Component {
     hasSoundBoardGame: PropTypes.bool.isRequired,
     board: PropTypes.object.isRequired,
     boardActions: PropTypes.object.isRequired,
+    soundActions: PropTypes.object.isRequired,
+    profileActions: PropTypes.object.isRequired,
     profileId: PropTypes.string.isRequired,
     profiles: PropTypes.array.isRequired
-  }
-
-  constructor (props) {
-    super(props)
-    this.state = {
-      large_grid: [],
-      medium_grid: [],
-      small_grid: []
-    }
-  }
-
-  componentWillReceiveProps (props) {
-    // if (!_.isEqual(this.props, props)) {
-    //   this.setState({
-    //     ...this.state,
-    //     large_grid: props.board.large_grid,
-    //     medium_grid: props.board.medium_grid,
-    //     small_grid: props.board.small_grid
-    //   })
-    // }
   }
 
   createGame = () => {
@@ -64,11 +47,15 @@ export class BoardEditor extends React.Component {
   }
 
   toggleLock = () => {
-    this.props.boardActions.toggleLock()
+    this.props.profileActions.toggleLock()
   }
 
   getGame = () => {
     this.props.boardActions.getOwnedGames()
+  }
+
+  editSound = (index) => {
+    this.props.soundActions.setupEdit(index)
   }
 
   render () {
@@ -94,6 +81,7 @@ export class BoardEditor extends React.Component {
                 Looks like you don't have a soundboard game in the Beam Dev Labs.
                 <div className='add-game-container'>
                   <span className='add-game' onClick={this.createGame}>Create Soundboard</span>
+                  <Ink />
                 </div>
               </span>}
           </div>
@@ -101,6 +89,11 @@ export class BoardEditor extends React.Component {
         </div>
       </div>
     )
+  }
+
+  isProfileLocked = () => {
+    const { profileId, profiles } = this.props
+    return _.find(profiles, p => p.id === profileId && p.locked)
   }
 
   renderBoard = () => {
@@ -123,13 +116,15 @@ export class BoardEditor extends React.Component {
                   : null}
               </div>
             </div>
-            {board.isLocked ? <div className='board-locked'></div> : null}
+            {this.isProfileLocked() ? <div className='board-locked'><span className='sicon-lock' /></div> : null}
             <div className='board-actions'>
               <div className='board-action lock' data-tip='Unlock/Lock Edit Mode' onClick={this.toggleLock}>
-                <div className={board.isLocked ? 'sicon-lock' : 'sicon-unlock'}></div>
+                <div className={!this.isProfileLocked() ? 'sicon-lock' : 'sicon-unlock'}></div>
+                <Ink />
               </div>
               <div className='board-action fetch' data-tip='Load Changes from Beam' onClick={this.getGame}>
                 <div className='sicon-cloud-fetch'></div>
+                <Ink />
               </div>
             </div>
           </div>
@@ -156,11 +151,13 @@ export class BoardEditor extends React.Component {
         verticalCompact>
         {
           large_grid.map((button) => {
+            const clickSound = this.editSound.bind(this, button.i)
             return (
-              <div key={button.i} className='grid-button'>
+              <div key={button.i} className='grid-button' onClick={clickSound} >
                 <div className='button-number'>#{button.i}</div>
                 <div className='button-name'>{button.name}</div>
                 <span className={`tactile tactile|${button.i}`}></span>
+                <Ink className={`tactile tactile|${button.i}`} />
               </div>
             )
           })
@@ -197,66 +194,20 @@ export class BoardEditor extends React.Component {
   }
 
   renderBackgroundGridDetails = (grid, cols, rowHeight, width, margin, box_class) => {
-    let gridArr = []
-    switch (grid) {
-      case 'large':
-        gridArr = largeGrid
-        break
-      case 'medium':
-        gridArr = mediumGrid
-        break
-      case 'small':
-        gridArr = smallGrid
-        break
-    }
     return (
       <ReactGridLayout
-        layout={gridArr}
+        layout={largeGrid}
         cols={cols}
         rowHeight={rowHeight}
         width={width}
         margin={margin}
         verticalCompact={false} >
-        {gridArr.map((item) => {
+        {largeGrid.map((item) => {
           return (
             <div className={box_class} key={item.i}></div>
           )
         })}
       </ReactGridLayout>
-    )
-  }
-
-  renderSelector = () => {
-    const showLarge = this.showBoard.bind(this, 'large')
-    const showMedium = this.showBoard.bind(this, 'medium')
-    const showSmall = this.showBoard.bind(this, 'small')
-    return (
-      <div className='board-size-selector'>
-        <div className='board-size'>
-          <div className='board-size-header'>Large</div>
-          <div className='board-size-image large' onClick={showLarge}>
-            <div className='board-grid'>
-              {this.renderBackgroundGridDetails('large', 30, 40, 600, [5, 5], 'grid-box')}
-            </div>
-          </div>
-        </div>
-        <div className='board-size'>
-          <div className='board-size-header'>Medium</div>
-          <div className='board-size-image medium' onClick={showMedium}>
-            <div className='board-grid'>
-              {this.renderBackgroundGridDetails('medium', 9, 8, 110, [3, 3], 'grid-box')}
-            </div>
-          </div>
-        </div>
-        <div className='board-size'>
-          <div className='board-size-header'>Small</div>
-          <div className='board-size-image small' onClick={showSmall}>
-            <div className='board-grid'>
-              {this.renderBackgroundGridDetails('small', 6, 8, 70, [3, 3], 'grid-box')}
-            </div>
-          </div>
-        </div>
-      </div>
     )
   }
 }
@@ -270,7 +221,9 @@ const mapStateToProps = (state) => ({
 
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch) => ({
-  boardActions: bindActionCreators(boardActions, dispatch)
+  boardActions: bindActionCreators(boardActions, dispatch),
+  soundActions: bindActionCreators(soundActions, dispatch),
+  profileActions: bindActionCreators(profileActions, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(BoardEditor)

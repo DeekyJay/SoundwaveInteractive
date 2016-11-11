@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import Ink from '../Ink/src'
 
 export class ProfileItem extends React.Component {
   static propTypes = {
@@ -19,9 +20,16 @@ export class ProfileItem extends React.Component {
     return (
       <div key={index} className={`profile-item-container ${isSelected ? 'selected' : ''}`}
         onClick={this.selectProfile}>
+        <div className='profile-list-col-header lock'>
+          {profile.locked
+            ? <span className='sicon-lock' />
+            : <span className='sicon-unlock' />
+          }
+        </div>
         <div className='profile-list-col-header name'>
           {profile.name}
         </div>
+        <Ink />
       </div>
     )
   }

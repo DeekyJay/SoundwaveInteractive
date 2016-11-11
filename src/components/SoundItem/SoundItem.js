@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { remote } from 'electron'
+import Ink from '../../components/Ink/src'
 const { shell } = remote
 
 export class SoundItem extends React.Component {
@@ -15,7 +16,7 @@ export class SoundItem extends React.Component {
     shell.showItemInFolder(this.props.sound.path)
   }
 
-  selectSound = () => {
+  selectSound = (e) => {
     this.props.selectSound(this.props.sound)
   }
 
@@ -37,6 +38,7 @@ export class SoundItem extends React.Component {
         <div className='sound-list-col-header folder' onClick={this.openFileLocation}>
           <span className='sicon-folder'></span>
         </div>
+        <Ink />
       </div>
     )
   }

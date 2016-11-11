@@ -12,15 +12,16 @@
     margin-bottom: 20px;
   }
   .login-button {
+    position: relative;
     padding: 10px 25px;
     font-size: 24px;
     border-radius: 4px;
     display: inline-block;
     margin: auto 0;
     cursor: pointer;
-    background: -webkit-linear-gradient(-45deg, #77aeff 0%,#461c9a 100%);
+    background: $primary-button-bg;
     &:hover {
-      background: -webkit-linear-gradient(-45deg, #9fc5ff 0%,#713cdc 100%);
+      background: $nav-bg-hover;
     }
   }
   .login-minor-text {

@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as uiActions } from '../redux/modules/UI'
+import ClearData from './ClearData'
+import Audio from './Audio'
 
 export class Settings extends React.Component {
 
@@ -19,6 +21,8 @@ export class Settings extends React.Component {
       <div className={'content-container' + this.isActive() + ' settings'}>
         <div className='content-header'>Settings</div>
         <div className='content-body'>
+          <Audio />
+          <ClearData />
         </div>
       </div>
     )

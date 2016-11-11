@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as uiActions } from '../redux/modules/UI'
-
+import Ink from '../components/Ink/src'
 export class NavBall extends React.Component {
 
   static propTypes = {
@@ -21,14 +21,17 @@ export class NavBall extends React.Component {
           <div className='nav-item board' onClick={navigateSoundboard}>
             <span className='sicon-piano'></span>
             <div className='nav-item-text'>Soundboard</div>
+            <Ink />
           </div>
           <div className='nav-item settings' onClick={navigateSettings}>
             <span className='sicon-controls'></span>
             <div className='nav-item-text'>Settings</div>
+            <Ink />
           </div>
           <div className='nav-item about' onClick={navigateAbout}>
             <span className='sicon-info'></span>
             <div className='nav-item-text'>About</div>
+            <Ink />
           </div>
         </div>
       </div>

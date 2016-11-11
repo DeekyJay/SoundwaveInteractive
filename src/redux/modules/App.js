@@ -1,5 +1,7 @@
 import { remote, ipcRenderer } from 'electron'
 import fetch from '../utils/fetch'
+import _ from 'lodash'
+
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
 // Constants
@@ -9,7 +11,9 @@ export const constants = {
   CLOSE: 'CLOSE',
   FULLSCREEN: 'FULLSCREEN',
   ALWAYS_ON_TOP: 'ALWAYS_ON_TOP',
-  CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE'
+  CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE',
+  GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES',
+  SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -93,6 +97,29 @@ export const actions = {
         })
       })
     }
+  },
+  getAudioDevices: () => {
+    console.log('GET AUDIO DEVICES')
+    return (dispatch, getState) => {
+      navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        console.log(devices)
+        const audioOutputs = _.filter(devices, d => d.kind === 'audiooutput')
+        dispatch({
+          type: constants.GET_AUDIO_DEVICES,
+          payload: { outputs: audioOutputs }
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  setAudioDevice: (id) => {
+    return {
+      type: constants.SET_AUDIO_DEVICE,
+      payload: { id: id }
+    }
   }
 }
 // Action handlers
@@ -134,6 +161,21 @@ const ACTION_HANDLERS = {
       ...state,
       ...payload
     }
+  },
+  GET_AUDIO_DEVICES: (state, action) => {
+    console.log('HANDLE GET AUDIO', action)
+    const { payload } = action
+    return {
+      ...state,
+      ...payload
+    }
+  },
+  SET_AUDIO_DEVICE: (state, action) => {
+    const { payload: { id } } = action
+    return {
+      ...state,
+      selectedOutput: id
+    }
   }
 }
 // Reducer
@@ -144,7 +186,9 @@ export const initialState = {
     alwaysOnTop: mainWindow.isAlwaysOnTop()
   },
   hasUpdate: false,
-  url: null
+  url: null,
+  outputs: [],
+  selectedOutput: null
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

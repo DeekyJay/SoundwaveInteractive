@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import ProfileItem from '../components/ProfileItem/ProfileItem'
+import Ink from '../components/Ink/src'
 import ReactToolTip from 'react-tooltip'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { toastr } from 'redux-toastr'
@@ -157,6 +158,9 @@ export class ProfileList extends React.Component {
         <div className='profile-list-title'>Profiles</div>
         <div className='profile-list-table'>
           <div className='profile-list-col-headers'>
+            <div className='profile-list-col-header lock'>
+              <span className='sicon-lock' />
+            </div>
             <div className='profile-list-col-header name'>
               Name
             </div>
@@ -194,9 +198,11 @@ export class ProfileList extends React.Component {
                 </div>
                 <button type='button' className='btn btn-primary' onClick={this.saveProfile}>
                   Save
+                  <Ink />
                 </button>
                 <button type='button' className='btn btn-secondary' onClick={this.cancelEdit}>
                   Cancel
+                  <Ink />
                 </button>
               </div>
               : null}
@@ -206,14 +212,17 @@ export class ProfileList extends React.Component {
               data-tip='Drag a profile here to edit the name'
               onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
+              <Ink />
             </div>
             <div className={`profile-list-action trash ${dragMode ? 'drag' : ''}`}
               data-tip='Drag a profile here to delete it'>
               <span className='sicon-trash'></span>
+              <Ink />
             </div>
             <div className={`profile-list-action add ${dragMode ? 'disabled' : ''}`}
               data-tip='Add Profile' onClick={this.addProfile}>
               <span className='sicon-add'></span>
+              <Ink />
             </div>
           </div>
         </div>

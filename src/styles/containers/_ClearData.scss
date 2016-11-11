@@ -1,0 +1,31 @@
+.clear-data-container {
+  height: 50%;
+  width: 100%;
+  display: flex;
+  position: relative;
+  border: 1px solid $table-border;
+  border-radius: 4px;
+  background: $table-bg;
+  margin-bottom: 5px;
+  flex-direction: column;
+  flex: 1.5;
+  .clear-data-title {
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    font-size: 18px;
+    border-bottom: 2px solid $table-border;
+    padding: 4px;
+    background: $col-bg;
+  }
+  .clear-data-wrapper {
+    margin-left: 15px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    .form-group {
+      font-size: 14px;
+      flex: 1;
+    }
+  }
+}

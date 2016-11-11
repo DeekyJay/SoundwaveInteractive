@@ -3,10 +3,11 @@ import { toastr } from 'redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
-import { Howl } from 'howler'
 import { actions as interactiveActions } from './Interactive'
 import analytics from '../utils/analytics'
-
+import { Howl, Howler } from 'howler'
+Howler.usingWebAudio = true
+Howler.ctx = true
 // Constants
 export const constants = {
   SOUNDS_INITIALIZE: 'SOUNDS_INITIALIZE',
@@ -19,7 +20,9 @@ export const constants = {
   PLAY_SOUND_STARTED: 'PLAY_SOUND_STARTED',
   PLAY_SOUND_ENDED: 'PLAY_SOUND_ENDED',
   PLAY_SOUND_INTERRUPTED: 'PLAY_SOUND_INTERRUPTED',
-  PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR'
+  PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR',
+  CLEAR_EDIT: 'CLEAR_EDIT',
+  SETUP_EDIT: 'SETUP_EDIT'
 }
 
 const syncStorageWithState = (state) => {
@@ -108,6 +111,7 @@ export const actions = {
         payload: { sounds: newSounds }
       })
       dispatch(interactiveActions.updateCooldown())
+      dispatch()
     }
   },
   clearAllSounds: () => {
@@ -117,7 +121,7 @@ export const actions = {
   },
   playSound: (i) => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles }, sounds: { sounds } } = getState()
+      const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput } } = getState()
       try {
         const profile = _.find(profiles, p => p.id === profileId)
         const soundId = profile.sounds[i]
@@ -130,12 +134,29 @@ export const actions = {
             dispatch({ type: constants.PLAY_SOUND_ENDED })
           }
         })
+        if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
         howl.play()
         analytics.soundPlayed()
         dispatch({ type: constants.PLAY_SOUND_STARTED })
       } catch (err) {
         dispatch({ type: constants.PLAY_SOUND_ERROR })
       }
+    }
+  },
+  clearEdit: () => {
+    return {
+      type: constants.CLEAR_EDIT
+    }
+  },
+  setupEdit: (index) => {
+    return (dispatch, getState) => {
+      const { profiles: { profiles, profileId } } = getState()
+      const profile = _.find(profiles, p => p.id === profileId)
+      let sound = profile.sounds[index]
+      dispatch({
+        type: constants.SETUP_EDIT,
+        payload: sound
+      })
     }
   }
 }
@@ -181,6 +202,19 @@ const ACTION_HANDLERS = {
       ...state,
       sounds: []
     }
+  },
+  CLEAR_EDIT: (state) => {
+    return {
+      ...state,
+      hasEdit: null
+    }
+  },
+  SETUP_EDIT: (state, actions) => {
+    const { payload } = actions
+    return {
+      ...state,
+      hasEdit: payload
+    }
   }
 }
 // Reducer
@@ -188,7 +222,8 @@ export const initialState = {
   sounds: [],
   default_cooldown: 15,
   default_sparks: 100,
-  default_volume: 100
+  default_volume: 100,
+  hasEdit: null
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

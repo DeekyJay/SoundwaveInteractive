@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as interactiveActions } from '../redux/modules/Interactive'
 import ReactToolTip from 'react-tooltip'
+import Ink from '../components/Ink/src'
 
 export class Connector extends React.Component {
   static propTypes = {
@@ -97,6 +98,7 @@ export class Connector extends React.Component {
                   : 'Connect'
                 }
               </span>}
+            <Ink />
           </button>
         </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />

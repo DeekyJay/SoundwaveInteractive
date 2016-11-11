@@ -7,9 +7,13 @@ import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
-import { Howl } from 'howler'
+import { Howl, Howler } from 'howler'
+Howler.usingWebAudio = true
+Howler.ctx = true
 import { toastr } from 'redux-toastr'
 import ReactSlider from 'react-slider'
+import Ink from '../components/Ink/src'
+import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound}) => {
   return (<SoundItem index={index} sound={sound} soundActions={soundActions}
@@ -36,7 +40,9 @@ export class SoundList extends React.Component {
   static propTypes = {
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
-    sounds: PropTypes.array.isRequired
+    sounds: PropTypes.array.isRequired,
+    hasEdit: PropTypes.string,
+    selectedOutput: PropTypes.string
   }
 
   constructor (props) {
@@ -53,6 +59,15 @@ export class SoundList extends React.Component {
         name: '',
         volume: ''
       }
+    }
+  }
+
+  componentWillReceiveProps (props) {
+    console.log('Received')
+    if (props.hasEdit) {
+      this.props.soundActions.clearEdit()
+      const sound = _.find(props.sounds, s => s.id === props.hasEdit)
+      if (sound) this._edit(sound)
     }
   }
 
@@ -140,15 +155,18 @@ export class SoundList extends React.Component {
 
   playSound = () => {
     const { sound } = this.state
+    const { selectedOutput } = this.props
     if (sound) {
       const howl = new Howl({
         urls: [sound.path],
         buffer: true,
+        html5: true,
         volume: parseFloat(sound.volume) * 0.01,
         onend: () => {
           this.setState({ ...this.state, isPlaying: false, howl: null })
         }
       })
+      if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
       this.setState({ ...this.state, isPlaying: true, howl: howl }, () => {
         this.state.howl.play()
       })
@@ -232,19 +250,19 @@ export class SoundList extends React.Component {
 
     return (
       <div className='sound-list-container'>
-        <div className='sound-list-title'>Sounds</div>
+        <div className='sound-list-title'>Sound Library</div>
         <div className='sound-list-table'>
           <div className='sound-list-col-headers'>
-            <div className='sound-list-col-header cooldown' data-tip='Cooldown'>
+            <div className='sound-list-col-header cooldown top' data-tip='Cooldown'>
               <span className='sicon-stopwatch'></span>
             </div>
-            <div className='sound-list-col-header sparks' data-tip='Sparks'>
+            <div className='sound-list-col-header sparks top' data-tip='Sparks'>
               <span className='sicon-lightning'></span>
             </div>
-            <div className='sound-list-col-header name'>
+            <div className='sound-list-col-header name top'>
               Name
             </div>
-            <div className='sound-list-col-header folder' data-tip='Location'>
+            <div className='sound-list-col-header folder top' data-tip='Location'>
               <span className='sicon-folder'></span>
             </div>
           </div>
@@ -317,9 +335,11 @@ export class SoundList extends React.Component {
                 </div>
                 <button type='button' className='btn btn-primary' onClick={this.editSound}>
                   Save
+                  <Ink />
                 </button>
                 <button type='button' className='btn btn-secondary' onClick={this.cancelEdit}>
                   Cancel
+                  <Ink />
                 </button>
               </div>
               : null}
@@ -343,15 +363,18 @@ export class SoundList extends React.Component {
               data-tip='Drag a sound here to edit it'
               onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
+              <Ink />
             </div>
             <div className={`sound-list-action trash ${dragMode ? 'drag' : ''}`}
               data-tip='Drag a sound here to delete it'
               onClick={this.clickDelete}>
               <span className='sicon-trash'></span>
+              <Ink />
             </div>
             <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}
-              data-tip='Add Sound' onClick={this.addSound}>
+              data-tip='Add Sound' onMouseUp={this.addSound}>
               <span className='sicon-add'></span>
+              <Ink />
             </div>
           </div>
         </div>
@@ -363,7 +386,9 @@ export class SoundList extends React.Component {
 
 /* istanbul ignore next */
 const mapStateToProps = (state) => ({
-  sounds: state.sounds.sounds
+  sounds: state.sounds.sounds,
+  hasEdit: state.sounds.hasEdit,
+  selectedOutput: state.app.selectedOutput
 })
 
 /* istanbul ignore next */

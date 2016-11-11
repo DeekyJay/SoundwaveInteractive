@@ -17,7 +17,8 @@ export const constants = {
   SORT_PROFILES: 'SORT_PROFILES',
   CLEAR_ALL_PROFILES: 'CLEAR_ALL_PROFILES',
   SELECT_PROFILE: 'SELECT_PROFILE',
-  ASSIGN_SOUNDS: 'ASSIGN_SOUNDS'
+  ASSIGN_SOUNDS: 'ASSIGN_SOUNDS',
+  TOGGLE_PROFILE_LOCK: 'TOGGLE_PROFILE_LOCK'
 }
 
 const syncStorageWithState = (state) => {
@@ -117,6 +118,22 @@ export const actions = {
       dispatch(boardActions.updateGame())
       dispatch(interactiveActions.updateCooldown())
     }
+  },
+  toggleLock: () => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles } } = getState()
+      const newProfiles = Object.assign([], profiles)
+      for (let i = 0; i <= newProfiles.length; i++) {
+        if (newProfiles[i].id === profileId) {
+          newProfiles[i].locked = !newProfiles[i].locked
+          break
+        }
+      }
+      dispatch({
+        type: constants.TOGGLE_PROFILE_LOCK,
+        payload: { profiles: newProfiles }
+      })
+    }
   }
 }
 // Action handlers
@@ -164,6 +181,13 @@ const ACTION_HANDLERS = {
     }
   },
   ASSIGN_SOUNDS: (state, actions) => {
+    const { payload: { profiles } } = actions
+    return {
+      ...state,
+      profiles: profiles
+    }
+  },
+  TOGGLE_PROFILE_LOCK: (state, actions) => {
     const { payload: { profiles } } = actions
     return {
       ...state,
