@@ -14,6 +14,8 @@ export const constants = {
   FULLSCREEN: 'FULLSCREEN',
   ALWAYS_ON_TOP: 'ALWAYS_ON_TOP',
   CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE',
+  UPDATE_READY: 'UPDATE_READY',
+  INSTALL_UPDATE: 'INSTALL_UPDATE',
   GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES',
   SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE',
   SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
@@ -27,6 +29,10 @@ ipcRenderer.on('browser-window-focus', function () {
 
 ipcRenderer.on('browser-window-blur', function () {
   document.body.classList.add('blurred')
+})
+
+ipcRenderer.on('UPDATE_READY', function () {
+  actions.updateReady()
 })
 
 const syncStorageWithState = (state) => {
@@ -87,36 +93,20 @@ export const actions = {
     }
   },
   checkForUpdate: () => {
-    return (dispatch) => {
-      ipcRenderer.send('GET_VERSION')
-      ipcRenderer.once('GET_VERSION', (event, err, result) => {
-        const {version, platform, arch} = result
-        fetch.get(`http://localhost:3000/updates/latest?v=${version}&platform=${platform}&arch=${arch}`)
-        .then(res => {
-          console.log(res)
-          dispatch({
-            type: 'CHECK_FOR_UPDATE',
-            payload: {
-              hasUpdate: !!res.url,
-              url: res.url || null
-            }
-          })
-        })
-      })
+    ipcRenderer.send('CHECK_FOR_UPDATE')
+    return {
+      type: constants.CHECK_FOR_UPDATE
+    }
+  },
+  updateReady: () => {
+    return {
+      type: constants.UPDATE_READY
     }
   },
   update: () => {
-    return (dispatch, getState) => {
-      const { app: { url } } = getState()
-      ipcRenderer.send('UPDATE_APP', { url: url })
-      ipcRenderer.once('UPDATE_APP', (event, err, result) => {
-        dispatch({
-          type: 'UPDATE_APP',
-          payload: {
-            isUpdating: !!result.isUpdating
-          }
-        })
-      })
+    ipcRenderer.send('INSTALL_UPDATE')
+    return {
+      type: constants.INSTALL_UPDATE
     }
   },
   getAudioDevices: () => {

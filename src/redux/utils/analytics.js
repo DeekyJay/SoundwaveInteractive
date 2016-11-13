@@ -28,7 +28,17 @@ export function wentInteractive () {
   fetch.put(`${config.API_BASE_URL}/users/connected`)
 }
 
+export function updateProfiles () {
+  console.log('Update Profiles')
+}
+
+export function updateSoundCount () {
+  console.log('Update Sound Count')
+}
+
 export default {
   init,
-  wentInteractive
+  wentInteractive,
+  updateProfiles,
+  updateSoundCount
 }

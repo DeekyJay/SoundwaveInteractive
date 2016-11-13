@@ -3,23 +3,22 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 // import electron from 'electron'
 const electron = require('electron')
+const GhReleases = require('electron-gh-releases')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const crashReporter = electron.crashReporter
 const nativeImage = electron.nativeImage
-const autoUpdater = electron.autoUpdater
 const ipcMain = electron.ipcMain
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 let mainWindow = null
 const appVersion = require('./package.json').version
 
-let updateFeed = 'http://localhost:5001/updates/latest'
-
-if (process.env.NODE_ENV !== 'development') {
-  updateFeed = process.platform === 'darwin'
-    ? 'http://localhost:5001/updates/latest'
-    : 'http://localhost:5001/updates/latest'
+const options = {
+  repo: 'DeekyJay/BeamSoundlyInteractive',
+  currentVersion: appVersion
 }
+
+const updater = new GhReleases(options)
 
 crashReporter.start({
   productName: 'SoundwaveInteractive',
@@ -95,35 +94,25 @@ app.on('ready', () => {
   })
 })
 
-ipcMain.on('GET_VERSION', function (event) {
-  event.sender.send('GET_VERSION', null, { version: appVersion, arch: process.arch, platform: process.platform })
+ipcMain.on('CHECK_FOR_UPDATE', function (event) {
+  console.log('CHECKING')
+  updater.check((err, status) => {
+    console.log(err, status)
+    if (!err && status) {
+      // Download the update
+      updater.download()
+    }
+  })
 })
 
-ipcMain.on('UPDATE_APP', function (event, param) {
-  const url = param.url
-  autoUpdater.on('checking-for-update', function (d) {
-    console.log('Checking For Update...')
-    console.log(d)
-  })
+// When an update has been downloaded
+updater.on('update-downloaded', (info) => {
+  console.log('UPDATE WAS DOWNLOADED')
+  // Restart the app and install the Update
+  mainWindow.webContents.send('UPDATE_READY')
+})
 
-  autoUpdater.on('update-available', function (d) {
-    console.log('Update Available..')
-    console.log(d)
-  })
-
-  autoUpdater.on('update-not-available', function (d) {
-    console.log('No Update Available..')
-    console.log(d)
-  })
-
-  autoUpdater.on('error', function (d) {
-    console.log('Update Error', d)
-  })
-
-  autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateURL) {
-    console.log(releaseName, releaseDate, updateURL)
-    autoUpdater.quitAndInstall()
-  })
-  autoUpdater.setFeedURL(url)
-  autoUpdater.checkForUpdates()
+ipcMain.on('INSTALL_UPDATE', function (event) {
+  console.log('TIME TO INSTALL')
+  updater.install()
 })

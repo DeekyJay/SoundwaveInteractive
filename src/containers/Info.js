@@ -12,7 +12,6 @@ export class Info extends React.Component {
   }
 
   goToLink = (e) => {
-    console.log(e.target.name)
     switch (e.target.name) {
       case 'wiki':
         shell.openExternal('https://github.com/DeekyJay/BeamSoundlyInteractive/wiki')

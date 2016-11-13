@@ -6,7 +6,7 @@ export class InfoGroup extends React.Component {
     text: PropTypes.string,
     className: PropTypes.string,
     isOrdered: PropTypes.bool,
-    children: PropTypes.array
+    children: PropTypes.any
   }
 
   getClass = () => {

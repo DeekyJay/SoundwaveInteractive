@@ -61,7 +61,6 @@ export class SoundList extends React.Component {
   }
 
   componentWillReceiveProps (props) {
-    console.log('Received')
     if (props.hasEdit) {
       this.props.soundActions.clearEdit()
       const sound = _.find(props.sounds, s => s.id === props.hasEdit)
@@ -78,7 +77,6 @@ export class SoundList extends React.Component {
   }
 
   onSortStart = ({node, index, collection}, e) => {
-    console.log(node.className)
     this.setState({ ...this.state, dragMode: true })
   }
 
@@ -89,7 +87,6 @@ export class SoundList extends React.Component {
     this.setState({ ...this.state, dragMode: false }, () => {
       const name = document.elementFromPoint(e.x, e.y).className
       const currentSound = this.props.sounds[oldIndex]
-      console.log(name)
       if (name.startsWith('tactile tactile|')) {
         const index = name.split('|')[1]
         this.props.profileActions.assignSound(index, currentSound)
@@ -117,7 +114,6 @@ export class SoundList extends React.Component {
     if (!currentSound) s = sound
     if (!oldIndex && oldIndex !== 0) i = this.props.sounds.findIndex(sound => sound.id === s.id)
     else i = oldIndex
-    console.log(i)
     this.props.soundActions.removeSound(i)
     if (sound && s.id === sound.id) {
       if (this.state.howl) this.state.howl.stop()

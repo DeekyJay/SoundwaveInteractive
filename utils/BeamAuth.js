@@ -21,7 +21,6 @@ authWindow.setup({
 /* eslint-enable camelcase */
 
 const checkStatus = function () {
-  console.log(beamAuth.tokens)
   return beamAuth.isAuthenticated()
 }
 
@@ -59,7 +58,6 @@ const init = function () {
   return loadTokens().then(tokens => {
     return setTokens(tokens)
   }).then(tokens => {
-    console.log(checkStatus())
     if (!checkStatus() && tokens.refresh) {
       return beamAuth.refresh()
     }

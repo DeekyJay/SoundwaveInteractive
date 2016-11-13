@@ -27,7 +27,6 @@ export class Audio extends React.Component {
   }
 
   componentWillReceiveProps (props) {
-    console.log('PROPS', props.selectedOutput, props.globalVolume)
     if (this.props.globalVolume !== props.globalVolume) {
       this.setState({ ...this.state, globalVolume: props.globalVolume})
     }
@@ -38,7 +37,6 @@ export class Audio extends React.Component {
   }
 
   setVolume = (value) => {
-    console.log(value)
     this.props.appActions.setGlobalVolume(value)
   }
 
@@ -53,12 +51,12 @@ export class Audio extends React.Component {
             <label htmlFor='output'>Output Device</label>
             <select
               name='output'
-              value={selectedOutput}
+              value={selectedOutput || ''}
               onChange={this.setOutput}>
               {outputs && outputs.length
                 ? outputs.map(o => {
                   return (
-                    <option value={o.deviceId}>{o.label}</option>
+                    <option key={o.deviceId} value={o.deviceId}>{o.label}</option>
                   )
                 })
                 : null}

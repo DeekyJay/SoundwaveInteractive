@@ -15,7 +15,6 @@ const largeGrid = DevLabUtil.makeGrid(16, 4)
 export class BoardEditor extends React.Component {
 
   static propTypes = {
-    hasSoundBoardGame: PropTypes.bool.isRequired,
     board: PropTypes.object.isRequired,
     boardActions: PropTypes.object.isRequired,
     soundActions: PropTypes.object.isRequired,
@@ -37,12 +36,10 @@ export class BoardEditor extends React.Component {
   }
 
   onDragStop = (grid) => {
-    console.log(grid)
     this.props.boardActions.updateGrid(grid)
   }
 
   onResizeStop = (grid) => {
-    console.log(grid)
     this.props.boardActions.updateGrid(grid)
   }
 
@@ -80,8 +77,7 @@ export class BoardEditor extends React.Component {
               : <span>
                 Looks like you don't have a soundboard game in the Beam Dev Labs.
                 <div className='add-game-container'>
-                  <span className='add-game' onClick={this.createGame}>Create Soundboard</span>
-                  <Ink />
+                  <span className='add-game' onClick={this.createGame}>Create Soundboard<Ink /></span>
                 </div>
               </span>}
           </div>
@@ -98,7 +94,6 @@ export class BoardEditor extends React.Component {
 
   renderBoard = () => {
     const {
-      board,
       profileId,
       board: {
         large_grid
@@ -146,8 +141,6 @@ export class BoardEditor extends React.Component {
         maxRows={4}
         width={600}
         margin={[4, 4]}
-        onDragStop={this.onDragStop}
-        onResizeStop={this.onResizeStop}
         verticalCompact>
         {
           large_grid.map((button) => {

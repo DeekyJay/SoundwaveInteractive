@@ -17,7 +17,6 @@ export const actions = {
   signIn: (tokens) => {
     return (dispatch, getState) => {
       if (!tokens) {
-        console.log('Open Window')
         ipcRenderer.send('auth')
         dispatch({
           type: 'SIGN_IN_PENDING'

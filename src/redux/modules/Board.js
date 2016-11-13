@@ -156,7 +156,6 @@ export const actions = {
       dispatch({type: 'GET_OWNED_GAMES_PENDING'})
       client.game.ownedGames(user.id)
       .then(res => {
-        console.log(res)
         if (res.body && res.body.length) {
           res.body.map(g => {
             if (g.name === DEVLAB_APP_NAME) {
@@ -169,7 +168,6 @@ export const actions = {
         return client.request('GET', `/interactive/versions/${versionId}`)
       })
       .then(res => {
-        console.log(res)
         let game = res.body
         let valid = true
         let newtactiles = []
@@ -177,12 +175,10 @@ export const actions = {
           newtactiles = makeValidSoundboard(game.controls.tactiles, profiles, sounds, profileId)
           if (!newtactiles.length || !_.isEqual(newtactiles, game.controls.tactiles)) {
             valid = false
-            console.log('GAME IS INVALID')
           }
         }
         if (!valid) {
           game.controls.tactiles = newtactiles
-          console.log('GET OWNED', game)
           const version = {
             controls: game.controls,
             gameId: gameId
@@ -193,7 +189,6 @@ export const actions = {
         }
       })
       .then(res => {
-        console.log(res)
         const large_grid = getGridFromTactiles(res.body.controls.tactiles)
         dispatch({
           type: 'GET_OWNED_GAMES_FULFILLED',
@@ -240,9 +235,15 @@ export const actions = {
         return client.game.updateVersion(versionId, { body: version, json: true })
       })
       .then(res => {
+        const large_grid = getGridFromTactiles(res.body.controls.tactiles)
         dispatch({
           type: 'CREATE_GAME_FULFILLED',
-          payload: { gameId: gameId, versionId: versionId, board: game }
+          payload: {
+            gameId: gameId,
+            versionId: versionId,
+            board: game,
+            large_grid: large_grid
+           }
         })
       })
       .catch(err => {
@@ -268,7 +269,6 @@ export const actions = {
       }
       let newtactiles = makeValidSoundboard(game.controls.tactiles, profiles, sounds, profileId)
       game.controls.tactiles = newtactiles
-      console.log('UPDATE', game)
       return client.game.updateVersion(versionId, {
         body: game,
         json: true
@@ -326,7 +326,6 @@ const ACTION_HANDLERS = {
     }
   },
   GET_OWNED_GAMES_FULFILLED: (state, actions) => {
-    console.log('FULFILLED')
     const { payload: { board, hasSoundBoardGame, gameId, versionId, large_grid } } = actions
     return {
       ...state,
@@ -338,12 +337,13 @@ const ACTION_HANDLERS = {
     }
   },
   CREATE_GAME_FULFILLED: (state, actions) => {
-    const { payload: { gameId, versionId, board } } = actions
+    const { payload: { gameId, versionId, board, large_grid } } = actions
     return {
       ...state,
       board: board,
       gameId: gameId,
       versionId: versionId,
+      large_grid: large_grid,
       hasSoundBoardGame: true,
       gameCreationError: false,
       isGameCreating: false

@@ -12,8 +12,7 @@ export class BoardView extends React.Component {
 
   static propTypes = {
     appActions: PropTypes.object.isRequired,
-    boardActions: PropTypes.object.isRequired,
-    hasSoundBoardGame: PropTypes.bool.isRequired
+    boardActions: PropTypes.object.isRequired
   }
 
   componentDidMount () {

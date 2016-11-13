@@ -9,7 +9,7 @@ export class SoundItem extends React.Component {
     sound: PropTypes.object.isRequired,
     soundActions: PropTypes.object.isRequired,
     selectSound: PropTypes.func.isRequired,
-    selectedSound: PropTypes.object.isRequired
+    selectedSound: PropTypes.object
   }
 
   openFileLocation = () => {

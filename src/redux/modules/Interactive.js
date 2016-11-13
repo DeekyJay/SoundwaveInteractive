@@ -92,9 +92,7 @@ export const actions = {
         auth: { user: { channel: { id } } }
       } = getState()
       const shouldConnect = !isConnected
-      console.log('GO INTERACTIVE', shouldConnect)
       if (shouldConnect) {
-        console.log(beam)
         dispatch({
           type: 'GO_INTERACTIVE_PENDING'
         })
@@ -114,12 +112,10 @@ export const actions = {
     }
   },
   robotClosedEvent: () => {
-    console.log('ROBOT CLOSE EVENT')
     return (dispatch, getState) => {
       const { interactive: { isConnected, storage: { useReconnect, reconnectionTimeout } } } = getState()
       if (useReconnect && isConnected) {
         dispatch({ type: 'STOP_INTERACTIVE' })
-        console.log('TIME TO RECONNECT')
         setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
       }
     }

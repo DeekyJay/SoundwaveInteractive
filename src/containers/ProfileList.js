@@ -47,7 +47,6 @@ export class ProfileList extends React.Component {
   }
 
   onSortStart = ({node, index, collection}, e) => {
-    console.log(node.className)
     this.setState({ ...this.state, dragMode: true })
   }
 
@@ -57,7 +56,6 @@ export class ProfileList extends React.Component {
   onSortEnd = ({ oldIndex, newIndex }, e) => {
     const name = document.elementFromPoint(e.x, e.y).className
     const currentProfile = this.props.profiles[oldIndex]
-    console.log(currentProfile)
     const { profileId } = this.props
     switch (name) {
       case 'sicon-pencil':

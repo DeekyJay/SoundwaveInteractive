@@ -147,7 +147,6 @@ function initHandshake (id) {
       })
     })
     .then(rb => {
-      console.log('LETS GO')
       rb.on('report', handleReport)
       rb.on('error', err => {
         console.log(err)
@@ -211,7 +210,6 @@ export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
   cooldownType = _cooldownType
   staticCooldown = _staticCooldown
   cooldowns = _cooldowns
-  console.log(cooldownType, staticCooldown, cooldowns)
 }
 
 export function setProfile (profileId) {
