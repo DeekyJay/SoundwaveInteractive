@@ -5,6 +5,7 @@ import { actions as soundActions } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import { actions as authActions } from '../redux/modules/Authentication'
 import Ink from '../components/Ink/src'
+import { toastr } from 'redux-toastr'
 
 export class ClearData extends React.Component {
 
@@ -16,10 +17,12 @@ export class ClearData extends React.Component {
 
   clearSounds = () => {
     this.props.soundActions.clearAllSounds()
+    toastr.success('Sound Library Cleared!')
   }
 
   clearProfiles = () => {
     this.props.profileActions.clearProfiles()
+    toastr.success('Profiles Cleared!')
   }
 
   clearAllData = () => {
@@ -33,18 +36,30 @@ export class ClearData extends React.Component {
       <div className='clear-data-container'>
         <div className='clear-data-title'>Clear Data</div>
         <div className='clear-data-wrapper'>
-          <button type='button' className='btn btn-primary' onClick={this.clearSounds}>
-            Clear Sound Library
-            <Ink />
-          </button>
-          <button type='button' className='btn btn-secondary' onClick={this.clearProfiles}>
-            Clear Profiles
-            <Ink />
-          </button>
-          <button type='button' className='btn btn-secondary' onClick={this.clearAllData}>
-            Clear All Local Data
-            <Ink />
-          </button>
+          <div className='form-group'>
+            <div className='button-wrapper'>
+              <button type='button' className='btn btn-secondary' onClick={this.clearSounds}>
+                Clear Sound Library
+                <Ink />
+              </button>
+            </div>
+          </div>
+          <div className='form-group'>
+            <div className='button-wrapper'>
+              <button type='button' className='btn btn-secondary' onClick={this.clearProfiles}>
+                Clear Profiles
+                <Ink />
+              </button>
+            </div>
+          </div>
+          <div className='form-group'>
+            <div className='button-wrapper'>
+              <button type='button' className='btn btn-secondary' onClick={this.clearAllData}>
+                Clear All Local Data
+                <Ink />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )

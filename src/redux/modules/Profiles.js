@@ -134,6 +134,11 @@ export const actions = {
         payload: { profiles: newProfiles }
       })
     }
+  },
+  clearProfiles: () => {
+    return {
+      type: constants.CLEAR_ALL_PROFILES
+    }
   }
 }
 // Action handlers
@@ -192,6 +197,13 @@ const ACTION_HANDLERS = {
     return {
       ...state,
       profiles: profiles
+    }
+  },
+  CLEAR_ALL_PROFILES: (state) => {
+    return {
+      ...state,
+      profiles: [],
+      profileId: ''
     }
   }
 }

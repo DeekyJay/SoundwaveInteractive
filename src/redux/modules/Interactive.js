@@ -11,7 +11,8 @@ export const constants = {
   SET_COOLDOWN_OPTION: 'SET_COOLDOWN_OPTION',
   TOGGLE_AUTO_RECONNECT: 'TOGGLE_AUTO_RECONNECT',
   UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT',
-  COOLDOWN_UPDATED: 'COOLDOWN_UPDATED'
+  COOLDOWN_UPDATED: 'COOLDOWN_UPDATED',
+  UPDATE_STATIC_COOLDOWN: 'UPDATE_STATIC_COOLDOWN'
 }
 
 const syncStorageWithState = (state) => {
@@ -122,6 +123,15 @@ export const actions = {
         setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
       }
     }
+  },
+  updateStaticCooldown: (value) => {
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.UPDATE_STATIC_COOLDOWN,
+        payload: { staticCooldown: value }
+      })
+      dispatch(actions.updateCooldown())
+    }
   }
 }
 // Action handlers
@@ -199,6 +209,16 @@ const ACTION_HANDLERS = {
       ...state,
       isConnected: false,
       isConnecting: false
+    }
+  },
+  UPDATE_STATIC_COOLDOWN: (state, action) => {
+    const { payload: { staticCooldown } } = action
+    return {
+      ...state,
+      storage: {
+        ...state.storage,
+        staticCooldown
+      }
     }
   }
 }

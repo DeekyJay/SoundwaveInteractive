@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux'
 import { actions as uiActions } from '../redux/modules/UI'
 import ClearData from './ClearData'
 import Audio from './Audio'
+import Analytics from './Analytics'
+import Cooldown from './Cooldown'
 
 export class Settings extends React.Component {
 
@@ -21,8 +23,14 @@ export class Settings extends React.Component {
       <div className={'content-container' + this.isActive() + ' settings'}>
         <div className='content-header'>Settings</div>
         <div className='content-body'>
-          <Audio />
-          <ClearData />
+          <div className='about-left'>
+            <Audio />
+            <ClearData />
+          </div>
+          <div className='about-right'>
+            <Cooldown />
+            <Analytics />
+          </div>
         </div>
       </div>
     )

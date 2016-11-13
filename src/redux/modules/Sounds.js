@@ -4,6 +4,7 @@ import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import { actions as interactiveActions } from './Interactive'
+import { actions as boardActions } from './Board'
 import analytics from '../utils/analytics'
 import { Howl, Howler } from 'howler'
 Howler.usingWebAudio = true
@@ -111,7 +112,7 @@ export const actions = {
         payload: { sounds: newSounds }
       })
       dispatch(interactiveActions.updateCooldown())
-      dispatch()
+      dispatch(boardActions.updateGame())
     }
   },
   clearAllSounds: () => {

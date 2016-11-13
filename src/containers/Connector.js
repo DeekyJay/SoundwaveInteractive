@@ -82,7 +82,7 @@ export class Connector extends React.Component {
           <div className='connector-options-wrapper'>
             <span className='connector-option'>Reconnection Timeout</span>
             <input
-              type='text'
+              type='number'
               className='connector-input'
               value={reconnectionTimeout}
               onChange={this.updateReconnectionTimeout} />

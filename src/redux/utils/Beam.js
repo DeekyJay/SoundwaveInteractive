@@ -4,7 +4,7 @@ import { remote } from 'electron'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
 const Interactive = remote.require('beam-interactive-node')
-let Packets = remote.require('beam-interactive-node/dist/robot/packets').default
+const Packets = remote.require('beam-interactive-node/dist/robot/packets').default
 let robot
 let running
 let store

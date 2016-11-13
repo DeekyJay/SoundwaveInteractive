@@ -1,6 +1,8 @@
 import { remote, ipcRenderer } from 'electron'
 import fetch from '../utils/fetch'
 import _ from 'lodash'
+import storage from 'electron-json-storage'
+import { Howler } from 'howler'
 
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -13,7 +15,10 @@ export const constants = {
   ALWAYS_ON_TOP: 'ALWAYS_ON_TOP',
   CHECK_FOR_UPDATE: 'CHECK_FOR_UPDATE',
   GET_AUDIO_DEVICES: 'GET_AUDIO_DEVICES',
-  SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE'
+  SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE',
+  SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
+  APP_INITIALIZE: 'APP_INITIALIZE',
+  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -24,8 +29,25 @@ ipcRenderer.on('browser-window-blur', function () {
   document.body.classList.add('blurred')
 })
 
+const syncStorageWithState = (state) => {
+  const data = {
+    globalVolume: state.globalVolume,
+    selectedOutput: state.selectedOutput,
+    shareAnalytics: state.shareAnalytics
+  }
+  storage.set('app', data, (err) => {
+    if (err) throw err
+  })
+}
+
 // Action Creators
 export const actions = {
+  initialize: (data) => {
+    return {
+      type: constants.APP_INITIALIZE,
+      payload: data
+    }
+  },
   minimize: () => {
     mainWindow.minimize()
     return {
@@ -33,7 +55,6 @@ export const actions = {
     }
   },
   maximize: (flag) => {
-    console.log(flag)
     if (flag || !mainWindow.isMaximized()) mainWindow.maximize()
     else mainWindow.unmaximize()
     return {
@@ -99,11 +120,9 @@ export const actions = {
     }
   },
   getAudioDevices: () => {
-    console.log('GET AUDIO DEVICES')
     return (dispatch, getState) => {
       navigator.mediaDevices.enumerateDevices()
       .then(devices => {
-        console.log(devices)
         const audioOutputs = _.filter(devices, d => d.kind === 'audiooutput')
         dispatch({
           type: constants.GET_AUDIO_DEVICES,
@@ -120,10 +139,32 @@ export const actions = {
       type: constants.SET_AUDIO_DEVICE,
       payload: { id: id }
     }
+  },
+  setGlobalVolume: (volume) => {
+    Howler.volume(parseFloat(volume) * 0.01)
+    return {
+      type: constants.SET_GLOBAL_VOLUME,
+      payload: { globalVolume: volume }
+    }
+  },
+  toggleAnalytics: () => {
+    return (dispatch, getState) => {
+      const { app: { shareAnalytics } } = getState()
+      dispatch({
+        type: constants.TOGGLE_ANALYTICS,
+        payload: { shareAnalytics: !shareAnalytics }
+      })
+    }
   }
 }
 // Action handlers
 const ACTION_HANDLERS = {
+  APP_INITIALIZE: (state, action) => {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
   MINIMIZE: (state) => {
     return {
       ...state
@@ -163,7 +204,6 @@ const ACTION_HANDLERS = {
     }
   },
   GET_AUDIO_DEVICES: (state, action) => {
-    console.log('HANDLE GET AUDIO', action)
     const { payload } = action
     return {
       ...state,
@@ -172,10 +212,30 @@ const ACTION_HANDLERS = {
   },
   SET_AUDIO_DEVICE: (state, action) => {
     const { payload: { id } } = action
-    return {
+    const newState = {
       ...state,
       selectedOutput: id
     }
+    syncStorageWithState(newState)
+    return newState
+  },
+  SET_GLOBAL_VOLUME: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
+  },
+  TOGGLE_ANALYTICS: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
   }
 }
 // Reducer
@@ -188,7 +248,9 @@ export const initialState = {
   hasUpdate: false,
   url: null,
   outputs: [],
-  selectedOutput: null
+  selectedOutput: null,
+  globalVolume: 100,
+  shareAnalytics: true
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

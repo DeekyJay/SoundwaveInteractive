@@ -18,6 +18,10 @@
       margin-left: -107.5px;
       transition: margin-left 0.5s;
     }
+    .social-media {
+      margin-left: 3px;
+      transition: margin-left 0.5s;
+    }
   }
 }
 
@@ -64,5 +68,32 @@
   &.about {
     bottom: 0;
     left: 130px;
+  }
+}
+
+.social-media {
+  width: 65px;
+  height: 65px;
+  background-size: 100%;
+  position: absolute;
+  cursor: pointer;
+  box-shadow: 0px 0px 50px -10px rgba(255,255,255,1);
+  border-radius: 50%;
+  margin-left: -32.5px;
+  &.twitter {
+    top: calc(10% - 32.5px);
+    background-image: url('./images/twitter.png')
+  }
+  &.discord {
+    top: calc(25% - 32.5px);
+    background-image: url('./images/discord.png')
+  }
+  &.github {
+    top: calc(75% - 32.5px);
+    background-image: url('./images/github.png')
+  }
+  &.paypal {
+    top: calc(90% - 32.5px);
+    background-image: url('./images/paypal.png')
   }
 }

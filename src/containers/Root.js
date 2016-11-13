@@ -65,6 +65,7 @@ class Root extends React.Component {
     this.initializeModule('sounds', 'soundActions')
     this.initializeModule('profiles', 'profileActions')
     this.initializeModule('interactive', 'interactiveActions')
+    this.initializeModule('app', 'appActions')
     this.props.appActions.checkForUpdate()
   }
 

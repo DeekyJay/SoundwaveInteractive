@@ -181,7 +181,7 @@ export class ProfileList extends React.Component {
               </div>
               : <div className='profile-list-no-profiles'>
                 <span>{'You currently don\'t have any profiles.'}</span>
-                <span>{'To add profile, click the add button.'}</span>
+                <span>{'To add a profile, click the add button.'}</span>
               </div>}
             {editId
               ? <div className='edit-profile-container'>

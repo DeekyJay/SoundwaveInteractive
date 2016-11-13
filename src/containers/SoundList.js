@@ -7,11 +7,9 @@ import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
-import { Howl, Howler } from 'howler'
-Howler.usingWebAudio = true
-Howler.ctx = true
+import { Howl } from 'howler'
 import { toastr } from 'redux-toastr'
-import ReactSlider from 'react-slider'
+import ReactSlider from 'rc-slider'
 import Ink from '../components/Ink/src'
 import _ from 'lodash'
 
@@ -328,8 +326,7 @@ export class SoundList extends React.Component {
                   <ReactSlider
                     min={0}
                     max={100}
-                    step={2}
-                    defaultValue={edit_inputs.volume}
+                    value={edit_inputs.volume}
                     className='volume-slider'
                     onChange={this.setVolume} />
                 </div>
