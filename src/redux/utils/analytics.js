@@ -1,6 +1,6 @@
 import fetch from './fetch'
 import config from '../../app.config'
-
+let shouldAnalytics = true
 // If this is the first login, create a new account,
 // if not, validify that they are credentials for the user and save them.
 export function init (userId, tokens) {
@@ -11,7 +11,7 @@ export function init (userId, tokens) {
     }
   }
   console.log('ANALYTICS INIT', data)
-  fetch.post(`${config.API_BASE_URL}/auth`, data)
+  return fetch.post(`${config.API_BASE_URL}/auth`, data)
   .then(res => {
     // API is now authenticated with Beam.
     console.log(res)
@@ -20,25 +20,60 @@ export function init (userId, tokens) {
     }
   })
   .catch(err => {
+    console.log(err)
     throw err
   })
 }
 
 export function wentInteractive () {
-  fetch.put(`${config.API_BASE_URL}/users/connected`)
+  if (shouldAnalytics) fetch.put(`${config.API_BASE_URL}/stats/connected`)
 }
 
-export function updateProfiles () {
-  console.log('Update Profiles')
+export function updateProfiles (currentProfiles) {
+  if (shouldAnalytics) {
+    console.log('Update Profiles')
+    const data = {
+      stat: {
+        current_profiles: currentProfiles
+      }
+    }
+    fetch.post(`${config.API_BASE_URL}/stats/updateprofiles`, data)
+  }
 }
 
-export function updateSoundCount () {
-  console.log('Update Sound Count')
+export function updateSoundCount (currentSounds) {
+  if (shouldAnalytics) {
+    console.log('Update Sound Count')
+    const data = {
+      stat: {
+        current_sounds: currentSounds
+      }
+    }
+    fetch.post(`${config.API_BASE_URL}/stats/updatesounds`, data)
+  }
+}
+
+export function play (sparks) {
+  if (shouldAnalytics) {
+    console.log('PLAY SOUND')
+    const data = {
+      stat: {
+        sparks_spent: sparks
+      }
+    }
+    fetch.post(`${config.API_BASE_URL}/stats/play`, data)
+  }
+}
+
+export function shareAnalytics (flag) {
+  shouldAnalytics = flag
 }
 
 export default {
   init,
   wentInteractive,
   updateProfiles,
-  updateSoundCount
+  updateSoundCount,
+  shareAnalytics,
+  play
 }

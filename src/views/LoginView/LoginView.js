@@ -10,11 +10,16 @@ export class LoginView extends React.Component {
     actions: PropTypes.object.isRequired,
     isWaitingForOAuth: PropTypes.bool.isRequired,
     initialized: PropTypes.bool.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired
+    isAuthenticated: PropTypes.bool.isRequired,
+    denied: PropTypes.bool.isRequired
   }
 
   signIn = () => {
     this.props.actions.signIn()
+  }
+
+  signOut = () => {
+    this.props.actions.logout()
   }
 
   render () {
@@ -34,6 +39,15 @@ export class LoginView extends React.Component {
             <div className='loading'></div>
             <div className='login-minor-text'>Waiting for Authorization . . .</div>
           </div>}
+        {this.props.denied
+          ? <div className="denied">
+            <span>Whoa there! We aren't quite ready for you to use Soundwave Interactive yet!</span>
+            <div className='login-button' onClick={this.signOut}>
+              Logout
+              <Ink />
+            </div>
+          </div>
+          : null}
       </div>
     )
   }
@@ -43,7 +57,8 @@ export class LoginView extends React.Component {
 const mapStateToProps = (state) => ({
   isWaitingForOAuth: state.auth.isWaitingForOAuth,
   initialized: state.auth.initialized,
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  denied: state.auth.denied
 })
 
 /* istanbul ignore next */

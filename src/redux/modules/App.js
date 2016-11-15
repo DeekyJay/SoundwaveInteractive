@@ -3,6 +3,7 @@ import fetch from '../utils/fetch'
 import _ from 'lodash'
 import storage from 'electron-json-storage'
 import { Howler } from 'howler'
+import { shareAnalytics } from '../utils/analytics'
 
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -49,6 +50,7 @@ const syncStorageWithState = (state) => {
 // Action Creators
 export const actions = {
   initialize: (data) => {
+    shareAnalytics(data.shareAnalytics)
     return {
       type: constants.APP_INITIALIZE,
       payload: data
@@ -139,10 +141,11 @@ export const actions = {
   },
   toggleAnalytics: () => {
     return (dispatch, getState) => {
-      const { app: { shareAnalytics } } = getState()
+      const { app: { shareAnalytics: flag } } = getState()
+      shareAnalytics(!flag)
       dispatch({
         type: constants.TOGGLE_ANALYTICS,
-        payload: { shareAnalytics: !shareAnalytics }
+        payload: { shareAnalytics: !flag }
       })
     }
   }
@@ -224,6 +227,7 @@ const ACTION_HANDLERS = {
       ...state,
       ...payload
     }
+    
     syncStorageWithState(newState)
     return newState
   }

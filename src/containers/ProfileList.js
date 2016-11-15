@@ -210,12 +210,12 @@ export class ProfileList extends React.Component {
               data-tip='Drag a profile here to edit the name'
               onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
-              <Ink />
+              <Ink className='sicon-pencil' />
             </div>
             <div className={`profile-list-action trash ${dragMode ? 'drag' : ''}`}
               data-tip='Drag a profile here to delete it'>
               <span className='sicon-trash'></span>
-              <Ink />
+              <Ink className='sicon-trash' />
             </div>
             <div className={`profile-list-action add ${dragMode ? 'disabled' : ''}`}
               data-tip='Add Profile' onClick={this.addProfile}>

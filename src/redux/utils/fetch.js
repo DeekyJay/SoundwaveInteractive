@@ -2,8 +2,7 @@ require('es6-promise').polyfill()
 import fetch from 'isomorphic-fetch'
 
 function get (uri, data, headers = {}) {
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
+  headers = setHeaders(headers)
   return fetch(uri, { method: 'GET', headers: headers })
   .catch(err => {
     throw err
@@ -12,13 +11,12 @@ function get (uri, data, headers = {}) {
 }
 
 function post (uri, data, headers = {}) {
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
+  headers = setHeaders(headers)
   return fetch(uri, { method: 'POST', headers: headers, body: JSON.stringify(data) })
   .catch(err => {
     throw err
   })
-  .then(res => parseJson(res))
+  .then(res => handleResponse(res))
 }
 
 function put (uri, data, headers = {}) {
@@ -27,15 +25,13 @@ function put (uri, data, headers = {}) {
   .catch(err => {
     throw err
   })
-  .then(res => parseJson(res))
+  .then(res => handleResponse(res))
 }
 
 function handleResponse (res) {
-  return res.json()
-}
-
-function parseJson (res) {
-  return res.json()
+  console.log(res)
+  if (res.status === 200) return res.json()
+  else throw new Error('HTTP Status: ' + res.status + ' ' + res.statusText)
 }
 
 function setHeaders (headers) {

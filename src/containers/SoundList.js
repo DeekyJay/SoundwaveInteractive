@@ -356,13 +356,13 @@ export class SoundList extends React.Component {
               data-tip='Drag a sound here to edit it'
               onClick={this.setupEdit}>
               <span className='sicon-pencil'></span>
-              <Ink />
+              <Ink className='sicon-pencil' />
             </div>
             <div className={`sound-list-action trash ${dragMode ? 'drag' : ''}`}
               data-tip='Drag a sound here to delete it'
               onClick={this.clickDelete}>
               <span className='sicon-trash'></span>
-              <Ink />
+              <Ink className='sicon-trash' />
             </div>
             <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}
               data-tip='Add Sound' onMouseUp={this.addSound}>

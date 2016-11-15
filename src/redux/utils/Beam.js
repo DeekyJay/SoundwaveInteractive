@@ -54,8 +54,13 @@ export function updateTokens (tokens) {
       ? Date.now() + tokens.expires_in * 1000
       : tokens.expires
   }
+  console.log(newTokens)
   auth.setTokens(newTokens)
-  storage.set('tokens', auth.getTokens())
+  storage.set('tokens', auth.tokens)
+}
+
+export function getTokens () {
+  return auth.getTokens()
 }
 
 /**
@@ -223,6 +228,7 @@ export default {
   requestInteractive,
   getUserInfo,
   updateTokens,
+  getTokens,
   goInteractive,
   stopInteractive,
   setupStore,

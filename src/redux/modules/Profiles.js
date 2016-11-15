@@ -45,7 +45,7 @@ export const actions = {
         type: constants.ADD_PROFILE,
         payload: { profiles: newProfiles }
       })
-      analytics.updateProfiles(profiles.length, 1)
+      analytics.updateProfiles(newProfiles.length)
     }
   },
   sortProfiles: (oldIndex, newIndex) => {
@@ -68,7 +68,7 @@ export const actions = {
         type: constants.REMOVE_PROFILE,
         payload: { profiles: newProfiles }
       })
-      analytics.updateProfiles(profiles.length, -1)
+      analytics.updateProfiles(newProfiles.length)
     }
   },
   editProfile: (id, name) => {
@@ -136,6 +136,7 @@ export const actions = {
     }
   },
   clearProfiles: () => {
+    analytics.updateProfiles(0)
     return {
       type: constants.CLEAR_ALL_PROFILES
     }

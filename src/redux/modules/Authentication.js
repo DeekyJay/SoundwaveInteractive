@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { auth, checkStatus, updateTokens, getUserInfo } from '../utils/Beam'
+import { auth, checkStatus, updateTokens, getUserInfo, getTokens } from '../utils/Beam'
 import { push } from 'react-router-redux'
 import analytics from '../utils/analytics'
 // Constants
@@ -35,17 +35,24 @@ export const actions = {
         getUserInfo()
         .then(response => {
           const user = response.body
-          analytics.init(user.id, tokens)
-          dispatch({
-            type: constants.SIGN_IN,
-            payload: {
-              tokens: tokens,
-              isAuthenticated: checkStatus(),
-              user: user,
-              isWaitingForOAuth: false
-            }
+          analytics.init(user.id, getTokens())
+          .then(() => {
+            dispatch({
+              type: constants.SIGN_IN,
+              payload: {
+                tokens: tokens,
+                isAuthenticated: checkStatus(),
+                user: user,
+                isWaitingForOAuth: false
+              }
+            })
+            dispatch(push('/'))
           })
-          dispatch(push('/'))
+          .catch(err => {
+            dispatch({
+              type: 'SIGN_IN_DENIED'
+            })
+          })
         })
       }
     }
@@ -67,21 +74,28 @@ export const actions = {
         getUserInfo()
         .then(response => {
           const user = response.body
-          analytics.init(user.id, tokens)
-          dispatch({
-            type: constants.SET_USER,
-            payload: { user: user }
+          analytics.init(user.id, getTokens())
+          .then(() => {
+            dispatch({
+              type: constants.SET_USER,
+              payload: { user: user }
+            })
+            dispatch({
+              type: constants.INITIALIZE,
+              payload: {
+                tokens: tokens,
+                isAuthenticated: checkStatus()
+              }
+            })
+            dispatch(push('/'))
           })
-          dispatch(push('/'))
+          .catch(err => {
+            dispatch({
+              type: 'SIGN_IN_DENIED'
+            })
+          })
         })
       }
-      dispatch({
-        type: constants.INITIALIZE,
-        payload: {
-          tokens: tokens,
-          isAuthenticated: checkStatus()
-        }
-      })
     }
   },
   logout: () => {
@@ -139,6 +153,12 @@ const ACTION_HANDLERS = {
       ...state,
       ...payload
     }
+  },
+  SIGN_IN_DENIED: (state) => {
+    return {
+      ...state,
+      denied: true
+    }
   }
 }
 // Reducer
@@ -147,7 +167,8 @@ export const initialState = {
   isAuthenticated: false,
   isWaitingForOAuth: false,
   tokens: '',
-  user: {}
+  user: {},
+  denied: false
 }
 
 export default function (state = initialState, action) {

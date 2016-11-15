@@ -68,7 +68,7 @@ export const actions = {
         type: constants.ADD_SOUNDS,
         payload: { sounds: sounds }
       })
-      analytics.updateSoundCount(state.sounds.sounds.length, 1)
+      analytics.updateSoundCount(sounds.length)
     }
   },
   sortSounds: (oldIndex, newIndex) => {
@@ -91,7 +91,7 @@ export const actions = {
         type: constants.REMOVE_SOUND,
         payload: { sounds: newSounds }
       })
-      analytics.updateSoundCount(sounds.length, -1)
+      analytics.updateSoundCount(newSounds.length)
     }
   },
   editSound: (id, cooldown, sparks, name, volume) => {
@@ -137,7 +137,7 @@ export const actions = {
         })
         if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
         howl.play()
-        analytics.soundPlayed()
+        analytics.play(sound.sparks)
         dispatch({ type: constants.PLAY_SOUND_STARTED })
       } catch (err) {
         dispatch({ type: constants.PLAY_SOUND_ERROR })
