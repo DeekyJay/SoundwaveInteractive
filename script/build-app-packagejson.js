@@ -7,12 +7,12 @@ const path = require('path')
 let jsonObj = {
   'name': 'SoundwaveInteractive',
   'productName': 'Soundwave Interactive',
-  'version': '1.0.1',
+  'version': '0.9.0',
   'description': 'Soundwave Interactive Soundboard',
   'author': 'Derek Jensen',
   'private': false,
   'license': 'MIT',
-  'homepage': 'github.com/Leviathan5',
+  'homepage': 'github.com/DeekyJay',
   'main': './main.js',
   'dependencies': {}
 }

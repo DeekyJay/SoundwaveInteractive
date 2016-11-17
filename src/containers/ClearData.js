@@ -28,7 +28,7 @@ export class ClearData extends React.Component {
   clearAllData = () => {
     this.clearSounds()
     this.clearProfiles()
-    this.props.authActions.clearTokens()
+    this.props.authActions.logout()
   }
 
   render () {
