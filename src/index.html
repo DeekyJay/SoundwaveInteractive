@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Soundwave Interactive</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="static/bootstrap.min.css">
+  <link href="static/react-redux-toastr.min.css" rel="stylesheet" type="text/css">
+  <link href="static/fonts/SIcon.css" rel="stylesheet" type="text/css">
+  <link href="static/fonts/Roboto/stylesheet.css" rel="stylesheet" type="text/css">
+  <script>
+      (function() {
+        if (process != undefined && !process.env.HOT) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'style.css';
+          document.write(link.outerHTML);
+        }
+      }());
+    </script>
+</head>
+<body>
+  <div id="root" style="height: 100%"></div>
+  <script>
+      (function() {
+        const vendor = document.createElement('script');
+        vendor.src = (process != undefined && process.env.HOT) ? 'http://localhost:5000/vendor.bundle.js' : 'vendor.bundle.js';
+        vendor.async = true
+        document.write(vendor.outerHTML);
+        const script = document.createElement('script');
+        script.src = (process != undefined && process.env.HOT) ? 'http://localhost:5000/app.bundle.js' : 'app.bundle.js';
+        script.async = true
+        document.write(script.outerHTML);
+      }());
+    </script>
+</body>
+</html>

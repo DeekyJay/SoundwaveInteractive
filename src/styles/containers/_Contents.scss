@@ -1,0 +1,51 @@
+.content-container {
+  background: $content-bg;
+  text-align: left;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  left: 100px;
+  bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid $border;
+  display: none;
+  opacity: 0;
+  &.active {
+    display: block;
+    opacity: 1;
+  }
+  .content-header {
+    font-size: 22px;
+    height: 38px;
+    padding-left: 20px;
+    border-bottom: 1px solid $border;
+  }
+  .content-body {
+    height: calc(100% - 68px);
+    margin: 10px 20px 20px 20px;
+    .content-left {
+      height: 100%;
+      width: 30%;
+      float: left;
+      padding-right: 10px;
+    }
+    .content-right {
+      height: 100%;
+      width: 70%;
+      float: right;
+      padding-left: 10px;
+    }
+    .about-left {
+      height: 100%;
+      width: 50%;
+      float: left;
+      padding-right: 10px;
+    }
+    .about-right {
+      height: 100%;
+      width: 50%;
+      float: right;
+      padding-left: 10px;
+    }
+  }
+}

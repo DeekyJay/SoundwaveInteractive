@@ -1,0 +1,238 @@
+.board-editor-container {
+  height: 250px;
+  .board-editor-title {
+    font-size: 20px;
+    height: 30px;
+  }
+  .board-editor {
+    background: $bg;
+    border-radius: 3px;
+    height: calc(100% - 30px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .no-game {
+      font-size: 18px;
+      color: gray;
+      .loading {
+        width: 100px;
+        height: 100px;
+      }
+      .add-game-container {
+        position: relative;
+        margin: 20px;
+        text-align: center;
+        .add-game {
+          padding: 10px;
+          background: $col-bg;
+          border-radius: 2px;
+          color: white;
+          cursor: pointer;
+          position: relative;
+        }
+      }
+    }
+    .board-size-selector {
+      .board-size {
+        display: inline-block;
+        margin: 10px;
+        float: left;
+        .board-size-header {
+          text-align: center;
+          font-size: 18px;
+          margin-bottom: 5px;
+        }
+        .board-size-image {
+          height: 150px;
+          width: 200px;
+          background: $content-bg;
+          border-radius: 5px;
+          position: relative;
+          cursor: pointer;
+          &:hover {
+            background: #3a3d5f;
+          }
+          .board-grid {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            .react-grid-layout {
+              margin: 10px;
+              .grid-box {
+                background: $table-bg;
+                width: 20px;
+                height: 20px;
+              }
+            }
+          }
+          &.large {
+            .react-grid-layout {
+              margin-left: 10px;
+            }
+          }
+          &.medium {
+            .react-grid-layout {
+              margin-left: 45px;
+            }
+          }
+          &.small {
+            .react-grid-layout {
+              margin-left: 65px;
+            }
+          }
+        }
+      }
+    }
+    .board {
+      height: 100%;
+      width: 100%;
+      position: relative;
+      .board-editor-wrapper {
+        height: 100%;
+      }
+      .board-back {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .board-no-profile {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+      .board-select-profile {
+        width: 100%;
+        justify-content: center;
+        font-size: 20px;
+        color: $table-bg;
+        display: flex;
+        align-self: center;
+      }
+      .board-profile {
+        font-size: 20px;
+        margin: 10px;
+        display: inline-block;
+      }
+      .board-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 50px;
+        background: $col-bg;
+        font-size: 24px;
+        text-align: center;
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+        display: flex;
+        flex-direction: column;
+        max-width: 250px;
+        .board-action {
+          position: relative;
+          width: 100%;
+          line-height: 0;
+          padding: 10px 0;
+          cursor: pointer;
+          border-top: 1px solid $table-border;
+          border-bottom: 1px solid $table-border;
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &.back {
+          border: none;
+          }
+          &.save {
+            border: none;
+          }
+          &:hover {
+            background: rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+      .board-background-grid {
+        height: 100%;
+        width: calc(100% - 50px);
+        display: flex;
+        justify-content: center;
+        .background-grid-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .background-grid-row {
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .background-grid-cube {
+              background: #32365e;
+              display: inline-block;
+              width: 30px;
+              margin: 3px;
+              height: 30px;
+              border: 2px dashed #5b6692;
+            }
+          }
+        }
+        .board-wrapper {
+          width: 608px;
+          .react-grid-layout {
+            position: absolute;
+            top: 30px;
+            .react-grid-item {
+              &.grid-box {
+                background: #32365e;
+                border: 2px dashed #5b6692;
+                border-radius: 2px;
+              }
+              &.grid-button {
+                background: #464b7a;
+                border-radius: 2px;
+                padding: 2px;
+                &:hover {
+                  background: $board-btn-hover;
+                }
+                .tactile {
+                  position: absolute;
+                  height: 100%;
+                  width: 100%;
+                  top: 0;
+                  left: 0;
+                }
+                .button-number {
+                  font-size: 10px;
+                  line-height: 0.75;
+                }
+                .button-name {
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space: nowrap;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .board-locked {
+    background: rgba(54, 58, 93, 0.59);
+    top: 0;
+    right: 50px;
+    left: 0;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 135px;
+    color: #222438;
+  }
+}

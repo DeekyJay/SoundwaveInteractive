@@ -1,0 +1,33 @@
+/*
+Application Settings Go Here
+------------------------------------
+This file acts as a bundler for all variables/mixins/themes, so they
+can easily be swapped out without `core.scss` ever having to know.
+
+For example:
+
+@import './variables/colors';
+@import './variables/components';
+@import './themes/default';
+*/
+
+$bg: #1e213d;
+$table-bg: #464b7a;
+$content-bg: #32365e;
+$nav-bg: #2b76c2;
+$nav-bg-hover: #418cd8;
+$nav-bg-focus: #2669ac;
+$border: #5C5FBD;
+$table-border: #414377;
+$minor: #8C89B9;
+$col-bg: linear-gradient(to bottom, #526aaf 0%,#575f96 100%);
+$search-bg: linear-gradient(to bottom, #586cbc 1%,#5e65a3 100%);
+$edit-bg: rgba(99, 112, 171, 0.95);
+$primary-button-bg: #2b76c2;
+$item-hover-bg: rgba(255, 255, 255, 0.1);
+$item-selected-bg: #6d72a2;
+$item-border: #7678b7;
+$board-btn-hover: #6d72a2;
+
+$loading: url('../styles/images/loading.gif');
+//Icons

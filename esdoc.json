@@ -1,0 +1,12 @@
+{
+  "source": "./",
+  "destination": "./docs/esdoc",
+  "excludes": ["^bin/", "^docs/", "^build/", "^node_modules/", "^config/", "^test/", "^test_electron/", "^interfaces/", "^blueprints/"],
+  "test": {
+    "type": "mocha",
+    "source": "./test"
+  },
+  "plugins": [
+    {"name": "esdoc-es7-plugin"}
+  ]
+}

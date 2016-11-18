@@ -1,0 +1,52 @@
+.audio-container {
+  height: 50%;
+  display: flex;
+  position: relative;
+  border: 1px solid $table-border;
+  border-radius: 4px;
+  background: $table-bg;
+  margin-bottom: 5px;
+  flex-direction: column;
+  flex: 1.5;
+  margin-bottom: 10px;
+  .audio-title {
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    font-size: 18px;
+    border-bottom: 2px solid $table-border;
+    padding: 4px;
+    background: $col-bg;
+  }
+  .audio-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 15px;
+    flex: 1;
+    flex-direction: column;
+    .form-group {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      label {
+        width: 20%;
+      }
+      select {
+        border-style: none;
+        border: 1px solid;
+        border-radius: 2px;
+        outline: none;
+        padding-left: 5px;
+        background: #3e426b;
+        width: 80%;
+      }
+      .volume-slider {
+        width: calc(80% - 50px);
+      }
+      .volume {
+        width: 50px;
+        text-align: right;
+      }
+    }
+  }
+}

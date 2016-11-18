@@ -1,0 +1,100 @@
+.navball-container {
+  height: 100%;
+  width: 100px;
+  position: relative;
+  .navball {
+    background: -webkit-linear-gradient(-90deg,#77aeff,#461c9a);
+    height: 175px;
+    border-radius: 175px;
+    width: 175px;
+    margin-left: -125.5px;
+    box-shadow: inset 0 0 6px 0 hsla(0,0%,100%,.5);
+    position: relative;
+    transition: margin-left 0.5s;
+    top: calc(50% - 87.5px);
+  }
+  &:hover {
+    .navball {
+      margin-left: -107.5px;
+      transition: margin-left 0.5s;
+    }
+    .social-media {
+      margin-left: 3px;
+      transition: margin-left 0.5s;
+    }
+  }
+}
+
+.nav-item {
+  width: 45px;
+  // width: 170px;
+  height: 45px;
+  background: $nav-bg;
+  border-radius: 25px;
+  position: absolute;
+  z-index: 1;
+  font-size: 22px;
+  line-height: 2.2;
+  box-shadow: 0px 0px 50px -10px rgba(255,255,255,1);
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.5s;
+  span {
+    float: left;
+    margin-left: 12px;
+  }
+  .nav-item-text {
+    font-size: 20px;
+    padding-right: 10px;
+    opacity: 0;
+    transition: opacity 0.1s linear 0s;
+  }
+  &:hover {
+    width: 170px;
+    transition: width 0.5s;
+    .nav-item-text {
+      opacity: 1;
+      transition: opacity 0.5s linear 0.1s;
+    }
+  }
+  &.board {
+    top: 0;
+    left: 130px;
+  }
+  &.settings {
+    top: 65px;
+    left: 155px;
+  }
+  &.about {
+    bottom: 0;
+    left: 130px;
+  }
+}
+
+.social-media {
+  width: 65px;
+  height: 65px;
+  background-size: 100%;
+  position: absolute;
+  cursor: pointer;
+  box-shadow: 0px 0px 50px -10px rgba(255,255,255,1);
+  border-radius: 50%;
+  margin-left: -32.5px;
+  transition: margin-left 0.5s;
+  &.twitter {
+    top: calc(10% - 32.5px);
+    background-image: url('./images/twitter.png')
+  }
+  &.discord {
+    top: calc(25% - 32.5px);
+    background-image: url('./images/discord.png')
+  }
+  &.github {
+    top: calc(75% - 32.5px);
+    background-image: url('./images/github.png')
+  }
+  &.paypal {
+    top: calc(90% - 32.5px);
+    background-image: url('./images/paypal.png')
+  }
+}

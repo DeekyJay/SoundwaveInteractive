@@ -1,6 +1,6 @@
-# Beam Soundly Interactive
+# Soundwave Interactive
 The Interactive Sound Board for Beam
-#### Like this project and want to support me? [Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6DFKBUF4QQU9C)
+#### Like this project and want to support me? [Paypal](https://www.paypal.me/deekyjay/20USD)
 
 ## Description
 Not all the interactive streams on Beam have to be playing a game!
@@ -8,15 +8,10 @@ Want to get your viewers interacting with you while you stream?
 Let them spice up the stream by triggering sound effects of your choice!
 
 ## Download
-Go [here](https://github.com/Leviathan5/BeamSoundlyInteractive/releases) to download the latest release.
-
-## Installation
-* Extract the zip.
-* Run!
+Go [here](https://github.com/DeekyJay/SoundwaveInteractive/releases) to download the latest release.
 
 ## Screenshots
-![Beam Soundly Interactive Sound Board](http://i.imgur.com/HOTeKFw.png)
-![Beam Soundly Interactive Status](http://i.imgur.com/XZF8OhF.png)
+![Soundwave Interactive Sound Board](http://i.imgur.com/WeikdDO.png)
 
 ## License
 The MIT License (MIT)

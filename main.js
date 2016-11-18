@@ -1,67 +1,118 @@
-var Interactive = require('./interactive');
-var Logger = require('./lib/Logger');
-var logger = new Logger("Main");
-var electron = require('electron');
-// Module to control application life.
-var app = electron.app;
-// Module to create native browser window.
-var BrowserWindow = electron.BrowserWindow;
-var ipcMain = electron.ipcMain;
+'use strict'
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-var mainWindow;
+// import electron from 'electron'
+const electron = require('electron')
+const GhReleases = require('electron-gh-releases')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
+const crashReporter = electron.crashReporter
+const nativeImage = electron.nativeImage
+const ipcMain = electron.ipcMain
+const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
+let mainWindow = null
+const appVersion = require('./package.json').version
 
-function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 1020,
-    height: 450,
-    minWidth: 1020,
-    minHeight: 450,
-    //x: 920,
-    //y: 54,
-    //center: true,
-    fullscreenable: false,
-    //resizable: false,
-    frame: false,
-    icon: __dirname + '/fav.png',
-    show: false
-  });
-
-  var interactive = new Interactive(electron, mainWindow);
-
-  //mainWindow.setMaximizable(false);
-  //mainWindow.setResizable(false);
-
-  // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-  //mainWindow.loadURL("https://github.com");
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
-
-  logger.log("UserData Path: " + app.getPath("userData"));
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-    app.quit();
-  });
-
-  mainWindow.show();
+const options = {
+  repo: 'DeekyJay/SoundwaveInteractive-releases',
+  currentVersion: appVersion
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-app.on('ready', createWindow);
+const updater = new GhReleases(options)
 
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
+crashReporter.start({
+  productName: 'SoundwaveInteractive',
+  companyName: 'SoundwaveInteractive',
+  submitURL: '',
+  autoSubmit: true
+})
+
+if (process.env.NODE_ENV === 'development') {
+  require('electron-debug')()
+  require('babel-register')
+}
+
+require('babel-polyfill')
+
+const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
+const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
+/**
+ * Load squirrel handlers
+ */
+
+const windowsEvents = require(requirePath + '/squirrel/WindowsEvents')
+if (windowsEvents.handleStartup(app)) {
+  return
+}
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('ready', () => {
+  mainWindow = new BrowserWindow({
+    width: 1140,
+    height: 760,
+    minWidth: 1140,
+    minHeight: 760,
+    title: 'Soundwave Interactive',
+    frame: false,
+    icon: appIcon,
+    show: false
+  })
+
+  // Emitted when the window is loaded and ready to be shown.
+  mainWindow.on('ready-to-show', function () {
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.on('will-navigate', ev => {
+    ev.preventDefault()
+  })
+
+  process.env.NODE_ENV === 'development' ? mainWindow.loadURL(`file://${__dirname}/src/index.html`)
+    : mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
+
+  // Load IPC handler
+  require(utilsPath + '/ipcHandler')
+  require(utilsPath + '/interactive')
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+    app.quit()
+  })
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.openDevTools()
   }
-});
+
+  mainWindow.on('focus', function () {
+    mainWindow.webContents.send('browser-window-focus')
+  })
+  mainWindow.on('blur', function () {
+    mainWindow.webContents.send('browser-window-blur')
+  })
+})
+
+ipcMain.on('CHECK_FOR_UPDATE', function (event) {
+  console.log('CHECKING')
+  updater.check((err, status) => {
+    console.log(err, status)
+    if (!err && status) {
+      // Download the update
+      updater.download()
+    }
+  })
+})
+
+// When an update has been downloaded
+updater.on('update-downloaded', (info) => {
+  console.log('UPDATE WAS DOWNLOADED')
+  // Restart the app and install the Update
+  mainWindow.webContents.send('UPDATE_READY')
+})
+
+ipcMain.on('INSTALL_UPDATE', function (event) {
+  console.log('TIME TO INSTALL')
+  updater.install()
+})
