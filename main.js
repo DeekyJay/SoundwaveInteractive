@@ -15,7 +15,7 @@ const appVersion = require('./package.json').version
 
 const options = {
   repo: 'DeekyJay/SoundwaveInteractive-releases',
-  currentVersion: '0.9.0'
+  currentVersion: appVersion
 }
 
 const updater = new GhReleases(options)
