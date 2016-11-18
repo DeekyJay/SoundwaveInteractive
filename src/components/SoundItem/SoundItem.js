@@ -25,7 +25,7 @@ export class SoundItem extends React.Component {
     const isSelected = selectedSound && sound.id === selectedSound.id
     return (
       <div key={index} className={`sound-item-container ${isSelected ? 'selected' : ''}`}
-        onClick={this.selectSound}>
+        onMouseUp={this.selectSound}>
         <div className='sound-list-col-header cooldown'>
           {sound.cooldown}s
         </div>

@@ -124,7 +124,7 @@ export const actions = {
     return (dispatch, getState) => {
       dispatch({
         type: constants.UPDATE_STATIC_COOLDOWN,
-        payload: { staticCooldown: value }
+        payload: { staticCooldown: parseInt(value) }
       })
       dispatch(actions.updateCooldown())
     }

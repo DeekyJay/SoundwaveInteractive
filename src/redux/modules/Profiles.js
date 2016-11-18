@@ -93,10 +93,11 @@ export const actions = {
         type: constants.SELECT_PROFILE,
         payload: { profileId: profileId }
       })
-      dispatch(boardActions.updateGame())
+      if (profileId) dispatch(boardActions.updateGame())
     }
   },
   assignSound: (index, sound) => {
+    if (!sound) return
     return (dispatch, getState) => {
       const { profiles: { profileId, profiles } } = getState()
       let newProfiles = Object.assign([], profiles)
@@ -107,6 +108,7 @@ export const actions = {
           return true
         }
       })
+      if (!profile) return
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = sound.id
       profile.sounds = newSounds
