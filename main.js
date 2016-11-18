@@ -14,8 +14,8 @@ let mainWindow = null
 const appVersion = require('./package.json').version
 
 const options = {
-  repo: 'DeekyJay/BeamSoundlyInteractive',
-  currentVersion: appVersion
+  repo: 'DeekyJay/SoundwaveInteractive-releases',
+  currentVersion: '0.9.0'
 }
 
 const updater = new GhReleases(options)

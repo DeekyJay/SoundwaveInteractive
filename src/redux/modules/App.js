@@ -32,8 +32,9 @@ ipcRenderer.on('browser-window-blur', function () {
   document.body.classList.add('blurred')
 })
 
+let ipcDispatch
 ipcRenderer.on('UPDATE_READY', function () {
-  actions.updateReady()
+  ipcDispatch(actions.updateReady())
 })
 
 const syncStorageWithState = (state) => {
@@ -50,11 +51,14 @@ const syncStorageWithState = (state) => {
 // Action Creators
 export const actions = {
   initialize: (data) => {
-    if (data.shareAnalytics !== undefined &&
-      data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
-    return {
-      type: constants.APP_INITIALIZE,
-      payload: data
+    return (dispatch) => {
+      if (data.shareAnalytics !== undefined &&
+        data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
+      ipcDispatch = dispatch
+      dispatch({
+        type: constants.APP_INITIALIZE,
+        payload: data
+      })
     }
   },
   minimize: () => {
@@ -228,9 +232,14 @@ const ACTION_HANDLERS = {
       ...state,
       ...payload
     }
-    
     syncStorageWithState(newState)
     return newState
+  },
+  UPDATE_READY: (state) => {
+    return {
+      ...state,
+      hasUpdate: true
+    }
   }
 }
 // Reducer
