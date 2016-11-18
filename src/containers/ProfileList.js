@@ -81,6 +81,7 @@ export class ProfileList extends React.Component {
     let p
     if (!profile) p = _.find(profiles, p => p.id === profileId)
     else p = profile
+    if (!p) return
     this.setState({
       ...this.state,
       editId: p.id,

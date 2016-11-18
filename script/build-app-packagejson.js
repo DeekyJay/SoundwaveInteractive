@@ -7,7 +7,7 @@ const path = require('path')
 let jsonObj = {
   'name': 'SoundwaveInteractive',
   'productName': 'Soundwave Interactive',
-  'version': '0.9.0',
+  'version': '0.9.1',
   'description': 'Soundwave Interactive Soundboard',
   'author': 'Derek Jensen',
   'private': false,

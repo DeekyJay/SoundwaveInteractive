@@ -125,6 +125,7 @@ export class SoundList extends React.Component {
     let s
     if (!sound) s = this.state.sound
     else s = sound
+    if (!s) return
     this.setState({
       ...this.state,
       editId: s.id,

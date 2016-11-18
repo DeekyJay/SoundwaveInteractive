@@ -50,7 +50,8 @@ const syncStorageWithState = (state) => {
 // Action Creators
 export const actions = {
   initialize: (data) => {
-    shareAnalytics(data.shareAnalytics)
+    if (data.shareAnalytics !== undefined &&
+      data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
     return {
       type: constants.APP_INITIALIZE,
       payload: data
