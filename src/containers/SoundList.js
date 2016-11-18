@@ -112,6 +112,7 @@ export class SoundList extends React.Component {
     let s
     let i
     if (!currentSound) s = sound
+    if (!s) return
     if (!oldIndex && oldIndex !== 0) i = this.props.sounds.findIndex(sound => sound.id === s.id)
     else i = oldIndex
     this.props.soundActions.removeSound(i)
@@ -272,7 +273,7 @@ export class SoundList extends React.Component {
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
-                  pressDelay={100} />
+                  pressDelay={90} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi' />
               </div>
