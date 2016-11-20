@@ -2,12 +2,13 @@
 
 const jsonfile = require('jsonfile')
 const path = require('path')
+const version = require('../package.json').version
 
 // Some default values for app/package.json
 let jsonObj = {
   'name': 'SoundwaveInteractive',
   'productName': 'Soundwave Interactive',
-  'version': '0.9.2',
+  'version': version,
   'description': 'Soundwave Interactive Soundboard',
   'author': 'Derek Jensen',
   'private': false,
