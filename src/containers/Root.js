@@ -69,7 +69,7 @@ class Root extends React.Component {
     this.initializeModule('app', 'appActions')
     this.props.appActions.checkForUpdate()
     setInterval(() => {
-      this.props.appActions.checkForUpdate()
+      if (!this.props.app.hasUpdate) this.props.appActions.checkForUpdate()
     }, 20 * 60 * 1000)
   }
 
