@@ -235,7 +235,7 @@ export default function (state = initialState, action) {
   let newState
   if (handler) {
     newState = handler(state, action)
-    syncStorageWithState(newState)
+    if (action.type !== constants.INTERACTIVE_INITIALIZE) syncStorageWithState(newState)
   } else {
     newState = state
   }
