@@ -20,7 +20,8 @@ class Root extends React.Component {
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
     appActions: PropTypes.object.isRequired,
-    interactiveActions: PropTypes.object.isRequired
+    interactiveActions: PropTypes.object.isRequired,
+    app: PropTypes.object.isRequired
   };
 
   get content () {
@@ -67,6 +68,9 @@ class Root extends React.Component {
     this.initializeModule('interactive', 'interactiveActions')
     this.initializeModule('app', 'appActions')
     this.props.appActions.checkForUpdate()
+    setInterval(() => {
+      this.props.appActions.checkForUpdate()
+    }, 20 * 60 * 1000)
   }
 
   render () {
@@ -87,7 +91,8 @@ class Root extends React.Component {
 
 /* istanbul ignore next */
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  app: state.app
 })
 
 /* istanbul ignore next */
