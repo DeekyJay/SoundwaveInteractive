@@ -336,6 +336,12 @@ const ACTION_HANDLERS = {
       large_grid: large_grid
     }
   },
+  GET_OWNED_GAMES_REJECTED: (state) => {
+    return {
+      ...state,
+      isGameCreating: false
+    }
+  },
   CREATE_GAME_FULFILLED: (state, actions) => {
     const { payload: { gameId, versionId, board, large_grid } } = actions
     return {
@@ -403,7 +409,7 @@ export const initialState = {
   hasSoundBoardGame: false,
   gameId: '',
   versionId: '',
-  isGameCreating: false,
+  isGameCreating: true,
   gameCreationError: false,
   isUpdating: false,
   updateError: false,

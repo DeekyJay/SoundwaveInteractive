@@ -94,6 +94,7 @@ export class BoardEditor extends React.Component {
 
   renderBoard = () => {
     const {
+      profiles,
       profileId,
       board: {
         large_grid
@@ -101,7 +102,7 @@ export class BoardEditor extends React.Component {
     } = this.props
     return (
       <div className='board'>
-        {profileId || true
+        {profileId
           ? <div className='board-editor-wrapper'>
             <div className='board-background-grid'>
               <div className='board-wrapper'>
@@ -124,7 +125,9 @@ export class BoardEditor extends React.Component {
             </div>
           </div>
           : <div className='board-no-profile'>
-            <div className='board-select-profile'>Please Select A Profile</div>
+            <div className='board-select-profile'>
+              {profiles && profiles.length ? 'Please Select A Profile' : 'Please Create A Profile'}
+            </div>
           </div>}
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
       </div>

@@ -64,7 +64,7 @@ export class Header extends React.Component {
             <span className='sicon-dash'></span>
           </div>
           <div className='action maximize' onClick={this.maximize}>
-            <span className='sicon-grow'></span>
+            <span className='sicon-max'></span>
           </div>
           <div className='action exit' onClick={this.close}>
             <span className='sicon-cross'></span>

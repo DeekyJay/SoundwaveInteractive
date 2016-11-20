@@ -27,6 +27,7 @@ export const constants = {
 }
 
 const syncStorageWithState = (state) => {
+  console.log('WRITING TO STORAGE')
   storage.set('sounds', state, (err) => {
     if (err) throw err
   })
@@ -231,7 +232,7 @@ export default function (state = initialState, action) {
   let newState
   if (handler) {
     newState = handler(state, action)
-    syncStorageWithState(newState)
+    if (action.type !== constants.SOUNDS_INITIALIZE) syncStorageWithState(newState)
   } else {
     newState = state
   }

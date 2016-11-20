@@ -273,7 +273,7 @@ export class SoundList extends React.Component {
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
-                  pressDelay={90} />
+                  pressDelay={95} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi' />
               </div>

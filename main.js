@@ -21,8 +21,8 @@ const options = {
 const updater = new GhReleases(options)
 
 crashReporter.start({
-  productName: 'SoundwaveInteractive',
-  companyName: 'SoundwaveInteractive',
+  productName: 'Soundwave Interactive',
+  companyName: 'Derek Jensen',
   submitURL: '',
   autoSubmit: true
 })

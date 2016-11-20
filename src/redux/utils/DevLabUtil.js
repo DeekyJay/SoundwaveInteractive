@@ -34,7 +34,7 @@ function renderTactiles () {
         holding: true,
         frequency: true
       },
-      text: 'Sound ' + (i + 1),
+      text: 'Unassigned',
       cost: {
         press: {
           cost: 0

@@ -64,6 +64,9 @@ export const actions = {
   initialize: (tokens) => {
     return (dispatch) => {
       if (tokens.access && tokens.refresh && tokens.expires) {
+        dispatch({
+          type: 'SIGN_IN_PENDING'
+        })
         updateTokens(tokens)
         if (tokens.refresh && !checkStatus()) {
           auth.refresh()

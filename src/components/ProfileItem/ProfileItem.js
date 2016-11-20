@@ -19,7 +19,7 @@ export class ProfileItem extends React.Component {
     const isSelected = profile.id === selectedProfile
     return (
       <div key={index} className={`profile-item-container ${isSelected ? 'selected' : ''}`}
-        onClick={this.selectProfile}>
+        onMouseUp={this.selectProfile}>
         <div className='profile-list-col-header lock'>
           {profile.locked
             ? <span className='sicon-lock' />

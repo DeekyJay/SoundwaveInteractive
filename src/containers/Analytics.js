@@ -24,7 +24,7 @@ export class Analytics extends React.Component {
           <div
             className='form-group'
             onClick={this.checkChanged}>
-            <span className='analytics-label'>Opt out of sharing data for analytics*</span>
+            <span className='analytics-label'>Share data for analytics*</span>
             <span className={`custom-checkbox ${shareAnalytics ? 'sicon-round-check' : ''}`}></span>
           </div>
           <div className='form-info'>* The data uploaded includes the following: Total sparks spent, total

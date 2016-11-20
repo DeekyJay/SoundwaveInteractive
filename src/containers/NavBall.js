@@ -37,8 +37,12 @@ export class NavBall extends React.Component {
     const navigateAbout = navigate.bind(this, 'about')
     return (
       <div className='navball-container'>
-        <div onClick={this.link} className='social-media twitter' data-tip='Twitter'></div>
-        <div onClick={this.link} className='social-media discord' data-tip='Discord'></div>
+        <div onClick={this.link} className='social-media twitter' data-tip='Twitter'>
+          <Ink className='ink twitter' />
+        </div>
+        <div onClick={this.link} className='social-media discord' data-tip='Discord'>
+          <Ink className='ink discord' />
+        </div>
         <div className='navball'>
           <div className='nav-item board' onClick={navigateSoundboard}>
             <span className='sicon-piano'></span>
@@ -56,8 +60,12 @@ export class NavBall extends React.Component {
             <Ink />
           </div>
         </div>
-        <div onClick={this.link} className='social-media github' data-tip='GitHub'></div>
-        <div onClick={this.link} className='social-media paypal' data-tip='PayPal'></div>
+        <div onClick={this.link} className='social-media github' data-tip='GitHub'>
+          <Ink className='ink github' />
+        </div>
+        <div onClick={this.link} className='social-media paypal' data-tip='PayPal'>
+          <Ink className='ink paypal' />
+        </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
       </div>
     )
