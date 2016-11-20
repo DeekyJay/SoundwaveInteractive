@@ -27,7 +27,7 @@ export class Changelog extends React.Component {
             <InfoBullet text='A major update to the original Beam Soundly Interactive application.' />
           </InfoGroup>
           <InfoGroup title='Some Changed Stuff' className='change'
-            text={'Here are some changes we\'ve made since the last released.'}>
+            text={'Here are some changes we\'ve made since the last release.'}>
             <InfoBullet text='Everything. Literally everything was changed.' />
           </InfoGroup>
         </div>
