@@ -31,7 +31,9 @@ export class ProfileList extends React.Component {
   static propTypes = {
     profiles: PropTypes.array.isRequired,
     profileActions: PropTypes.object.isRequired,
-    profileId: PropTypes.string.isRequired
+    profileId: PropTypes.string.isRequired,
+    tutMode: PropTypes.bool.isRequired,
+    tutStep: PropTypes.number
   }
 
   constructor (props) {
@@ -141,6 +143,14 @@ export class ProfileList extends React.Component {
     this._edit()
   }
 
+  isDisabled = (step) => {
+    const { tutMode, tutStep } = this.props
+    if (!tutMode) return null
+    return (
+      <span className={tutStep !== step ? 'disabled' : ''}></span>
+    )
+  }
+
   render () {
     const {
       profiles,
@@ -226,6 +236,7 @@ export class ProfileList extends React.Component {
           </div>
         </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
+        {this.isDisabled(3)}
       </div>
     )
   }
@@ -234,7 +245,9 @@ export class ProfileList extends React.Component {
 /* istanbul ignore next */
 const mapStateToProps = (state) => ({
   profiles: state.profiles.profiles,
-  profileId: state.profiles.profileId
+  profileId: state.profiles.profileId,
+  tutMode: state.app.tutMode,
+  tutStep: state.app.tutStep
 })
 
 /* istanbul ignore next */

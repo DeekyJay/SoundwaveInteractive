@@ -8,7 +8,9 @@ import Ink from '../components/Ink/src'
 export class Connector extends React.Component {
   static propTypes = {
     interactiveActions: PropTypes.object.isRequired,
-    interactive: PropTypes.object.isRequired
+    interactive: PropTypes.object.isRequired,
+    tutMode: PropTypes.bool.isRequired,
+    tutStep: PropTypes.number
   }
 
   setCooldownOption = (option) => {
@@ -25,6 +27,14 @@ export class Connector extends React.Component {
 
   goInteractive = () => {
     this.props.interactiveActions.goInteractive()
+  }
+
+  isDisabled = (step) => {
+    const { tutMode, tutStep } = this.props
+    if (!tutMode) return null
+    return (
+      <span className={tutStep !== step ? 'disabled' : ''}></span>
+    )
   }
 
   render () {
@@ -102,13 +112,16 @@ export class Connector extends React.Component {
           </button>
         </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
+        {this.isDisabled(5)}
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  interactive: state.interactive
+  interactive: state.interactive,
+  tutMode: state.app.tutMode,
+  tutStep: state.app.tutStep
 })
 const mapDispatchToProps = (dispatch) => ({
   interactiveActions: bindActionCreators(interactiveActions, dispatch)

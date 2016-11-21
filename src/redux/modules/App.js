@@ -21,7 +21,8 @@ export const constants = {
   SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE',
   SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
   APP_INITIALIZE: 'APP_INITIALIZE',
-  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS'
+  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
+  UPDATE_TUT: 'UPDATE_TUT'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -41,7 +42,9 @@ const syncStorageWithState = (state) => {
   const data = {
     globalVolume: state.globalVolume,
     selectedOutput: state.selectedOutput,
-    shareAnalytics: state.shareAnalytics
+    shareAnalytics: state.shareAnalytics,
+    tutMode: state.tutMode,
+    tutStep: state.tutStep
   }
   storage.set('app', data, (err) => {
     if (err) throw err
@@ -153,6 +156,27 @@ export const actions = {
         payload: { shareAnalytics: !flag }
       })
     }
+  },
+  nextTutStep: () => {
+    return (dispatch, getState) => {
+      const { app: { tutStep } } = getState()
+      if (tutStep === 6) {
+        dispatch({
+          type: constants.UPDATE_TUT,
+          payload: {
+            tutStep: 1,
+            tutMode: false
+          }
+        })
+      } else {
+        dispatch({
+          type: constants.UPDATE_TUT,
+          payload: {
+            tutStep: tutStep + 1
+          }
+        })
+      }
+    }
   }
 }
 // Action handlers
@@ -240,6 +264,15 @@ const ACTION_HANDLERS = {
       ...state,
       hasUpdate: true
     }
+  },
+  UPDATE_TUT: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
   }
 }
 // Reducer
@@ -254,7 +287,9 @@ export const initialState = {
   outputs: [],
   selectedOutput: null,
   globalVolume: 100,
-  shareAnalytics: true
+  shareAnalytics: true,
+  tutMode: true,
+  tutStep: 1
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

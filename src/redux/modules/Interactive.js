@@ -226,7 +226,7 @@ export const initialState = {
   storage: {
     cooldownOption: 'dynamic',
     staticCooldown: 5000,
-    useReconnect: false,
+    useReconnect: true,
     reconnectionTimeout: 3000
   }
 }
