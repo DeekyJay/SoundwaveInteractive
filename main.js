@@ -112,6 +112,10 @@ updater.on('update-downloaded', (info) => {
   mainWindow.webContents.send('UPDATE_READY')
 })
 
+updater.autoUpdater.on('error', (err) => {
+  console.log(err)
+})
+
 ipcMain.on('INSTALL_UPDATE', function (event) {
   console.log('TIME TO INSTALL')
   updater.install()
