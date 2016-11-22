@@ -26,11 +26,17 @@ export const constants = {
   SETUP_EDIT: 'SETUP_EDIT'
 }
 
+let timeout
 const syncStorageWithState = (state) => {
-  console.log('WRITING TO STORAGE')
-  storage.set('sounds', state, (err) => {
-    if (err) throw err
-  })
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    storage.set('sounds', state, (err) => {
+      if (err) {
+        console.log('SOUNDS')
+        throw err
+      }
+    })
+  }, 5000)
 }
 
 // Action Creators
@@ -130,6 +136,7 @@ export const actions = {
         const sound = _.find(sounds, s => s.id === soundId)
         const howl = new Howl({
           urls: [sound.path],
+          html5: true,
           buffer: true,
           volume: parseFloat(sound.volume) * 0.01,
           onend: () => {

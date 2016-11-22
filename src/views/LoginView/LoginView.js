@@ -25,7 +25,7 @@ export class LoginView extends React.Component {
   render () {
     return (
       <div className='login-container'>
-        {!this.props.isAuthenticated && !this.props.isWaitingForOAuth && !this.props.initialized
+        {!this.props.isAuthenticated && !this.props.isWaitingForOAuth || !this.props.initialized
           ? <div className='login-content'>
             <div className='login-text'>
               You're almost there.<br />Login so we can get started!

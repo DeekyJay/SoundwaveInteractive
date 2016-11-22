@@ -216,5 +216,37 @@
       color: #0089ff;
     }
   }
+
+  .disabled {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(50, 54, 94, 0.95);
+    top: 0;
+  }
+
+  .tutorial-container {
+    position: absolute;
+    font-size: 22px;
+    text-align: right;
+    display: inline-flex;
+    &.bottom {
+      bottom: 0;
+    }
+    &.top {
+      top: 0;
+    }
+    .tutorial-text {
+      margin-right: 20px;
+      text-align: right;
+      width: 580px;
+      display: inline-flex;
+    }
+    .btn {
+      font-size: 22px;
+      position: relative;
+      height: 50px;
+    }
+  }
 }
 /* Make standard style for this app */

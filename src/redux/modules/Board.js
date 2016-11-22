@@ -95,7 +95,7 @@ const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
       const sound = _.find(sounds, s => s.id === profile.sounds[i])
       if (sound) {
         text = sound.name
-        help = sound.name
+        help = sound.name ? sound.name.toUpperCase() : ''
         cooldown = parseInt(sound.cooldown) * 1000
         sparks = parseInt(sound.sparks)
       }

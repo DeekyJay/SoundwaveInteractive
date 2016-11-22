@@ -39,6 +39,17 @@ export function requestInteractive (channelID, versionId) {
   )
 }
 
+export function requestStopInteractive (channelID) {
+  return client.request('PUT', 'channels/' + channelID,
+    {
+      body: {
+        interactive: false
+      },
+      json: true
+    }
+  )
+}
+
 export function getUserInfo () {
   return client.request('GET', '/users/current')
   .then(response => {
@@ -102,7 +113,7 @@ function handleReport (report) {
           case 'dynamic':
             curCool = cooldowns[pressedId]
             break
-          case 'individiual':
+          case 'individual':
             curCool = cooldowns[tac.cooldown]
         }
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
@@ -192,18 +203,21 @@ export function goInteractive (channelId, versionId) {
 /**
  * Stops the connection to Beam.
  */
-export function stopInteractive () {
-  return new Promise((resolve, reject) => {
-    if (robot !== null) {
-      robot.on('close', () => {
-        console.log('Robot Closed')
-        resolve(true)
-      })
-      robot.on('error', (err) => {
-        reject(err)
-      })
-      robot.close()
-    }
+export function stopInteractive (channelId) {
+  return requestStopInteractive(channelId)
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      if (robot !== null) {
+        robot.on('close', () => {
+          console.log('Robot Closed')
+          resolve(true)
+        })
+        robot.on('error', (err) => {
+          reject(err)
+        })
+        robot.close()
+      }
+    })
   })
 }
 

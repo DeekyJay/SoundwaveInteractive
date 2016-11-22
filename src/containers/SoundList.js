@@ -40,7 +40,9 @@ export class SoundList extends React.Component {
     profileActions: PropTypes.object.isRequired,
     sounds: PropTypes.array.isRequired,
     hasEdit: PropTypes.string,
-    selectedOutput: PropTypes.string
+    selectedOutput: PropTypes.string,
+    tutMode: PropTypes.bool.isRequired,
+    tutStep: PropTypes.number
   }
 
   constructor (props) {
@@ -231,6 +233,14 @@ export class SoundList extends React.Component {
     this.updateValue({ target: { name: 'volume', value: value } })
   }
 
+  isDisabled = (step) => {
+    const { tutMode, tutStep } = this.props
+    if (!tutMode) return null
+    return (
+      <span className={tutStep !== step ? 'disabled' : ''}></span>
+    )
+  }
+
   render () {
     const {
       sounds,
@@ -369,11 +379,12 @@ export class SoundList extends React.Component {
             <div className={`sound-list-action add ${dragMode ? 'disabled' : ''}`}
               data-tip='Add Sound' onMouseUp={this.addSound}>
               <span className='sicon-add'></span>
-              <Ink />
+              { /* <Ink /> */ }
             </div>
           </div>
         </div>
         <ReactToolTip type='light' class='default-tooltip' effect='solid' />
+        {this.isDisabled(2)}
       </div>
     )
   }
@@ -383,7 +394,9 @@ export class SoundList extends React.Component {
 const mapStateToProps = (state) => ({
   sounds: state.sounds.sounds,
   hasEdit: state.sounds.hasEdit,
-  selectedOutput: state.app.selectedOutput
+  selectedOutput: state.app.selectedOutput,
+  tutMode: state.app.tutMode,
+  tutStep: state.app.tutStep
 })
 
 /* istanbul ignore next */

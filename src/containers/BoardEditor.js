@@ -20,7 +20,9 @@ export class BoardEditor extends React.Component {
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
     profileId: PropTypes.string.isRequired,
-    profiles: PropTypes.array.isRequired
+    profiles: PropTypes.array.isRequired,
+    tutMode: PropTypes.bool.isRequired,
+    tutStep: PropTypes.number
   }
 
   createGame = () => {
@@ -55,6 +57,14 @@ export class BoardEditor extends React.Component {
     this.props.soundActions.setupEdit(index)
   }
 
+  isDisabled = (step) => {
+    const { tutMode, tutStep } = this.props
+    if (!tutMode) return null
+    return (
+      <span className={tutStep !== step ? 'disabled' : ''}></span>
+    )
+  }
+
   render () {
     const {
       profiles,
@@ -83,6 +93,7 @@ export class BoardEditor extends React.Component {
           </div>
         }
         </div>
+        {this.isDisabled(4)}
       </div>
     )
   }
@@ -212,7 +223,9 @@ export class BoardEditor extends React.Component {
 const mapStateToProps = (state) => ({
   board: state.board,
   profileId: state.profiles.profileId,
-  profiles: state.profiles.profiles
+  profiles: state.profiles.profiles,
+  tutMode: state.app.tutMode,
+  tutStep: state.app.tutStep
 })
 
 /* istanbul ignore next */

@@ -36,6 +36,11 @@ export class Info extends React.Component {
             <li><a name='wiki' onClick={this.goToLink}>Wiki</a></li>
             <li><a name='forums' onClick={this.goToLink}>Beam Forums</a></li>
           </InfoGroup>
+          <InfoGroup title='App Info' className='app-info'
+            text='App Information and License'>
+            <InfoBullet text='Made by Derek Jensen' />
+            <InfoBullet text='Copyright 2016 Derek Jensen. All rights reserved.' />
+          </InfoGroup>
         </div>
       </div>
     )

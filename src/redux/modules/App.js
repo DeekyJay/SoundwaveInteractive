@@ -1,5 +1,4 @@
 import { remote, ipcRenderer } from 'electron'
-import fetch from '../utils/fetch'
 import _ from 'lodash'
 import storage from 'electron-json-storage'
 import { Howler } from 'howler'
@@ -21,7 +20,9 @@ export const constants = {
   SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE',
   SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
   APP_INITIALIZE: 'APP_INITIALIZE',
-  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS'
+  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
+  UPDATE_TUT: 'UPDATE_TUT',
+  CLEAR_APP: 'CLEAR_APP'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -37,15 +38,21 @@ ipcRenderer.on('UPDATE_READY', function () {
   ipcDispatch(actions.updateReady())
 })
 
+let timeout
 const syncStorageWithState = (state) => {
-  const data = {
-    globalVolume: state.globalVolume,
-    selectedOutput: state.selectedOutput,
-    shareAnalytics: state.shareAnalytics
-  }
-  storage.set('app', data, (err) => {
-    if (err) throw err
-  })
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    const data = {
+      globalVolume: state.globalVolume,
+      selectedOutput: state.selectedOutput,
+      shareAnalytics: state.shareAnalytics,
+      tutMode: state.tutMode,
+      tutStep: state.tutStep
+    }
+    storage.set('app', data, (err) => {
+      if (err) throw err
+    })
+  }, 5000)
 }
 
 // Action Creators
@@ -55,6 +62,7 @@ export const actions = {
       if (data.shareAnalytics !== undefined &&
         data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
       ipcDispatch = dispatch
+      console.log(data)
       dispatch({
         type: constants.APP_INITIALIZE,
         payload: data
@@ -153,6 +161,32 @@ export const actions = {
         payload: { shareAnalytics: !flag }
       })
     }
+  },
+  nextTutStep: () => {
+    return (dispatch, getState) => {
+      const { app: { tutStep } } = getState()
+      if (tutStep === 6) {
+        dispatch({
+          type: constants.UPDATE_TUT,
+          payload: {
+            tutStep: 1,
+            tutMode: false
+          }
+        })
+      } else {
+        dispatch({
+          type: constants.UPDATE_TUT,
+          payload: {
+            tutStep: tutStep + 1
+          }
+        })
+      }
+    }
+  },
+  clearAppSettings: () => {
+    return {
+      type: constants.CLEAR_APP
+    }
   }
 }
 // Action handlers
@@ -240,6 +274,28 @@ const ACTION_HANDLERS = {
       ...state,
       hasUpdate: true
     }
+  },
+  UPDATE_TUT: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
+  },
+  CLEAR_APP: (state) => {
+    let data = {
+      selectedOutput: null,
+      globalVolume: 100,
+      shareAnalytics: true,
+      tutMode: true,
+      tutStep: 1
+    }
+    syncStorageWithState(data)
+    return {
+      ...initialState
+    }
   }
 }
 // Reducer
@@ -254,7 +310,9 @@ export const initialState = {
   outputs: [],
   selectedOutput: null,
   globalVolume: 100,
-  shareAnalytics: true
+  shareAnalytics: true,
+  tutMode: true,
+  tutStep: 1
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]
