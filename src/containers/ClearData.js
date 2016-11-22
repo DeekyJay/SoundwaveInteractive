@@ -4,6 +4,9 @@ import { bindActionCreators } from 'redux'
 import { actions as soundActions } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import { actions as authActions } from '../redux/modules/Authentication'
+import { actions as appActions } from '../redux/modules/App'
+import { actions as interactiveActions } from '../redux/modules/Interactive'
+
 import Ink from '../components/Ink/src'
 import { toastr } from 'redux-toastr'
 
@@ -12,7 +15,9 @@ export class ClearData extends React.Component {
   static propTypes = {
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
-    authActions: PropTypes.object.isRequired
+    authActions: PropTypes.object.isRequired,
+    appActions: PropTypes.object.isRequired,
+    interactiveActions: PropTypes.object.isRequired
   }
 
   clearSounds = () => {
@@ -28,6 +33,8 @@ export class ClearData extends React.Component {
   clearAllData = () => {
     this.clearSounds()
     this.clearProfiles()
+    this.props.appActions.clearAppSettings()
+    this.props.interactiveActions.clearInteractiveSettings()
     this.props.authActions.logout()
   }
 
@@ -73,7 +80,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   soundActions: bindActionCreators(soundActions, dispatch),
   profileActions: bindActionCreators(profileActions, dispatch),
-  authActions: bindActionCreators(authActions, dispatch)
+  authActions: bindActionCreators(authActions, dispatch),
+  appActions: bindActionCreators(appActions, dispatch),
+  interactiveActions: bindActionCreators(interactiveActions, dispatch)
 })
 
 export default connect(

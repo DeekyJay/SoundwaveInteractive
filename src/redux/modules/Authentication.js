@@ -147,7 +147,7 @@ const ACTION_HANDLERS = {
   LOGOUT: (state) => {
     return {
       ...initialState,
-      initialized: true
+      initialized: false
     }
   },
   SET_USER: (state, action) => {

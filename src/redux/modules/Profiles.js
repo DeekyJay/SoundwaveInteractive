@@ -21,10 +21,14 @@ export const constants = {
   TOGGLE_PROFILE_LOCK: 'TOGGLE_PROFILE_LOCK'
 }
 
+let timeout
 const syncStorageWithState = (state) => {
-  storage.set('profiles', state, (err) => {
-    if (err) throw err
-  })
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    storage.set('profiles', state, (err) => {
+      if (err) throw err
+    })
+  }, 5000)
 }
 
 // Action Creators

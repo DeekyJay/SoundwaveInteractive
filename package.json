@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Soundwave Interactive Beam Soundboard",
   "main": "main.js",
   "engines": {
@@ -130,7 +130,6 @@
     "react-grid-layout": "^0.12.7",
     "react-ink": "^5.1.1",
     "react-onclickoutside": "^5.2.0",
-    "react-overlays": "^0.6.10",
     "react-redux": "^4.0.0",
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",

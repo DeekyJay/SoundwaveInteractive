@@ -12,13 +12,20 @@ export const constants = {
   TOGGLE_AUTO_RECONNECT: 'TOGGLE_AUTO_RECONNECT',
   UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT',
   COOLDOWN_UPDATED: 'COOLDOWN_UPDATED',
-  UPDATE_STATIC_COOLDOWN: 'UPDATE_STATIC_COOLDOWN'
+  UPDATE_STATIC_COOLDOWN: 'UPDATE_STATIC_COOLDOWN',
+  CLEAR_INTERACTIVE: 'CLEAR_INTERACTIVE'
 }
 
+let timeout
 const syncStorageWithState = (state) => {
-  storage.set('interactive', state.storage, (err) => {
-    if (err) throw err
-  })
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    storage.set('interactive', state.storage, (err) => {
+      if (err) {
+        console.log('INTERACTIVE', err)
+      }
+    })
+  }, 5000)
 }
 
 const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
@@ -107,7 +114,7 @@ export const actions = {
         })
       } else {
         dispatch({ type: 'STOP_INTERACTIVE' })
-        beam.stopInteractive()
+        beam.stopInteractive(id)
       }
     }
   },
@@ -127,6 +134,11 @@ export const actions = {
         payload: { staticCooldown: parseInt(value) }
       })
       dispatch(actions.updateCooldown())
+    }
+  },
+  clearInteractiveSettings: () => {
+    return {
+      type: constants.CLEAR_INTERACTIVE
     }
   }
 }
@@ -214,6 +226,14 @@ const ACTION_HANDLERS = {
       storage: {
         ...state.storage,
         staticCooldown
+      }
+    }
+  },
+  CLEAR_INTERACTIVE: (state) => {
+    return {
+      ...state,
+      storage: {
+        ...initialState.storage
       }
     }
   }

@@ -4,6 +4,7 @@ import _ from 'lodash'
 import storage from 'electron-json-storage'
 import { Howler } from 'howler'
 import { shareAnalytics } from '../utils/analytics'
+import { actions as interactiveActions } from './Interactive'
 
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -22,7 +23,8 @@ export const constants = {
   SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
   APP_INITIALIZE: 'APP_INITIALIZE',
   TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
-  UPDATE_TUT: 'UPDATE_TUT'
+  UPDATE_TUT: 'UPDATE_TUT',
+  CLEAR_APP: 'CLEAR_APP'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -38,17 +40,21 @@ ipcRenderer.on('UPDATE_READY', function () {
   ipcDispatch(actions.updateReady())
 })
 
+let timeout
 const syncStorageWithState = (state) => {
-  const data = {
-    globalVolume: state.globalVolume,
-    selectedOutput: state.selectedOutput,
-    shareAnalytics: state.shareAnalytics,
-    tutMode: state.tutMode,
-    tutStep: state.tutStep
-  }
-  storage.set('app', data, (err) => {
-    if (err) throw err
-  })
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    const data = {
+      globalVolume: state.globalVolume,
+      selectedOutput: state.selectedOutput,
+      shareAnalytics: state.shareAnalytics,
+      tutMode: state.tutMode,
+      tutStep: state.tutStep
+    }
+    storage.set('app', data, (err) => {
+      if (err) throw err
+    })
+  }, 5000)
 }
 
 // Action Creators
@@ -58,6 +64,7 @@ export const actions = {
       if (data.shareAnalytics !== undefined &&
         data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
       ipcDispatch = dispatch
+      console.log(data)
       dispatch({
         type: constants.APP_INITIALIZE,
         payload: data
@@ -79,9 +86,13 @@ export const actions = {
     }
   },
   close: () => {
-    mainWindow.close()
-    return {
-      type: constants.CLOSE
+    return (dispatch, getState) => {
+      const { interactive: { isConnected } } = getState()
+      if (isConnected) dispatch(interactiveActions.stopInteractiveAndQuit())
+      else mainWindow.close()
+      dispatch({
+        type: constants.CLOSE
+      })
     }
   },
   fullscreen: (flag) => {
@@ -176,6 +187,11 @@ export const actions = {
           }
         })
       }
+    }
+  },
+  clearAppSettings: () => {
+    return {
+      type: constants.CLEAR_APP
     }
   }
 }
@@ -273,6 +289,19 @@ const ACTION_HANDLERS = {
     }
     syncStorageWithState(newState)
     return newState
+  },
+  CLEAR_APP: (state) => {
+    let data = {
+      selectedOutput: null,
+      globalVolume: 100,
+      shareAnalytics: true,
+      tutMode: true,
+      tutStep: 1
+    }
+    syncStorageWithState(data)
+    return {
+      ...initialState
+    }
   }
 }
 // Reducer
