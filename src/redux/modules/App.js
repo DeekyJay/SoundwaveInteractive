@@ -1,10 +1,8 @@
 import { remote, ipcRenderer } from 'electron'
-import fetch from '../utils/fetch'
 import _ from 'lodash'
 import storage from 'electron-json-storage'
 import { Howler } from 'howler'
 import { shareAnalytics } from '../utils/analytics'
-import { actions as interactiveActions } from './Interactive'
 
 const { BrowserWindow } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -86,13 +84,9 @@ export const actions = {
     }
   },
   close: () => {
-    return (dispatch, getState) => {
-      const { interactive: { isConnected } } = getState()
-      if (isConnected) dispatch(interactiveActions.stopInteractiveAndQuit())
-      else mainWindow.close()
-      dispatch({
-        type: constants.CLOSE
-      })
+    mainWindow.close()
+    return {
+      type: constants.CLOSE
     }
   },
   fullscreen: (flag) => {
