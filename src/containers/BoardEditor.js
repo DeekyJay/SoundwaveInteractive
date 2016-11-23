@@ -8,7 +8,7 @@ import ReactGridLayout from 'react-grid-layout'
 import ReactToolTip from 'react-tooltip'
 import DevLabUtil from '../redux/utils/DevLabUtil'
 import _ from 'lodash'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 
 const largeGrid = DevLabUtil.makeGrid(16, 4)
 

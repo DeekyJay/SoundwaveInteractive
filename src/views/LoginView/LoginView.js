@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { actions } from '../../redux/modules/Authentication'
 import { bindActionCreators } from 'redux'
-import Ink from '../../components/Ink/src'
+import Ink from '../../components/Ink'
 
 export class LoginView extends React.Component {
 

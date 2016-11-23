@@ -10,7 +10,7 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { Howl } from 'howler'
 import { toastr } from 'redux-toastr'
 import ReactSlider from 'rc-slider'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound}) => {

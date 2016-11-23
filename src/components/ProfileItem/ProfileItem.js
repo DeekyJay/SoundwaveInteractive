@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import Ink from '../Ink/src'
+import Ink from '../Ink'
 
 export class ProfileItem extends React.Component {
   static propTypes = {

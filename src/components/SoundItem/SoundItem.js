@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { remote } from 'electron'
-import Ink from '../../components/Ink/src'
+import Ink from '../../components/Ink'
 const { shell } = remote
 
 export class SoundItem extends React.Component {
