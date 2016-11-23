@@ -32,9 +32,10 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
   let cooldowns = []
   try {
     const profile = _.find(profiles, p => p.id === id)
-    profile.sounds.map(s => {
+    profile.sounds.map((s, i) => {
       const sound = _.find(sounds, so => so.id === s)
       if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
+      else cooldowns.push(0)
     })
   } catch (err) {
     // Something happened, set the default amount

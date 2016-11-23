@@ -39,7 +39,8 @@ export function requestInteractive (channelID, versionId) {
   )
 }
 
-export function requestStopInteractive (channelID) {
+export function requestStopInteractive (channelID, updateChannel) {
+  if (!updateChannel) return new Promise ((resolve, reject) => { resolve(true) })
   return client.request('PUT', 'channels/' + channelID,
     {
       body: {
@@ -166,7 +167,10 @@ function initHandshake (id) {
       rb.on('report', handleReport)
       rb.on('error', err => {
         console.log(err)
-        throw err
+        // Commenting this out because there is nothing I can do about it
+        // and it's just spamming Sentry.
+        // Reconnect is handled anyway.
+        // throw err
       })
       rb.on('close', () => {
         store.dispatch(interactiveActions.robotClosedEvent())
@@ -203,8 +207,8 @@ export function goInteractive (channelId, versionId) {
 /**
  * Stops the connection to Beam.
  */
-export function stopInteractive (channelId) {
-  return requestStopInteractive(channelId)
+export function stopInteractive (channelId, updateChannel=true) {
+  return requestStopInteractive(channelId, updateChannel)
   .then(() => {
     return new Promise((resolve, reject) => {
       if (robot !== null) {
@@ -226,9 +230,11 @@ export function setupStore (_store) {
 }
 
 export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
+  console.log(cooldownType, staticCooldown)
   cooldownType = _cooldownType
   staticCooldown = _staticCooldown
   cooldowns = _cooldowns
+  console.log(cooldownType, staticCooldown, cooldowns)
 }
 
 export function setProfile (profileId) {

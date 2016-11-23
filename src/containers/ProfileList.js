@@ -56,6 +56,7 @@ export class ProfileList extends React.Component {
   }
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
+    if (!document.elementFromPoint(e.x, e.y)) return
     const name = document.elementFromPoint(e.x, e.y).className
     const currentProfile = this.props.profiles[oldIndex]
     const { profileId } = this.props

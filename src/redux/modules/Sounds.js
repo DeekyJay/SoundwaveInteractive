@@ -161,7 +161,7 @@ export const actions = {
     return (dispatch, getState) => {
       const { profiles: { profiles, profileId } } = getState()
       const profile = _.find(profiles, p => p.id === profileId)
-      let sound = profile.sounds[index]
+      let sound = profile ? profile.sounds[index] : null
       dispatch({
         type: constants.SETUP_EDIT,
         payload: sound

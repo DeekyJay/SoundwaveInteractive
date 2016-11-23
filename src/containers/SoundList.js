@@ -87,6 +87,7 @@ export class SoundList extends React.Component {
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
     this.setState({ ...this.state, dragMode: false }, () => {
+      if (!document.elementFromPoint(e.x, e.y)) return
       const name = document.elementFromPoint(e.x, e.y).className
       const currentSound = this.props.sounds[oldIndex]
       if (name.startsWith('tactile tactile|')) {
