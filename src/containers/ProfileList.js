@@ -187,7 +187,9 @@ export class ProfileList extends React.Component {
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
                   hideSortableGhost
-                  pressDelay={100} />
+                  lockAxis
+                  lockToContainerEdges
+                  distance={8} />
               </div>
               : <div className='profile-list-no-profiles'>
                 <span>{'You currently don\'t have any profiles.'}</span>

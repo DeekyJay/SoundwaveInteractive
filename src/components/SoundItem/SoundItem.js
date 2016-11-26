@@ -35,9 +35,9 @@ export class SoundItem extends React.Component {
         <div className='sound-list-col-header name'>
           {sound.name}
         </div>
-        <div className='sound-list-col-header folder' onClick={this.openFileLocation}>
+        {/*<div className='sound-list-col-header folder' onClick={this.openFileLocation}>
           <span className='sicon-folder'></span>
-        </div>
+        </div>*/}
         <Ink />
       </div>
     )

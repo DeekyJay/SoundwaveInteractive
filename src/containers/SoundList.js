@@ -89,6 +89,7 @@ export class SoundList extends React.Component {
     this.setState({ ...this.state, dragMode: false }, () => {
       if (!document.elementFromPoint(e.x, e.y)) return
       const name = document.elementFromPoint(e.x, e.y).className
+      console.log('Drop Sound onto ' + name)
       const currentSound = this.props.sounds[oldIndex]
       if (name.startsWith('tactile tactile|')) {
         const index = name.split('|')[1]
@@ -111,11 +112,14 @@ export class SoundList extends React.Component {
   }
 
   _delete = (currentSound, oldIndex) => {
+    console.log('Deleting a sound')
     const { sound } = this.state
     let s
     let i
     if (!currentSound) s = sound
+    else s = currentSound
     if (!s) return
+    console.log(s)
     if (!oldIndex && oldIndex !== 0) i = this.props.sounds.findIndex(sound => sound.id === s.id)
     else i = oldIndex
     this.props.soundActions.removeSound(i)
@@ -269,9 +273,9 @@ export class SoundList extends React.Component {
             <div className='sound-list-col-header name top'>
               Name
             </div>
-            <div className='sound-list-col-header folder top' data-tip='Location'>
+            {/*<div className='sound-list-col-header folder top' data-tip='Location'>
               <span className='sicon-folder'></span>
-            </div>
+            </div>*/}
           </div>
           <div className='sound-list-items'>
             {sounds && sounds.length
@@ -284,7 +288,7 @@ export class SoundList extends React.Component {
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
-                  pressDelay={100} />
+                  distance={8} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
                   accept='audio/mp3,audio/ogg,audio/wav,audio/midi' />
               </div>

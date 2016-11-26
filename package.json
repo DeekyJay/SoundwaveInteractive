@@ -134,7 +134,7 @@
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",
     "react-slider": "^0.7.0",
-    "react-sortable-hoc": "0.0.5",
+    "react-sortable-hoc": "^0.2.0",
     "react-tooltip": "^3.0.8",
     "redux": "^3.0.0",
     "redux-auth-wrapper": "^0.3.0",
@@ -145,7 +145,8 @@
     "redux-toastr": "^1.1.2",
     "sprintf-js": "^1.0.3",
     "validate.js": "^0.9.0",
-    "webpack-target-electron-renderer": "^0.4.0"
+    "webpack-target-electron-renderer": "^0.4.0",
+    "winston": "^2.3.0"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
