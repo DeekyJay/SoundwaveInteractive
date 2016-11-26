@@ -13,17 +13,21 @@ import ReactSlider from 'rc-slider'
 import Ink from '../components/Ink'
 import _ from 'lodash'
 
-const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound}) => {
+const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound, isActive}) => {
   return (<SoundItem index={index} sound={sound} soundActions={soundActions}
-    selectSound={selectSound} selectedSound={selectedSound} />)
+    selectSound={selectSound} selectedSound={selectedSound} isActive={isActive} />)
 })
-const SortableList = SortableContainer(({ items, soundActions, selectSound, selectedSound }) => {
+const SortableList = SortableContainer(({ items, soundActions, selectSound, selectedSound, selectedProfile }) => {
   return (
     <span>
-      {items.map((value, index) =>
-        <SortableItem key={`item-${index}`} index={index}
+      {items.map((value, index) => {
+        const isActive = selectedProfile && selectedProfile.sounds && selectedProfile.sounds.length && _.find(selectedProfile.sounds, s => s === value.id )
+        return (
+          <SortableItem key={`item-${index}`} index={index}
           sound={value} soundActions={soundActions} selectSound={selectSound}
-          selectedSound={selectedSound} />
+          selectedSound={selectedSound} isActive={isActive} />
+        )
+      }
       )}
     </span>
   )
@@ -42,7 +46,9 @@ export class SoundList extends React.Component {
     hasEdit: PropTypes.string,
     selectedOutput: PropTypes.string,
     tutMode: PropTypes.bool.isRequired,
-    tutStep: PropTypes.number
+    tutStep: PropTypes.number,
+    profiles: PropTypes.array.isRequired,
+    selectedProfile: PropTypes.string.isRequired
   }
 
   constructor (props) {
@@ -246,6 +252,11 @@ export class SoundList extends React.Component {
     )
   }
 
+  getSelectedProfile = () => {
+    const { profiles, selectedProfile } = this.props
+    return _.find(profiles, p => p.id === selectedProfile) || []
+  }
+
   render () {
     const {
       sounds,
@@ -258,6 +269,8 @@ export class SoundList extends React.Component {
       editId,
       edit_inputs
     } = this.state
+
+    const selectedProfileArr = this.getSelectedProfile()
 
     return (
       <div className='sound-list-container'>
@@ -273,6 +286,9 @@ export class SoundList extends React.Component {
             <div className='sound-list-col-header name top'>
               Name
             </div>
+            <div className='sound-list-col-header active top' data-tip='Active In Profile'>
+              <span className='sicon-check'></span>
+            </div>
             {/*<div className='sound-list-col-header folder top' data-tip='Location'>
               <span className='sicon-folder'></span>
             </div>*/}
@@ -285,6 +301,7 @@ export class SoundList extends React.Component {
                   soundActions={soundActions}
                   selectSound={this.selectSound}
                   selectedSound={sound}
+                  selectedProfile={selectedProfileArr}
                   onSortEnd={this.onSortEnd}
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
@@ -401,7 +418,9 @@ const mapStateToProps = (state) => ({
   hasEdit: state.sounds.hasEdit,
   selectedOutput: state.app.selectedOutput,
   tutMode: state.app.tutMode,
-  tutStep: state.app.tutStep
+  tutStep: state.app.tutStep,
+  profiles: state.profiles.profiles,
+  selectedProfile: state.profiles.profileId
 })
 
 /* istanbul ignore next */

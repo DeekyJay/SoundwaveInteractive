@@ -187,7 +187,7 @@ export class ProfileList extends React.Component {
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
                   hideSortableGhost
-                  lockAxis
+                  lockAxis='y'
                   lockToContainerEdges
                   distance={8} />
               </div>

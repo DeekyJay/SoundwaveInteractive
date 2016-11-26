@@ -9,7 +9,8 @@ export class SoundItem extends React.Component {
     sound: PropTypes.object.isRequired,
     soundActions: PropTypes.object.isRequired,
     selectSound: PropTypes.func.isRequired,
-    selectedSound: PropTypes.object
+    selectedSound: PropTypes.object,
+    isActive: PropTypes.bool
   }
 
   openFileLocation = () => {
@@ -21,7 +22,7 @@ export class SoundItem extends React.Component {
   }
 
   render () {
-    const { index, sound, selectedSound } = this.props
+    const { index, sound, selectedSound, isActive } = this.props
     const isSelected = selectedSound && sound.id === selectedSound.id
     return (
       <div key={index} className={`sound-item-container ${isSelected ? 'selected' : ''}`}
@@ -38,6 +39,9 @@ export class SoundItem extends React.Component {
         {/*<div className='sound-list-col-header folder' onClick={this.openFileLocation}>
           <span className='sicon-folder'></span>
         </div>*/}
+        <div className='sound-list-col-header active'>
+          {isActive ? <span className='sicon-check'></span> : null}
+        </div>
         <Ink />
       </div>
     )
