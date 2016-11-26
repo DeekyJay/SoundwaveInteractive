@@ -39,8 +39,8 @@ export function requestInteractive (channelID, versionId) {
   )
 }
 
-export function requestStopInteractive (channelID, updateChannel) {
-  if (!updateChannel) return new Promise ((resolve, reject) => { resolve(true) })
+export function requestStopInteractive (channelID, forcedDisconnect) {
+  if (!forcedDisconnect) return new Promise ((resolve, reject) => { resolve(true) })
   return client.request('PUT', 'channels/' + channelID,
     {
       body: {
@@ -207,8 +207,8 @@ export function goInteractive (channelId, versionId) {
 /**
  * Stops the connection to Beam.
  */
-export function stopInteractive (channelId, updateChannel=true) {
-  return requestStopInteractive(channelId, updateChannel)
+export function stopInteractive (channelId, forcedDisconnect) {
+  return requestStopInteractive(channelId, forcedDisconnect)
   .then(() => {
     return new Promise((resolve, reject) => {
       if (robot !== null) {

@@ -93,7 +93,7 @@ export const actions = {
       payload: value
     }
   },
-  goInteractive: () => {
+  goInteractive: (isDisconnect) => {
     return (dispatch, getState) => {
       const { interactive: { isConnected },
         board: { versionId },
@@ -115,7 +115,7 @@ export const actions = {
         })
       } else {
         dispatch({ type: 'STOP_INTERACTIVE' })
-        beam.stopInteractive(id)
+        beam.stopInteractive(id, isDisconnect)
       }
     }
   },

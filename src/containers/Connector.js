@@ -26,7 +26,7 @@ export class Connector extends React.Component {
   }
 
   goInteractive = () => {
-    this.props.interactiveActions.goInteractive()
+    this.props.interactiveActions.goInteractive(true)
   }
 
   isDisabled = (step) => {
