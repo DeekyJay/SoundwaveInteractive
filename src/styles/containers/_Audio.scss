@@ -40,6 +40,10 @@
         background: #3e426b;
         width: 80%;
       }
+      .checkbox-label {
+        flex: 1;
+        cursor: pointer;
+      }
       .volume-slider {
         width: calc(80% - 50px);
       }

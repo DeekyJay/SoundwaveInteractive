@@ -248,5 +248,15 @@
       height: 50px;
     }
   }
+
+  .custom-checkbox {
+    height: 16px;
+    width: 16px;
+    border: 2px solid;
+    border-radius: 20px;
+    line-height: 0;
+    font-size: 12px;
+    cursor: pointer;
+  }
 }
 /* Make standard style for this app */

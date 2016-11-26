@@ -12,7 +12,8 @@ export class Audio extends React.Component {
     outputs: PropTypes.array.isRequired,
     appActions: PropTypes.object.isRequired,
     selectedOutput: PropTypes.string,
-    globalVolume: PropTypes.number.isRequired
+    globalVolume: PropTypes.number.isRequired,
+    trayMinimize: PropTypes.bool
   }
 
   constructor (props) {
@@ -40,12 +41,16 @@ export class Audio extends React.Component {
     this.props.appActions.setGlobalVolume(value)
   }
 
+  checkChanged = (e) => {
+    this.props.appActions.toggleTray()
+  }
+
   render () {
-    const { outputs, selectedOutput } = this.props
+    const { outputs, selectedOutput, trayMinimize } = this.props
     const { globalVolume } = this.state
     return (
       <div className='audio-container'>
-        <div className='audio-title'>Audio</div>
+        <div className='audio-title'>General</div>
         <div className='audio-wrapper'>
           <div className='form-group'>
             <label htmlFor='output'>Output Device</label>
@@ -72,6 +77,12 @@ export class Audio extends React.Component {
               onChange={this.setVolume} />
             <span className='volume'>{globalVolume}%</span>
           </div>
+          <div
+            className='form-group'
+            onClick={this.checkChanged}>
+            <span className='checkbox-label'>Minimize to system tray</span>
+            <span className={`custom-checkbox ${trayMinimize ? 'sicon-round-check' : ''}`}></span>
+          </div>
         </div>
       </div>
     )
@@ -81,7 +92,8 @@ export class Audio extends React.Component {
 const mapStateToProps = (state) => ({
   outputs: state.app.outputs,
   selectedOutput: state.app.selectedOutput,
-  globalVolume: state.app.globalVolume
+  globalVolume: state.app.globalVolume,
+  trayMinimize: state.app.trayMinimize
 })
 const mapDispatchToProps = (dispatch) => ({
   appActions: bindActionCreators(appActions, dispatch)

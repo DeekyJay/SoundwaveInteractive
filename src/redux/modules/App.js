@@ -4,8 +4,11 @@ import storage from 'electron-json-storage'
 import { Howler } from 'howler'
 import { shareAnalytics } from '../utils/analytics'
 
-const { BrowserWindow } = remote
+const { BrowserWindow, Tray, Menu, nativeImage, app } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
+let tray = null
+const appIcon = nativeImage.createFromPath('./app_build/tray.png')
+console.log(appIcon)
 // Constants
 export const constants = {
   MINIMIZE: 'MINIMIZE',
@@ -22,7 +25,8 @@ export const constants = {
   APP_INITIALIZE: 'APP_INITIALIZE',
   TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
   UPDATE_TUT: 'UPDATE_TUT',
-  CLEAR_APP: 'CLEAR_APP'
+  CLEAR_APP: 'CLEAR_APP',
+  TOGGLE_TRAY: 'TOGGLE_TRAY'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -47,7 +51,8 @@ const syncStorageWithState = (state) => {
       selectedOutput: state.selectedOutput,
       shareAnalytics: state.shareAnalytics,
       tutMode: state.tutMode,
-      tutStep: state.tutStep
+      tutStep: state.tutStep,
+      trayMinimize: state.trayMinimize
     }
     storage.set('app', data, (err) => {
       if (err) throw err
@@ -70,9 +75,30 @@ export const actions = {
     }
   },
   minimize: () => {
-    mainWindow.minimize()
-    return {
-      type: constants.MINIMIZE
+    return (dispatch, getState) => {
+      const { app: { trayMinimize } } = getState()
+      if (trayMinimize) {
+        mainWindow.hide()
+        app.dock.hide()
+        tray = new Tray(appIcon)
+        tray.setToolTip('Soundwave Interactive')
+        var contextMenu = Menu.buildFromTemplate([
+          { label: 'Open', click:  function () {
+              mainWindow.show()
+              app.dock.show()
+              tray.destroy()
+          } }
+        ])
+        tray.setContextMenu(contextMenu)
+        dispatch({
+          type: constants.MINIMIZE
+        })
+      } else {
+          mainWindow.minimize()
+          dispatch({
+            type: constants.MINIMIZE
+          })
+      }
     }
   },
   maximize: (flag) => {
@@ -187,6 +213,15 @@ export const actions = {
     return {
       type: constants.CLEAR_APP
     }
+  },
+  toggleTray: () => {
+    return (dispatch, getState) => {
+      const { app: { trayMinimize } } = getState()
+      dispatch({
+        type: constants.TOGGLE_TRAY,
+        payload: { trayMinimize: !trayMinimize }
+      })
+    }
   }
 }
 // Action handlers
@@ -296,6 +331,15 @@ const ACTION_HANDLERS = {
     return {
       ...initialState
     }
+  },
+  TOGGLE_TRAY: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
   }
 }
 // Reducer
@@ -312,7 +356,8 @@ export const initialState = {
   globalVolume: 100,
   shareAnalytics: true,
   tutMode: true,
-  tutStep: 1
+  tutStep: 1,
+  trayMinimize: false
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]
