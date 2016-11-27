@@ -38,8 +38,12 @@ require('babel-polyfill')
 
 const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
 const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
-const trayIconPath = process.env.NODE_ENV === 'development' ? `${__dirname}/src/static/tray.png` : `/${__dirname}/dist/static/tray.png`
-const appIconPath = process.env.NODE_NEV === 'development' ? `${__dirname}/src/static/icon.png` : `/${__dirname}/dist/static/icon.png`
+const trayIconPath = process.env.NODE_ENV === 'development'
+  ? `${__dirname}/src/static/tray.png`
+  : `/${__dirname}/dist/static/tray.png`
+const appIconPath = process.env.NODE_NEV === 'development'
+  ? `${__dirname}/src/static/icon.png`
+  : `/${__dirname}/dist/static/icon.png`
 const appIcon = nativeImage.createFromPath(appIconPath)
 /**
  * Load squirrel handlers
@@ -132,7 +136,7 @@ ipcMain.on('GET_TRAY_ICON', function (event) {
   tray.setToolTip('Soundwave Interactive')
   var contextMenu = Menu.buildFromTemplate([
     { label: 'Open',
-      click:  function () {
+      click: function () {
         showApp()
       }
     },
@@ -148,11 +152,10 @@ ipcMain.on('GET_TRAY_ICON', function (event) {
     showApp()
   })
   mainWindow.webContents.send('GET_TRAY_ICON', tray)
-  
 })
 
 function showApp () {
   mainWindow.show()
-  app.dock.show()
+  if (app.dock) app.dock.show()
   tray.destroy()
 }
