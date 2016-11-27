@@ -9,6 +9,8 @@ const BrowserWindow = electron.BrowserWindow
 const crashReporter = electron.crashReporter
 const nativeImage = electron.nativeImage
 const ipcMain = electron.ipcMain
+const Tray = electron.Tray
+const Menu = electron.Menu
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 let mainWindow = null
 const appVersion = require('./package.json').version
@@ -36,6 +38,7 @@ require('babel-polyfill')
 
 const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
 const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
+const trayIconPath = process.env.NODE_ENV === 'development' ? `${__dirname}/src/static/tray.png` : `/${__dirname}/dist/static/tray.png`
 /**
  * Load squirrel handlers
  */
@@ -119,4 +122,27 @@ updater.autoUpdater.on('error', (err) => {
 ipcMain.on('INSTALL_UPDATE', function (event) {
   console.log('TIME TO INSTALL')
   updater.install()
+})
+
+ipcMain.on('GET_TRAY_ICON', function (event) {
+  let tray = new Tray(trayIconPath)
+  tray.setToolTip('Soundwave Interactive')
+  var contextMenu = Menu.buildFromTemplate([
+    { label: 'Open',
+      click:  function () {
+        mainWindow.show()
+        app.dock.show()
+        tray.destroy()
+      }
+    },
+    {
+      label: 'Close',
+      click: function () {
+        mainWindow.close()
+      }
+    }
+  ])
+  tray.setContextMenu(contextMenu)
+  mainWindow.webContents.send('GET_TRAY_ICON', tray)
+  
 })

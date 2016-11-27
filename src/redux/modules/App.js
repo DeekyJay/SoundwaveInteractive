@@ -7,8 +7,9 @@ import { shareAnalytics } from '../utils/analytics'
 const { BrowserWindow, Tray, Menu, nativeImage, app } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
 let tray = null
-const appIcon = nativeImage.createFromPath('./app_build/tray.png')
-console.log(appIcon)
+const requirePath = process.env.NODE_ENV === 'development' ? './src/styles/images/' : './styles/images/'
+const appIcon = nativeImage.createFromPath(requirePath + 'tray.png')
+
 // Constants
 export const constants = {
   MINIMIZE: 'MINIMIZE',
@@ -78,20 +79,13 @@ export const actions = {
     return (dispatch, getState) => {
       const { app: { trayMinimize } } = getState()
       if (trayMinimize) {
-        mainWindow.hide()
-        app.dock.hide()
-        tray = new Tray(appIcon)
-        tray.setToolTip('Soundwave Interactive')
-        var contextMenu = Menu.buildFromTemplate([
-          { label: 'Open', click:  function () {
-              mainWindow.show()
-              app.dock.show()
-              tray.destroy()
-          } }
-        ])
-        tray.setContextMenu(contextMenu)
-        dispatch({
-          type: constants.MINIMIZE
+        ipcRenderer.send('GET_TRAY_ICON')
+        ipcRenderer.on('GET_TRAY_ICON', (event) => {
+          mainWindow.hide()
+          app.dock.hide()
+          dispatch({
+            type: constants.MINIMIZE
+          })
         })
       } else {
           mainWindow.minimize()
