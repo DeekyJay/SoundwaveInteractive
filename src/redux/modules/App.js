@@ -6,9 +6,6 @@ import { shareAnalytics } from '../utils/analytics'
 
 const { BrowserWindow, Tray, Menu, nativeImage, app } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
-let tray = null
-const requirePath = process.env.NODE_ENV === 'development' ? './src/styles/images/' : './styles/images/'
-const appIcon = nativeImage.createFromPath(requirePath + 'tray.png')
 
 // Constants
 export const constants = {
