@@ -16,19 +16,15 @@ export class Changelog extends React.Component {
         <div className='info-wrapper'>
           <InfoGroup title='Some New Stuff' className='new'
             text={'Here are some new features we\'ve recently added.'}>
-            <InfoBullet text='Dynamic Cooldown - The ability to cooldown your soundboard based on the sound clicked.' />
-            <InfoBullet text='Multiple Profiles - Tired of the single profile? Switch instantly between multiple profiles.' />
-            <InfoBullet text='Sound Library - Keep your soundbytes close, with easy drag and drop access right onto the board.' />
-            <InfoBullet text='Auto Updates - Those new features you want? No more manually downloading. They will be here with an update.' />
-            <InfoBullet text='OAuth - Nobody likes developers handling your credentials. Login through Beam.' />
-            <InfoBullet text='Minimal Setup - What Setup? Click that Create Soundboard button and start dragging sounds. You are good to go.' />
-            <InfoBullet text='Volume - Is that sound to loud? Perhaps all sounds? Turn them down, or the whole application down.' />
-            <InfoBullet text='Output - Not everyone uses the default audio output device. Now you can decide which device you want to use.' />
-            <InfoBullet text='A major update to the original Beam Soundly Interactive application.' />
+            <InfoBullet text='Active Sounds - Want to see what sounds you currently have assigned on your selected profile? Now you can!' />
+            <InfoBullet text='Minimize To Tray - Get rid of that pesky icon on your task bar or dock, put it in the tray!' />
+            <InfoBullet text='Mac & Linux - Some of you wanted a Mac & Linux build of the app! Here it is!' />
           </InfoGroup>
           <InfoGroup title='Some Changed Stuff' className='change'
             text={'Here are some changes we\'ve made since the last release.'}>
-            <InfoBullet text='Everything. Literally everything was changed.' />
+            <InfoBullet text='Drag and dropping is more natural now. No need to hold and wait, just start dragging!' />
+            <InfoBullet text='Reconnects from switching profiles or updating sounds cause a weird bug on Beam. Added tweaks to handle this better.' />
+            <InfoBullet text='Dragging the window around is a lot easier now, allowing you to select most of the header to move the window.' />
           </InfoGroup>
         </div>
       </div>

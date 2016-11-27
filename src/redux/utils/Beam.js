@@ -1,18 +1,9 @@
 import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
-import { remote } from 'electron'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
-const Interactive = remote.require('beam-interactive-node')
-const Packets = remote.require('beam-interactive-node/dist/robot/packets').default
-let robot
-let running
+import { ipcRenderer } from 'electron'
 let store
-
-let state = 'default'
-let cooldownType = 'static'
-let staticCooldown = 30000
-let cooldowns = []
 
 export const client = new Beam()
 const oAuthOpts = {
@@ -89,53 +80,6 @@ function getInteractiveControls (channelID) {
 }
 
 /**
- * Handles the report sent from Beam to us.
- * @param  {report} report - The report from Beam
- */
-function handleReport (report) {
-  if (running) {
-    var tactileResults = []
-    var pressedId
-    report.tactile.forEach(function (tac) {
-      if (tac.pressFrequency > 0) {
-        pressedId = tac.id
-        console.log('Tactile: ' + tac.id + ', Press: ' +
-                tac.pressFrequency + ', Release: ' + tac.releaseFrequency + ', Connected: ' + report.users.connected)
-        store.dispatch(soundActions.playSound(tac.id))
-      }
-    })
-    if (pressedId || pressedId === 0) {
-      report.tactile.forEach(tac => {
-        let curCool = 5000
-        switch (cooldownType) {
-          case 'static':
-            curCool = staticCooldown
-            break
-          case 'dynamic':
-            curCool = cooldowns[pressedId]
-            break
-          case 'individual':
-            curCool = cooldowns[tac.cooldown]
-        }
-        var tactile = new Packets.ProgressUpdate.TactileUpdate({
-          id: tac.id,
-          cooldown: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId ? curCool : 0,
-          fired: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId,
-          progress: tac.progress
-        })
-        tactileResults.push(tactile)
-      })
-      var progress = {
-        tactile: tactileResults,
-        joystick: [],
-        state: state
-      }
-      robot.send(new Packets.ProgressUpdate(progress))
-    }
-  }
-}
-
-/**
  * Initialize and start Hanshake with Interactive app
  * @param {int} id - Channel ID
  * @param {Object} res - Result of the channel join
@@ -143,45 +87,7 @@ function handleReport (report) {
 function initHandshake (id) {
   return client.game.join(id)
   .then(function (details) {
-    console.log('Authenticated with Beam. Starting Interactive Handshake.')
-    details = details.body
-    console.log('DETAILS', details)
-    robot = new Interactive.Robot({
-      remote: details.address,
-      channel: id,
-      key: details.key
-    })
-    return new Promise((resolve, reject) => {
-      return robot.handshake(err => {
-        if (err) {
-          console.log(err)
-          reject(err)
-        } else {
-          console.log('Connected')
-          running = true
-          resolve(robot)
-        }
-      })
-    })
-    .then(rb => {
-      rb.on('report', handleReport)
-      rb.on('error', err => {
-        console.log(err)
-        // Commenting this out because there is nothing I can do about it
-        // and it's just spamming Sentry.
-        // Reconnect is handled anyway.
-        // throw err
-      })
-      rb.on('close', () => {
-        store.dispatch(interactiveActions.robotClosedEvent())
-      })
-    })
-    .catch(err => {
-      if (err.res) {
-        throw new Error('Error connecting to Interactive:' + err.res.body.mesage)
-      }
-      throw new Error('Error connecting to Interactive', err)
-    })
+    ipcRenderer.send('initHandshake', details, id)
   })
 }
 
@@ -200,7 +106,7 @@ export function goInteractive (channelId, versionId) {
   })
   .catch(err => {
     console.log(err)
-    store.dispatch(interactiveActions.robotClosedEvent())
+    robotClosedEvent()
   })
 }
 
@@ -210,17 +116,12 @@ export function goInteractive (channelId, versionId) {
 export function stopInteractive (channelId, forcedDisconnect) {
   return requestStopInteractive(channelId, forcedDisconnect)
   .then(() => {
-    return new Promise((resolve, reject) => {
-      if (robot !== null) {
-        robot.on('close', () => {
-          console.log('Robot Closed')
-          resolve(true)
-        })
-        robot.on('error', (err) => {
-          reject(err)
-        })
-        robot.close()
-      }
+    return new Promise ((resolve, reject) => {
+      ipcRenderer.send('STOP_ROBOT')
+      ipcRenderer.once('STOP_ROBOT', (event, err) => {
+        if (err) reject(err)
+        else resolve(true)
+      })
     })
   })
 }
@@ -230,16 +131,16 @@ export function setupStore (_store) {
 }
 
 export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
-  console.log(cooldownType, staticCooldown)
-  cooldownType = _cooldownType
-  staticCooldown = _staticCooldown
-  cooldowns = _cooldowns
-  console.log(cooldownType, staticCooldown, cooldowns)
+  ipcRenderer.send('setCooldown', _cooldownType, _staticCooldown, _cooldowns)
 }
 
-export function setProfile (profileId) {
-  state = profileId
+function robotClosedEvent () {
+  store.dispatch(interactiveActions.robotClosedEvent())
 }
+
+ipcRenderer.on('robotClosedEvent', function (event) {
+  robotClosedEvent()
+})
 
 export default {
   client,
@@ -252,6 +153,5 @@ export default {
   goInteractive,
   stopInteractive,
   setupStore,
-  setCooldown,
-  setProfile
+  setCooldown
 }
