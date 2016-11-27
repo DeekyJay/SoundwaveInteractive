@@ -103,15 +103,24 @@ app.on('ready', () => {
   })
 })
 
+const WIN32 = process.platform === 'win32'
+
 ipcMain.on('CHECK_FOR_UPDATE', function (event) {
   console.log('CHECKING')
-  updater.check((err, status) => {
-    console.log(err, status)
-    if (!err && status) {
-      // Download the update
-      updater.download()
-    }
-  })
+  if (WIN32) {
+    updater.check((err, status) => {
+      console.log(err, status)
+      if (!err && status) {
+        // Download the update
+        updater.download()
+      }
+    })
+  } else {
+    updater._getLatestTag()
+    .then(tag => {
+      if (updater._newVersion(tag)) mainWindow.webContents.send('UPDATE_READY')
+    })
+  }
 })
 
 // When an update has been downloaded

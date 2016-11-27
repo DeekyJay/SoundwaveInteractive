@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as authActions } from '../redux/modules/Authentication'
 import { actions as appActions } from '../redux/modules/App'
+import { shell } from 'electron'
+const WIN32 = process.platform === 'win32'
 
 export class Header extends React.Component {
 
@@ -28,7 +30,8 @@ export class Header extends React.Component {
   }
 
   updateApp = () => {
-    this.props.appActions.update()
+    if (WIN32) this.props.appActions.update()
+    else shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive-releases/releases/latest')
   }
 
   render () {

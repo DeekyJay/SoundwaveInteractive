@@ -26,6 +26,7 @@ jsonfile.readFile(devPackage, (err, obj) => {
     throw new Error(err)
   } else {
     jsonObj.dependencies = obj.dependencies
+    jsonObj.author = obj.author
     jsonfile.writeFile(appPackage, jsonObj, (err) => {
       if (err) {
         throw new Error(err)
