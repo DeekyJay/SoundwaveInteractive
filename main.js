@@ -126,15 +126,14 @@ ipcMain.on('INSTALL_UPDATE', function (event) {
   updater.install()
 })
 
+let tray = null
 ipcMain.on('GET_TRAY_ICON', function (event) {
-  let tray = new Tray(trayIconPath)
+  tray = new Tray(trayIconPath)
   tray.setToolTip('Soundwave Interactive')
   var contextMenu = Menu.buildFromTemplate([
     { label: 'Open',
       click:  function () {
-        mainWindow.show()
-        app.dock.show()
-        tray.destroy()
+        showApp()
       }
     },
     {
@@ -145,6 +144,15 @@ ipcMain.on('GET_TRAY_ICON', function (event) {
     }
   ])
   tray.setContextMenu(contextMenu)
+  tray.on('click', function (event) {
+    showApp()
+  })
   mainWindow.webContents.send('GET_TRAY_ICON', tray)
   
 })
+
+function showApp () {
+  mainWindow.show()
+  app.dock.show()
+  tray.destroy()
+}
