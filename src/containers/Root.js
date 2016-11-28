@@ -70,7 +70,7 @@ class Root extends React.Component {
     this.props.appActions.checkForUpdate()
     setInterval(() => {
       if (!this.props.app.hasUpdate) this.props.appActions.checkForUpdate()
-    }, 20 * 60 * 1000)
+    }, 60 * 60 * 1000)
   }
 
   render () {

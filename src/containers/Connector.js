@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as interactiveActions } from '../redux/modules/Interactive'
 import ReactToolTip from 'react-tooltip'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 
 export class Connector extends React.Component {
   static propTypes = {
@@ -26,7 +26,7 @@ export class Connector extends React.Component {
   }
 
   goInteractive = () => {
-    this.props.interactiveActions.goInteractive()
+    this.props.interactiveActions.goInteractive(true)
   }
 
   isDisabled = (step) => {

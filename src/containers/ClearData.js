@@ -7,7 +7,7 @@ import { actions as authActions } from '../redux/modules/Authentication'
 import { actions as appActions } from '../redux/modules/App'
 import { actions as interactiveActions } from '../redux/modules/Interactive'
 
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 import { toastr } from 'redux-toastr'
 
 export class ClearData extends React.Component {

@@ -9,7 +9,9 @@ const BrowserWindow = electron.BrowserWindow
 const crashReporter = electron.crashReporter
 const nativeImage = electron.nativeImage
 const ipcMain = electron.ipcMain
-const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
+const Tray = electron.Tray
+const Menu = electron.Menu
+
 let mainWindow = null
 const appVersion = require('./package.json').version
 
@@ -36,6 +38,13 @@ require('babel-polyfill')
 
 const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './dist/electron'
 const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
+const trayIconPath = process.env.NODE_ENV === 'development'
+  ? `${__dirname}/src/static/tray.png`
+  : `${__dirname}/dist/static/tray.png`
+const appIconPath = process.env.NODE_NEV === 'development'
+  ? `${__dirname}/src/static/icon.png`
+  : `${__dirname}/dist/static/icon.png`
+const appIcon = nativeImage.createFromPath(appIconPath)
 /**
  * Load squirrel handlers
  */
@@ -94,15 +103,24 @@ app.on('ready', () => {
   })
 })
 
+const WIN32 = process.platform === 'win32'
+
 ipcMain.on('CHECK_FOR_UPDATE', function (event) {
   console.log('CHECKING')
-  updater.check((err, status) => {
-    console.log(err, status)
-    if (!err && status) {
-      // Download the update
-      updater.download()
-    }
-  })
+  if (WIN32) {
+    updater.check((err, status) => {
+      console.log(err, status)
+      if (!err && status) {
+        // Download the update
+        updater.download()
+      }
+    })
+  } else {
+    updater._getLatestTag()
+    .then(tag => {
+      if (updater._newVersion(tag)) mainWindow.webContents.send('UPDATE_READY')
+    })
+  }
 })
 
 // When an update has been downloaded
@@ -119,4 +137,42 @@ updater.autoUpdater.on('error', (err) => {
 ipcMain.on('INSTALL_UPDATE', function (event) {
   console.log('TIME TO INSTALL')
   updater.install()
+})
+
+let tray = null
+ipcMain.on('GET_TRAY_ICON', function (event) {
+  tray = new Tray(trayIconPath)
+  tray.setToolTip('Soundwave Interactive')
+  var contextMenu = Menu.buildFromTemplate([
+    { label: 'Open',
+      click: function () {
+        showApp()
+      }
+    },
+    {
+      label: 'Close',
+      click: function () {
+        mainWindow.close()
+      }
+    }
+  ])
+  tray.setContextMenu(contextMenu)
+  tray.on('click', function (event) {
+    showApp()
+  })
+  mainWindow.webContents.send('GET_TRAY_ICON', tray)
+})
+
+function showApp () {
+  mainWindow.show()
+  if (app.dock) app.dock.show()
+  tray.destroy()
+}
+
+// This seems bad...
+process.on('uncaughtException', function (error) {
+  console.log('UNCAUGHT ERROR', error)
+  if (error.stack.indexOf('WebSocket.ping') === -1) {
+    electron.dialog.showErrorBox('Uh Oh!', error.stack)
+  }
 })

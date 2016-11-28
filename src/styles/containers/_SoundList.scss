@@ -217,4 +217,12 @@
       border-top-right-radius: 4px;
     }
   }
+  &.active {
+    flex: 0.2;
+    text-align: center;
+    border-right: 1px solid $table-border;
+    &.top {
+      border-top-right-radius: 4px;
+    }
+  }
 }

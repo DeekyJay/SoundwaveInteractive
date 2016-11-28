@@ -40,83 +40,89 @@ const getGridFromTactiles = (tactiles) => {
 const makeValidSoundboard = (tactiles, profiles, sounds, profileId) => {
   tactiles = _.cloneDeep(tactiles)
   let profilesInBoard = []
-  profiles.map(p => {
-    profilesInBoard.push(p.id)
-  })
+  if (profiles && profiles.length) {
+    profiles.map(p => {
+      profilesInBoard.push(p.id)
+    })
+  }
   profilesInBoard = _.uniq(profilesInBoard)
   let newTactiles = []
-  tactiles.map((t, i) => {
-    // const largeDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'large')
-    // const mediumDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'medium')
-    // const smallDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'small')
+  if (tactiles && tactiles.length) {
+    tactiles.map((t, i) => {
+      // const largeDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'large')
+      // const mediumDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'medium')
+      // const smallDefault = _.find(t.blueprint, b => b.state === 'default' && b.grid === 'small')
 
-    // let newBlueprints = []
-    // newBlueprints.push(largeDefault)
-    // newBlueprints.push(mediumDefault)
-    // newBlueprints.push(smallDefault)
-    // profiles.map(p => {
-    //   if (largeDefault) {
-    //     let large = {}
-    //     if (large.width !== largeDefault.width) large.width = largeDefault.width
-    //     if (large.height !== largeDefault.height) large.height = largeDefault.height
-    //     if (large.x !== largeDefault.x) large.x = largeDefault.x
-    //     if (large.y !== largeDefault.y) large.y = largeDefault.y
-    //     large.state = p.id
-    //     large.grid = 'large'
-    //     newBlueprints.push(large)
-    //   }
-    //   if (mediumDefault) {
-    //     let med = {}
-    //     if (med.width !== mediumDefault.width) med.width = mediumDefault.width
-    //     if (med.height !== mediumDefault.height) med.height = mediumDefault.height
-    //     if (med.x !== mediumDefault.x) med.x = mediumDefault.x
-    //     if (med.y !== mediumDefault.y) med.y = mediumDefault.y
-    //     med.state = p.id
-    //     med.grid = 'medium'
-    //     newBlueprints.push(med)
-    //   }
-    //   if (smallDefault) {
-    //     let small = {}
-    //     if (small.width !== smallDefault.width) small.width = smallDefault.width
-    //     if (small.height !== smallDefault.height) small.height = smallDefault.height
-    //     if (small.x !== smallDefault.x) small.x = smallDefault.x
-    //     if (small.y !== smallDefault.y) small.y = smallDefault.y
-    //     small.state = p.id
-    //     small.grid = 'small'
-    //     newBlueprints.push(small)
-    //   }
-    // })
-    let text = 'Unassigned'
-    let cooldown = 0
-    let sparks = 0
-    let help = ''
-    const profile = _.find(profiles, p => p.id === profileId)
-    if (profile) {
-      const sound = _.find(sounds, s => s.id === profile.sounds[i])
-      if (sound) {
-        text = sound.name
-        help = sound.name ? sound.name.toUpperCase() : ''
-        cooldown = parseInt(sound.cooldown) * 1000
-        sparks = parseInt(sound.sparks)
+      // let newBlueprints = []
+      // newBlueprints.push(largeDefault)
+      // newBlueprints.push(mediumDefault)
+      // newBlueprints.push(smallDefault)
+      // profiles.map(p => {
+      //   if (largeDefault) {
+      //     let large = {}
+      //     if (large.width !== largeDefault.width) large.width = largeDefault.width
+      //     if (large.height !== largeDefault.height) large.height = largeDefault.height
+      //     if (large.x !== largeDefault.x) large.x = largeDefault.x
+      //     if (large.y !== largeDefault.y) large.y = largeDefault.y
+      //     large.state = p.id
+      //     large.grid = 'large'
+      //     newBlueprints.push(large)
+      //   }
+      //   if (mediumDefault) {
+      //     let med = {}
+      //     if (med.width !== mediumDefault.width) med.width = mediumDefault.width
+      //     if (med.height !== mediumDefault.height) med.height = mediumDefault.height
+      //     if (med.x !== mediumDefault.x) med.x = mediumDefault.x
+      //     if (med.y !== mediumDefault.y) med.y = mediumDefault.y
+      //     med.state = p.id
+      //     med.grid = 'medium'
+      //     newBlueprints.push(med)
+      //   }
+      //   if (smallDefault) {
+      //     let small = {}
+      //     if (small.width !== smallDefault.width) small.width = smallDefault.width
+      //     if (small.height !== smallDefault.height) small.height = smallDefault.height
+      //     if (small.x !== smallDefault.x) small.x = smallDefault.x
+      //     if (small.y !== smallDefault.y) small.y = smallDefault.y
+      //     small.state = p.id
+      //     small.grid = 'small'
+      //     newBlueprints.push(small)
+      //   }
+      // })
+      let text = 'Unassigned'
+      let cooldown = 0
+      let sparks = 0
+      let help = ''
+      const profile = _.find(profiles, p => p.id === profileId)
+      if (profile) {
+        const sound = _.find(sounds, s => s.id === profile.sounds[i])
+        if (sound) {
+          text = sound.name
+          help = sound.name ? sound.name.toUpperCase() : ''
+          cooldown = parseInt(sound.cooldown) * 1000
+          sparks = parseInt(sound.sparks)
+        }
       }
-    }
-    t.text = text
-    t.help = help
-    t.analysis = {
-      holding: true,
-      frequency: true
-    }
-    t.cooldown = {
-      press: cooldown
-    }
-    t.cost = {
-      press: {
-        cost: sparks
+      t.text = text
+      t.help = help
+      t.analysis = {
+        holding: true,
+        frequency: true
       }
-    }
-    newTactiles.push(t)
-  })
-  return newTactiles
+      t.cooldown = {
+        press: cooldown
+      }
+      t.cost = {
+        press: {
+          cost: sparks
+        }
+      }
+      newTactiles.push(t)
+    })
+    return newTactiles
+  } else {
+    throw new Error('Missing Tactiles')
+  }
 }
 
 const DEVLAB_APP_NAME = 'Soundwave Interactive Soundboard'

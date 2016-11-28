@@ -7,7 +7,7 @@ import SoundList from '../containers/SoundList'
 import ProfileList from '../containers/ProfileList'
 import BoardEditor from '../containers/BoardEditor'
 import Connector from '../containers/Connector'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 
 export class Soundboard extends React.Component {
 

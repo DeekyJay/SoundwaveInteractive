@@ -4,8 +4,9 @@ import storage from 'electron-json-storage'
 import { Howler } from 'howler'
 import { shareAnalytics } from '../utils/analytics'
 
-const { BrowserWindow } = remote
+const { BrowserWindow, app } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
+
 // Constants
 export const constants = {
   MINIMIZE: 'MINIMIZE',
@@ -22,7 +23,8 @@ export const constants = {
   APP_INITIALIZE: 'APP_INITIALIZE',
   TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
   UPDATE_TUT: 'UPDATE_TUT',
-  CLEAR_APP: 'CLEAR_APP'
+  CLEAR_APP: 'CLEAR_APP',
+  TOGGLE_TRAY: 'TOGGLE_TRAY'
 }
 
 ipcRenderer.on('browser-window-focus', function () {
@@ -47,7 +49,8 @@ const syncStorageWithState = (state) => {
       selectedOutput: state.selectedOutput,
       shareAnalytics: state.shareAnalytics,
       tutMode: state.tutMode,
-      tutStep: state.tutStep
+      tutStep: state.tutStep,
+      trayMinimize: state.trayMinimize
     }
     storage.set('app', data, (err) => {
       if (err) throw err
@@ -70,9 +73,23 @@ export const actions = {
     }
   },
   minimize: () => {
-    mainWindow.minimize()
-    return {
-      type: constants.MINIMIZE
+    return (dispatch, getState) => {
+      const { app: { trayMinimize } } = getState()
+      if (trayMinimize) {
+        ipcRenderer.send('GET_TRAY_ICON')
+        ipcRenderer.on('GET_TRAY_ICON', (event) => {
+          mainWindow.hide()
+          if (app.dock) app.dock.hide()
+          dispatch({
+            type: constants.MINIMIZE
+          })
+        })
+      } else {
+          mainWindow.minimize()
+          dispatch({
+            type: constants.MINIMIZE
+          })
+      }
     }
   },
   maximize: (flag) => {
@@ -187,6 +204,15 @@ export const actions = {
     return {
       type: constants.CLEAR_APP
     }
+  },
+  toggleTray: () => {
+    return (dispatch, getState) => {
+      const { app: { trayMinimize } } = getState()
+      dispatch({
+        type: constants.TOGGLE_TRAY,
+        payload: { trayMinimize: !trayMinimize }
+      })
+    }
   }
 }
 // Action handlers
@@ -296,6 +322,15 @@ const ACTION_HANDLERS = {
     return {
       ...initialState
     }
+  },
+  TOGGLE_TRAY: (state, action) => {
+    const { payload } = action
+    const newState = {
+      ...state,
+      ...payload
+    }
+    syncStorageWithState(newState)
+    return newState
   }
 }
 // Reducer
@@ -312,7 +347,8 @@ export const initialState = {
   globalVolume: 100,
   shareAnalytics: true,
   tutMode: true,
-  tutStep: 1
+  tutStep: 1,
+  trayMinimize: false
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

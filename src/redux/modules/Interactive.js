@@ -2,6 +2,7 @@ import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
 import analytics from '../utils/analytics'
+import { toastr } from 'redux-toastr'
 
 // Constants
 export const constants = {
@@ -32,10 +33,12 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
   let cooldowns = []
   try {
     const profile = _.find(profiles, p => p.id === id)
-    profile.sounds.map(s => {
+    for (let i = 0; i <= profile.sounds.length; i++) {
+      const s = profile.sounds[i]
       const sound = _.find(sounds, so => so.id === s)
       if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
-    })
+      else cooldowns.push(0)
+    }
   } catch (err) {
     // Something happened, set the default amount
     for (let i = 0; i <= 50; i++) {
@@ -92,7 +95,7 @@ export const actions = {
       payload: value
     }
   },
-  goInteractive: () => {
+  goInteractive: (isDisconnect) => {
     return (dispatch, getState) => {
       const { interactive: { isConnected },
         board: { versionId },
@@ -110,11 +113,12 @@ export const actions = {
         })
         .catch(err => {
           dispatch({ type: 'GO_INTERACTIVE_REJECTED' })
+          toastr.error('Failed to Connect to Beam')
           throw err
         })
       } else {
-        dispatch({ type: 'STOP_INTERACTIVE' })
-        beam.stopInteractive(id)
+        dispatch({ type: constants.STOP_INTERACTIVE })
+        beam.stopInteractive(id, isDisconnect)
       }
     }
   },
@@ -122,7 +126,8 @@ export const actions = {
     return (dispatch, getState) => {
       const { interactive: { isConnected, storage: { useReconnect, reconnectionTimeout } } } = getState()
       if (useReconnect && isConnected) {
-        dispatch({ type: 'STOP_INTERACTIVE' })
+        toastr.info('Connection Dropped. Reconnecting.')
+        dispatch({ type: constants.STOP_INTERACTIVE })
         setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
       }
     }
@@ -139,6 +144,15 @@ export const actions = {
   clearInteractiveSettings: () => {
     return {
       type: constants.CLEAR_INTERACTIVE
+    }
+  },
+  pingError: () => {
+    toastr.error('Connection Error',
+      'Uh oh! We\'re struggling to shake hands with Beam. Make sure your firewall isn\'t blocking us!',
+      { timeOut: 15000 })
+    return (dispatch) => {
+      dispatch({ type: constants.STOP_INTERACTIVE })
+      dispatch({ type: 'PING_ERROR'})
     }
   }
 }

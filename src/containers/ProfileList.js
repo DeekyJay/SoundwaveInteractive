@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import ProfileItem from '../components/ProfileItem/ProfileItem'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 import ReactToolTip from 'react-tooltip'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { toastr } from 'redux-toastr'
@@ -56,6 +56,7 @@ export class ProfileList extends React.Component {
   }
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
+    if (!document.elementFromPoint(e.x, e.y)) return
     const name = document.elementFromPoint(e.x, e.y).className
     const currentProfile = this.props.profiles[oldIndex]
     const { profileId } = this.props
@@ -186,7 +187,9 @@ export class ProfileList extends React.Component {
                   onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
                   hideSortableGhost
-                  pressDelay={100} />
+                  lockAxis='y'
+                  lockToContainerEdges
+                  distance={8} />
               </div>
               : <div className='profile-list-no-profiles'>
                 <span>{'You currently don\'t have any profiles.'}</span>

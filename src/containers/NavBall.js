@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as uiActions } from '../redux/modules/UI'
-import Ink from '../components/Ink/src'
+import Ink from '../components/Ink'
 import ReactToolTip from 'react-tooltip'
 import { shell } from 'electron'
 export class NavBall extends React.Component {

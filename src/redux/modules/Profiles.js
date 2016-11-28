@@ -97,7 +97,10 @@ export const actions = {
         type: constants.SELECT_PROFILE,
         payload: { profileId: profileId }
       })
-      if (profileId) dispatch(boardActions.updateGame())
+      if (profileId) {
+        dispatch(interactiveActions.updateCooldown())
+        dispatch(boardActions.updateGame())
+      }
     }
   },
   assignSound: (index, sound) => {
