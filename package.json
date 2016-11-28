@@ -9,15 +9,22 @@
   },
   "build": {
     "productName": "Soundwave Interactive",
-    "app-bundle-id": "SoundwaveInteractive",
+    "appId": "SoundwaveInteractive",
     "win": {
-      "iconUrl": "http://soundwave.deek.io/icon.ico",
-      "setupIcon": "app_build/ico_installer_win.ico"
+      "target": ["nsis", "squirrel"],
+      "icon": "app_build/ico_installer_win.ico"
     },
-    "osx": {
+    "squirrelWindows": {
+      "iconUrl": "http://soundwave.deek.io/icon.ico"
+    },
+    "mac": {
       "icon": "app_build/ico_installer_mac.icns"
     },
-    "asar": true
+    "linux": {
+      "target": "deb"
+    },
+    "asar": true,
+    "copyright": "Copyright © 2016 Derek Jensen"
   },
   "directories": {
     "output": "release",
@@ -37,10 +44,10 @@
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "dist:pre": "node script/build-app-packagejson && install-app-deps && npm run compile:prod && npm run compile:electron",
-    "package-linux": "cross-env NODE_ENV=production npm run dist:pre && node script/download-node --p linux --a x64 --d && build --platform linux --arch x64",
-    "package-darwin": "cross-env NODE_ENV=production npm run dist:pre && build --platform darwin --arch x64 --dist",
-    "package-win32": "cross-env NODE_ENV=production npm run dist:pre && build --platform win32 --arch x64 --dist",
-    "package-all": "cross-env NODE_ENV=production npm run dist:pre && build --platform all --arch all --dist"
+    "package-linux": "cross-env NODE_ENV=production npm run dist:pre && build --linux",
+    "package-darwin": "cross-env NODE_ENV=production npm run dist:pre && build --mac",
+    "package-win32": "cross-env NODE_ENV=production npm run dist:pre && build --win",
+    "package-all": "cross-env NODE_ENV=production npm run dist:pre && build -mwl"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -110,7 +117,6 @@
     "electron-gh-releases": "^2.0.4",
     "electron-json-storage": "^2.1.0",
     "electron-oauth2": "^2.3.1",
-    "electron-prebuilt": "^1.2.6",
     "es6-promise": "^3.2.1",
     "glob": "^7.0.3",
     "history": "^2.0.0",
@@ -178,11 +184,11 @@
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
     "devtron": "^1.3.0",
-    "electron-builder": "^8.6.0",
+    "electron": "^1.4.8",
+    "electron-builder": "9.1.0",
     "electron-debug": "^0.5.2",
     "electron-devtools-installer": "^2.0.1",
     "electron-mocha": "^1.0.2",
-    "electron-prebuilt": "^0.36.12",
     "electron-react-devtools": "^0.4.0",
     "electron-rebuild": "^1.1.4",
     "enzyme": "^2.0.0",

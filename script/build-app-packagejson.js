@@ -6,11 +6,11 @@ const version = require('../package.json').version
 
 // Some default values for app/package.json
 let jsonObj = {
-  'name': 'SoundwaveInteractive',
-  'productName': 'Soundwave Interactive',
+  'name': 'Soundwave Interactive',
+  'productName': 'SoundwaveInteractive',
   'version': version,
   'description': 'Soundwave Interactive Soundboard',
-  'author': 'Derek Jensen',
+  'author': 'Derek Jensen <derek@deek.io>',
   'private': false,
   'license': 'MIT',
   'homepage': 'github.com/DeekyJay',
@@ -26,7 +26,9 @@ jsonfile.readFile(devPackage, (err, obj) => {
     throw new Error(err)
   } else {
     jsonObj.dependencies = obj.dependencies
-    jsonObj.author = obj.author
+    jsonObj.devDependencies = {
+      "electron": obj.devDependencies['electron']
+    }
     jsonfile.writeFile(appPackage, jsonObj, (err) => {
       if (err) {
         throw new Error(err)
