@@ -11,7 +11,7 @@
     "productName": "Soundwave Interactive",
     "appId": "SoundwaveInteractive",
     "win": {
-      "target": ["nsis", "squirrel"],
+      "target": "squirrel",
       "icon": "app_build/ico_installer_win.ico"
     },
     "squirrelWindows": {
@@ -154,8 +154,7 @@
     "redux-toastr": "^1.1.2",
     "sprintf-js": "^1.0.3",
     "validate.js": "^0.9.0",
-    "webpack-target-electron-renderer": "^0.4.0",
-    "winston": "^2.3.0"
+    "webpack-target-electron-renderer": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",

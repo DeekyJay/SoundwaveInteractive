@@ -40,10 +40,10 @@ const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './d
 const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
 const trayIconPath = process.env.NODE_ENV === 'development'
   ? `${__dirname}/src/static/tray.png`
-  : `/${__dirname}/dist/static/tray.png`
+  : `${__dirname}/dist/static/tray.png`
 const appIconPath = process.env.NODE_NEV === 'development'
   ? `${__dirname}/src/static/icon.png`
-  : `/${__dirname}/dist/static/icon.png`
+  : `${__dirname}/dist/static/icon.png`
 const appIcon = nativeImage.createFromPath(appIconPath)
 /**
  * Load squirrel handlers
@@ -168,3 +168,11 @@ function showApp () {
   if (app.dock) app.dock.show()
   tray.destroy()
 }
+
+// This seems bad...
+process.on('uncaughtException', function (error) {
+  console.log('UNCAUGHT ERROR', error)
+  if (error.stack.indexOf('WebSocket.ping') === -1) {
+    electron.dialog.showErrorBox('Uh Oh!', error.stack)
+  }
+})

@@ -4,7 +4,7 @@ import storage from 'electron-json-storage'
 import { Howler } from 'howler'
 import { shareAnalytics } from '../utils/analytics'
 
-const { BrowserWindow, Tray, Menu, nativeImage, app } = remote
+const { BrowserWindow, app } = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
 
 // Constants
@@ -79,7 +79,7 @@ export const actions = {
         ipcRenderer.send('GET_TRAY_ICON')
         ipcRenderer.on('GET_TRAY_ICON', (event) => {
           mainWindow.hide()
-          app.dock.hide()
+          if (app.dock) app.dock.hide()
           dispatch({
             type: constants.MINIMIZE
           })

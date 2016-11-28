@@ -151,10 +151,15 @@ function initHandshake (id) {
       channel: id,
       key: details.key
     })
+    robot.on('error', err => {
+      if (err.stack.indexOf('Error.PingTimeoutError') > -1) store.dispatch(interactiveActions.pingError())
+      throw new Error(err.code ? err.code : err)
+    })
     return new Promise((resolve, reject) => {
       return robot.handshake(err => {
         if (err) {
-          console.log(err)
+          console.log('HANDSHAKE ERROR', err)
+          throw new Error('HANDSHAKE_ERROR')
           reject(err)
         } else {
           console.log('Connected')
@@ -166,17 +171,19 @@ function initHandshake (id) {
     .then(rb => {
       rb.on('report', handleReport)
       rb.on('error', err => {
-        console.log(err)
+        console.log('RB ERROR', err)
         // Commenting this out because there is nothing I can do about it
         // and it's just spamming Sentry.
         // Reconnect is handled anyway.
         // throw err
+        throw new Error('ROBOT ERROR')
       })
       rb.on('close', () => {
         store.dispatch(interactiveActions.robotClosedEvent())
       })
     })
     .catch(err => {
+      console.log('CAUGHT ERROR', err)
       if (err.res) {
         throw new Error('Error connecting to Interactive:' + err.res.body.mesage)
       }
@@ -200,7 +207,7 @@ export function goInteractive (channelId, versionId) {
   })
   .catch(err => {
     console.log(err)
-    store.dispatch(interactiveActions.robotClosedEvent())
+    throw new Error('CONNECTION_ERROR')
   })
 }
 

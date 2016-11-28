@@ -10,7 +10,7 @@
   <link href="static/fonts/Roboto/stylesheet.css" rel="stylesheet" type="text/css">
   <script>
       (function() {
-        if (process != undefined && !process.env.HOT) {
+        if (process && !process.env.HOT) {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
           link.href = 'style.css';
@@ -24,12 +24,12 @@
   <script>
       (function() {
         const vendor = document.createElement('script');
-        vendor.src = (process != undefined && process.env.HOT) ? 'http://localhost:5000/vendor.bundle.js' : 'vendor.bundle.js';
+        vendor.src = (process && process.env.HOT) ? 'http://localhost:5000/vendor.bundle.js' : 'vendor.bundle.js';
         vendor.async = false
-        document.write(vendor.outerHTML);
         const script = document.createElement('script');
-        script.src = (process != undefined && process.env.HOT) ? 'http://localhost:5000/app.bundle.js' : 'app.bundle.js';
-        script.async = true
+        script.src = (process && process.env.HOT) ? 'http://localhost:5000/app.bundle.js' : 'app.bundle.js';
+        script.async = false
+        document.write(vendor.outerHTML);
         document.write(script.outerHTML);
       }());
     </script>
