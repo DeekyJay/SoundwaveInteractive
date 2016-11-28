@@ -6,7 +6,7 @@ const version = require('../package.json').version
 
 // Some default values for app/package.json
 let jsonObj = {
-  'name': 'Soundwave nteractive',
+  'name': 'SoundwaveInteractive',
   'productName': 'Soundwave Interactive',
   'version': version,
   'description': 'Soundwave Interactive Soundboard',
