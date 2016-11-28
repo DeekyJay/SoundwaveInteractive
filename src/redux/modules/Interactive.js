@@ -33,11 +33,12 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
   let cooldowns = []
   try {
     const profile = _.find(profiles, p => p.id === id)
-    profile.sounds.map((s, i) => {
+    for (let i = 0; i <= profile.sounds.length; i++) {
+      const s = profile.sounds[i]
       const sound = _.find(sounds, so => so.id === s)
       if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
       else cooldowns.push(0)
-    })
+    }
   } catch (err) {
     // Something happened, set the default amount
     for (let i = 0; i <= 50; i++) {
@@ -121,7 +122,7 @@ export const actions = {
       }
     }
   },
-  robotClosedEvent: (reason) => {
+  robotClosedEvent: () => {
     return (dispatch, getState) => {
       const { interactive: { isConnected, storage: { useReconnect, reconnectionTimeout } } } = getState()
       if (useReconnect && isConnected) {

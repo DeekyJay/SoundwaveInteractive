@@ -153,7 +153,7 @@ function initHandshake (id) {
     })
     robot.on('error', err => {
       if (err.stack.indexOf('Error.PingTimeoutError') > -1) store.dispatch(interactiveActions.pingError())
-      throw new Error(err.code ? err.code : err)
+      if (err.code) throw new Error(err.code)
     })
     return new Promise((resolve, reject) => {
       return robot.handshake(err => {
