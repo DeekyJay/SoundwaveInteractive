@@ -1,9 +1,18 @@
 .board-editor-container {
   height: 250px;
   position: relative;
+  .board-stop-sounds {
+    position: relative;
+    width: 110px;
+    margin: 0;
+    padding: 2px;
+    margin-bottom: 2px;
+  }
   .board-editor-title {
     font-size: 20px;
     height: 30px;
+    width: calc(100% - 110px);
+    display: inline-block;
   }
   .board-editor {
     background: $bg;
