@@ -16,15 +16,13 @@ export class Changelog extends React.Component {
         <div className='info-wrapper'>
           <InfoGroup title='Some New Stuff' className='new'
             text={'Here are some new features we\'ve recently added.'}>
-            <InfoBullet text='Active Sounds - Want to see what sounds you currently have assigned on your selected profile? Now you can!' />
-            <InfoBullet text='Minimize To Tray - Get rid of that pesky icon on your task bar or dock, put it in the tray!' />
-            <InfoBullet text='Mac & Linux - Some of you wanted a Mac & Linux build of the app! Here it is!' />
+            <InfoBullet text='Kill Playing Sounds - Accidentally let users trigger some really long and annoying sounds? You can now stop all the sounds!' />
           </InfoGroup>
           <InfoGroup title='Some Changed Stuff' className='change'
             text={'Here are some changes we\'ve made since the last release.'}>
-            <InfoBullet text='Drag and dropping is more natural now. No need to hold and wait, just start dragging!' />
-            <InfoBullet text='Reconnects from switching profiles or updating sounds cause a weird bug on Beam. Added tweaks to handle this better.' />
-            <InfoBullet text='Dragging the window around is a lot easier now, allowing you to select most of the header to move the window.' />
+            <InfoBullet text='Various tweaks to the audio library to handle audio playback issues.' />
+            <InfoBullet text='Icon sizing issues on Windows.' />
+            <InfoBullet text='Handle reconnect on timeout errors.' />
           </InfoGroup>
         </div>
       </div>
