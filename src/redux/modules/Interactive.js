@@ -114,6 +114,7 @@ export const actions = {
         .catch(err => {
           dispatch({ type: 'GO_INTERACTIVE_REJECTED' })
           toastr.error('Failed to Connect to Beam')
+          dispatch(actions.robotClosedEvent())
           throw err
         })
       } else {
@@ -129,6 +130,8 @@ export const actions = {
         toastr.info('Connection Dropped. Reconnecting.')
         dispatch({ type: constants.STOP_INTERACTIVE })
         setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
+      } else if (isConnected) {
+        dispatch({ type: constants.STOP_INTERACTIVE })
       }
     }
   },
@@ -151,8 +154,8 @@ export const actions = {
       'Uh oh! We\'re struggling to shake hands with Beam. Make sure your firewall isn\'t blocking us!',
       { timeOut: 15000 })
     return (dispatch) => {
-      dispatch({ type: constants.STOP_INTERACTIVE })
-      dispatch({ type: 'PING_ERROR'})
+      dispatch(actions.robotClosedEvent())
+      dispatch({ type: 'PING_ERROR' })
     }
   }
 }

@@ -57,6 +57,10 @@ export class BoardEditor extends React.Component {
     this.props.soundActions.setupEdit(index)
   }
 
+  stopAllSounds = () => {
+    this.props.soundActions.killAllSounds()
+  }
+
   isDisabled = (step) => {
     const { tutMode, tutStep } = this.props
     if (!tutMode) return null
@@ -78,6 +82,10 @@ export class BoardEditor extends React.Component {
     return (
       <div className='board-editor-container'>
         <div className='board-editor-title'>Interactive Board{profile ? ' | ' + profile.name : null}</div>
+        <button type='button' className='btn btn-secondary board-stop-sounds' onClick={this.stopAllSounds}>
+          Stop All Sounds
+          <Ink />
+        </button>
         <div className='board-editor'>
         {hasSoundBoardGame
           ? this.renderBoard()

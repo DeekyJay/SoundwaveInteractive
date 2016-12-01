@@ -21,11 +21,12 @@ const SortableList = SortableContainer(({ items, soundActions, selectSound, sele
   return (
     <span>
       {items.map((value, index) => {
-        const isActive = selectedProfile && selectedProfile.sounds && selectedProfile.sounds.length && _.find(selectedProfile.sounds, s => s === value.id )
+        const isActive = selectedProfile && selectedProfile.sounds &&
+          selectedProfile.sounds.length && _.find(selectedProfile.sounds, s => s === value.id)
         return (
           <SortableItem key={`item-${index}`} index={index}
-          sound={value} soundActions={soundActions} selectSound={selectSound}
-          selectedSound={selectedSound} isActive={isActive} />
+            sound={value} soundActions={soundActions} selectSound={selectSound}
+            selectedSound={selectedSound} isActive={isActive} />
         )
       }
       )}
@@ -166,18 +167,20 @@ export class SoundList extends React.Component {
     const { sound } = this.state
     const { selectedOutput } = this.props
     if (sound) {
-      const howl = new Howl({
-        urls: [sound.path],
-        buffer: true,
+      let howl = new Howl({
+        src: [sound.path],
         html5: true,
-        volume: parseFloat(sound.volume) * 0.01,
-        onend: () => {
-          this.setState({ ...this.state, isPlaying: false, howl: null })
-        }
+        volume: parseFloat(sound.volume) * 0.01
       })
       if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
-      this.setState({ ...this.state, isPlaying: true, howl: howl }, () => {
-        this.state.howl.play()
+      howl.once('end', () => {
+        howl.unload()
+        this.setState({ ...this.state, isPlaying: false, howl: null })
+      })
+      howl.once('load', () => {
+        this.setState({ ...this.state, isPlaying: true, howl: howl }, () => {
+          this.state.howl.play()
+        })
       })
     }
   }

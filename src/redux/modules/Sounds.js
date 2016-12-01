@@ -23,7 +23,8 @@ export const constants = {
   PLAY_SOUND_INTERRUPTED: 'PLAY_SOUND_INTERRUPTED',
   PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR',
   CLEAR_EDIT: 'CLEAR_EDIT',
-  SETUP_EDIT: 'SETUP_EDIT'
+  SETUP_EDIT: 'SETUP_EDIT',
+  KILL_ALL_SOUNDS: 'KILL_ALL_SOUNDS'
 }
 
 let timeout
@@ -134,20 +135,24 @@ export const actions = {
         const profile = _.find(profiles, p => p.id === profileId)
         const soundId = profile.sounds[i]
         const sound = _.find(sounds, s => s.id === soundId)
-        const howl = new Howl({
-          urls: [sound.path],
+        let howl = new Howl({
+          src: [sound.path],
           html5: true,
-          buffer: true,
-          volume: parseFloat(sound.volume) * 0.01,
-          onend: () => {
-            dispatch({ type: constants.PLAY_SOUND_ENDED })
-          }
+          volume: parseFloat(sound.volume) * 0.01
         })
         if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
-        howl.play()
+        howl.once('end', () => {
+          howl.unload()
+          dispatch({ type: constants.PLAY_SOUND_ENDED })
+          howl = null
+        })
+        howl.once('load', () => {
+          howl.play()
+        })
         analytics.play(sound.sparks)
         dispatch({ type: constants.PLAY_SOUND_STARTED })
       } catch (err) {
+        console.log(err)
         dispatch({ type: constants.PLAY_SOUND_ERROR })
       }
     }
@@ -166,6 +171,12 @@ export const actions = {
         type: constants.SETUP_EDIT,
         payload: sound
       })
+    }
+  },
+  killAllSounds: () => {
+    Howler.unload()
+    return {
+      type: constants.KILL_ALL_SOUNDS
     }
   }
 }

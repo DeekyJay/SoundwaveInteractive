@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "Soundwave Interactive Beam Soundboard",
   "main": "main.js",
   "engines": {
@@ -120,7 +120,7 @@
     "es6-promise": "^3.2.1",
     "glob": "^7.0.3",
     "history": "^2.0.0",
-    "howler": "^1.1.29",
+    "howler": "^2.0.1",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.10.0",
     "moment": "^2.13.0",

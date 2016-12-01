@@ -40,7 +40,7 @@ export function requestInteractive (channelID, versionId) {
 }
 
 export function requestStopInteractive (channelID, forcedDisconnect) {
-  if (!forcedDisconnect) return new Promise ((resolve, reject) => { resolve(true) })
+  if (!forcedDisconnect) return new Promise((resolve, reject) => { resolve(true) })
   return client.request('PUT', 'channels/' + channelID,
     {
       body: {
@@ -117,6 +117,7 @@ function handleReport (report) {
           case 'individual':
             curCool = cooldowns[tac.cooldown]
         }
+        curCool = parseInt(curCool)
         var tactile = new Packets.ProgressUpdate.TactileUpdate({
           id: tac.id,
           cooldown: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId ? curCool : 0,
