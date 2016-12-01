@@ -7,7 +7,8 @@ import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
-import { Howl } from 'howler'
+import { Howl, Howler } from 'howler'
+console.log(Howler)
 import { toastr } from 'redux-toastr'
 import ReactSlider from 'rc-slider'
 import Ink from '../components/Ink'
@@ -172,7 +173,7 @@ export class SoundList extends React.Component {
         html5: true,
         volume: parseFloat(sound.volume) * 0.01
       })
-      if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
+      if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
       howl.once('end', () => {
         howl.unload()
         this.setState({ ...this.state, isPlaying: false, howl: null })

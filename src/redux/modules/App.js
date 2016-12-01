@@ -2,6 +2,7 @@ import { remote, ipcRenderer } from 'electron'
 import _ from 'lodash'
 import storage from 'electron-json-storage'
 import { Howler } from 'howler'
+Howler.usingWebAudio = false
 import { shareAnalytics } from '../utils/analytics'
 
 const { BrowserWindow, app } = remote
@@ -66,6 +67,7 @@ export const actions = {
         data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
       ipcDispatch = dispatch
       console.log(data)
+      if (data.globalVolume) Howler.volume(parseInt(data.globalVolume) * 0.01)
       dispatch({
         type: constants.APP_INITIALIZE,
         payload: data
@@ -85,10 +87,10 @@ export const actions = {
           })
         })
       } else {
-          mainWindow.minimize()
-          dispatch({
-            type: constants.MINIMIZE
-          })
+        mainWindow.minimize()
+        dispatch({
+          type: constants.MINIMIZE
+        })
       }
     }
   },
