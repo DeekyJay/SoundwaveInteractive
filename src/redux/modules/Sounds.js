@@ -7,8 +7,6 @@ import { actions as interactiveActions } from './Interactive'
 import { actions as boardActions } from './Board'
 import analytics from '../utils/analytics'
 import { Howl, Howler } from 'howler'
-Howler.usingWebAudio = true
-Howler.ctx = true
 // Constants
 export const constants = {
   SOUNDS_INITIALIZE: 'SOUNDS_INITIALIZE',
@@ -140,7 +138,7 @@ export const actions = {
           html5: true,
           volume: parseFloat(sound.volume) * 0.01
         })
-        if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
+        if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
         howl.once('end', () => {
           howl.unload()
           dispatch({ type: constants.PLAY_SOUND_ENDED })
