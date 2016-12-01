@@ -21,11 +21,12 @@ const SortableList = SortableContainer(({ items, soundActions, selectSound, sele
   return (
     <span>
       {items.map((value, index) => {
-        const isActive = selectedProfile && selectedProfile.sounds && selectedProfile.sounds.length && _.find(selectedProfile.sounds, s => s === value.id )
+        const isActive = selectedProfile && selectedProfile.sounds &&
+          selectedProfile.sounds.length && _.find(selectedProfile.sounds, s => s === value.id)
         return (
           <SortableItem key={`item-${index}`} index={index}
-          sound={value} soundActions={soundActions} selectSound={selectSound}
-          selectedSound={selectedSound} isActive={isActive} />
+            sound={value} soundActions={soundActions} selectSound={selectSound}
+            selectedSound={selectedSound} isActive={isActive} />
         )
       }
       )}
