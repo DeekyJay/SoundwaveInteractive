@@ -68,6 +68,7 @@ export const actions = {
       ipcDispatch = dispatch
       console.log(data)
       if (data.globalVolume) Howler.volume(parseInt(data.globalVolume) * 0.01)
+      if (data.selectedOutput) dispatch(actions.setAudioDevice(data.selectedOutput))
       dispatch({
         type: constants.APP_INITIALIZE,
         payload: data
