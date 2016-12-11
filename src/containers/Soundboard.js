@@ -77,7 +77,7 @@ export class Soundboard extends React.Component {
           'Drag and drop a sound onto it!'
       case 5:
         return 'Connection - Here are a couple different options for cooldown. Hover over them see what they do! ' +
-          'Sometimes your board can disconnect. You can enabled auto-reconnect and give it a time for when it ' +
+          'Sometimes your board can disconnect. You can enable auto-reconnect and give it a time for when it ' +
           'it should reconnect.'
       case 6:
         return 'Finally, once you\'ve done all this, click Connect!'

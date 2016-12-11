@@ -1,4 +1,5 @@
-import { ipcMain, session, nativeImage } from 'electron'
+import { ipcMain, session, nativeImage, BrowserWindow } from 'electron'
+const mainWindow = BrowserWindow.getAllWindows()[0]
 import electronAuth from 'electron-oauth2'
 import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
@@ -14,13 +15,13 @@ var config = {
 const scopes = ['user:details:self', 'channel:update:self', 'interactive:robot:self', 'interactive:manage:self']
 
 const windowParams = {
-  alwaysOnTop: true,
   autoHideMenuBar: true,
   webPreferences: {
     nodeIntegration: false
   },
   height: 800,
-  icon: appIcon
+  icon: appIcon,
+  parent: mainWindow
 }
 
 const options = {
