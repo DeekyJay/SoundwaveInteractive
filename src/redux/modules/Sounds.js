@@ -51,24 +51,19 @@ export const actions = {
       const state = getState()
       let sounds = Object.assign([], state.sounds.sounds)
       files.map((file) => {
-        if (!_.find(sounds, (sound) => { return sound.path === file.path })) {
-          let splitName = file.name.split('.')
-          let name = ''
-          if (splitName.length > 1) {
-            delete splitName[splitName.length - 1]
-            let tempName = splitName.join('.')
-            name = tempName.substring(0, tempName.length - 1)
-          } else if (splitName.length === 1) {
-            name = splitName[0]
-          } else {
-            name = file.name
-          }
-          sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
-            sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
+        let splitName = file.name.split('.')
+        let name = ''
+        if (splitName.length > 1) {
+          delete splitName[splitName.length - 1]
+          let tempName = splitName.join('.')
+          name = tempName.substring(0, tempName.length - 1)
+        } else if (splitName.length === 1) {
+          name = splitName[0]
         } else {
-          toastr.warning('Duplicate Detected',
-            file.path + ' already exists in your library.')
+          name = file.name
         }
+        sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
+          sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
       })
       dispatch({
         type: constants.ADD_SOUNDS,
