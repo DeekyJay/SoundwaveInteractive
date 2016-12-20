@@ -13,6 +13,8 @@ let state = 'default'
 let cooldownType = 'static'
 let staticCooldown = 30000
 let cooldowns = []
+let smart_increments = []
+let smart_increment_value = 5000
 
 export const client = new Beam()
 const oAuthOpts = {
@@ -94,8 +96,8 @@ function getInteractiveControls (channelID) {
  */
 function handleReport (report) {
   if (running) {
-    var tactileResults = []
-    var pressedId
+    let tactileResults = []
+    let pressedId
     report.tactile.forEach(function (tac) {
       if (tac.pressFrequency > 0) {
         pressedId = tac.id
@@ -105,6 +107,9 @@ function handleReport (report) {
       }
     })
     if (pressedId || pressedId === 0) {
+      console.log(cooldownType, cooldowns[pressedId], smart_increments, smart_increment_value)
+      // Update how many plays the current sound has for this session
+      smart_increments[pressedId] ? smart_increments[pressedId]++ : smart_increments[pressedId] = 1
       report.tactile.forEach(tac => {
         let curCool = 5000
         switch (cooldownType) {
@@ -116,17 +121,16 @@ function handleReport (report) {
             break
           case 'individual':
             curCool = cooldowns[tac.cooldown]
+            break
+          case 'smart':
+            curCool = pressedId === tac.id ? cooldowns[pressedId] + (smart_increments[pressedId] * smart_increment_value) : staticCooldown
+            break
         }
         curCool = parseInt(curCool)
-        var tactile = new Packets.ProgressUpdate.TactileUpdate({
-          id: tac.id,
-          cooldown: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId ? curCool : 0,
-          fired: cooldownType === 'static' || cooldownType === 'dynamic' || tac.id === pressedId,
-          progress: tac.progress
-        })
+        const tactile = getTactileUpdate({ tactile: tac, cooldownType, pressedId, cooldown: curCool })
         tactileResults.push(tactile)
       })
-      var progress = {
+      let progress = {
         tactile: tactileResults,
         joystick: [],
         state: state
@@ -134,6 +138,28 @@ function handleReport (report) {
       robot.send(new Packets.ProgressUpdate(progress))
     }
   }
+}
+
+function getTactileUpdate (options) {
+  let t = {
+    id: options.tactile.id,
+    progress: options.tactile.progress,
+    cooldown: 0,
+    fired: false
+  }
+  switch (cooldownType) {
+    case 'static':
+    case 'dynamic':
+    case 'smart':
+      t.fired = true
+      t.cooldown = options.cooldown
+      break
+    case 'individual':
+      t.fired = options.tactile.id === options.pressedId
+      t.cooldown = options.tactile.id === options.pressedId ? options.cooldown : 0
+      break
+  }
+  return new Packets.ProgressUpdate.TactileUpdate(t)
 }
 
 /**
@@ -160,8 +186,8 @@ function initHandshake (id) {
       return robot.handshake(err => {
         if (err) {
           console.log('HANDSHAKE ERROR', err)
-          throw new Error('HANDSHAKE_ERROR')
           reject(err)
+          throw new Error('HANDSHAKE_ERROR')
         } else {
           console.log('Connected')
           running = true
@@ -173,10 +199,6 @@ function initHandshake (id) {
       rb.on('report', handleReport)
       rb.on('error', err => {
         console.log('RB ERROR', err)
-        // Commenting this out because there is nothing I can do about it
-        // and it's just spamming Sentry.
-        // Reconnect is handled anyway.
-        // throw err
         throw new Error('ROBOT ERROR')
       })
       rb.on('close', () => {
@@ -237,11 +259,12 @@ export function setupStore (_store) {
   store = _store
 }
 
-export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
+export function setCooldown (_cooldownType, _staticCooldown, _cooldowns, _smart_increment_value) {
   console.log(cooldownType, staticCooldown)
   cooldownType = _cooldownType
   staticCooldown = _staticCooldown
   cooldowns = _cooldowns
+  smart_increment_value = _smart_increment_value
   console.log(cooldownType, staticCooldown, cooldowns)
 }
 

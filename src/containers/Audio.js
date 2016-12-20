@@ -77,12 +77,12 @@ export class Audio extends React.Component {
               onChange={this.setVolume} />
             <span className='volume'>{globalVolume}%</span>
           </div>
-          <div
+          { /* <div
             className='form-group'
             onClick={this.checkChanged}>
             <span className='checkbox-label'>Minimize to System Tray</span>
             <span className={`custom-checkbox ${trayMinimize ? 'sicon-round-check' : ''}`}></span>
-          </div>
+          </div> */ }
         </div>
       </div>
     )

@@ -14,6 +14,7 @@ export const constants = {
   UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT',
   COOLDOWN_UPDATED: 'COOLDOWN_UPDATED',
   UPDATE_STATIC_COOLDOWN: 'UPDATE_STATIC_COOLDOWN',
+  UPDATE_SMART_COOLDOWN: 'UPDATE_SMART_COOLDOWN',
   CLEAR_INTERACTIVE: 'CLEAR_INTERACTIVE'
 }
 
@@ -73,10 +74,11 @@ export const actions = {
   },
   updateCooldown: () => {
     return (dispatch, getState) => {
-      const { interactive: { storage: { cooldownOption, staticCooldown } },
+      const { interactive: { storage: { cooldownOption, staticCooldown, smartCooldown } },
         profiles: { profiles, profileId }, sounds: { sounds } } = getState()
       const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
-      beam.setCooldown(cooldownOption, staticCooldown, cooldowns)
+      // TODO: smart cooldown increment
+      beam.setCooldown(cooldownOption, staticCooldown, cooldowns, smartCooldown)
       dispatch({ type: constants.COOLDOWN_UPDATED })
     }
   },
@@ -140,6 +142,15 @@ export const actions = {
       dispatch({
         type: constants.UPDATE_STATIC_COOLDOWN,
         payload: { staticCooldown: parseInt(value) }
+      })
+      dispatch(actions.updateCooldown())
+    }
+  },
+  updateSmartCooldown: (value) => {
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.UPDATE_SMART_COOLDOWN,
+        payload: { smartCooldown: parseInt(value) }
       })
       dispatch(actions.updateCooldown())
     }
@@ -246,6 +257,16 @@ const ACTION_HANDLERS = {
       }
     }
   },
+  UPDATE_SMART_COOLDOWN: (state, action) => {
+    const { payload: { smartCooldown } } = action
+    return {
+      ...state,
+      storage: {
+        ...state.storage,
+        smartCooldown
+      }
+    }
+  },
   CLEAR_INTERACTIVE: (state) => {
     return {
       ...state,
@@ -264,7 +285,8 @@ export const initialState = {
     cooldownOption: 'dynamic',
     staticCooldown: 5000,
     useReconnect: true,
-    reconnectionTimeout: 3000
+    reconnectionTimeout: 3000,
+    smartCooldown: 5000
   }
 }
 export default function (state = initialState, action) {

@@ -53,6 +53,7 @@ export class Connector extends React.Component {
     const clickStatic = this.setCooldownOption.bind(this, 'static')
     const clickDynamic = this.setCooldownOption.bind(this, 'dynamic')
     const clickIndividual = this.setCooldownOption.bind(this, 'individual')
+    const clickSmart = this.setCooldownOption.bind(this, 'smart')
     return (
       <div className='connector-container'>
         <div className='connector-container-title'>Connection</div>
@@ -71,6 +72,13 @@ export class Connector extends React.Component {
             data-tip='The cooldown of the button pressed determines the global cooldown.'>
             <span className='connector-option'>Dynamic Cooldown</span>
             <span className={`connector-radio ${cooldownOption === 'dynamic' ? 'toggled' : ''}`}></span>
+          </div>
+          <div
+            className='connector-options-wrapper'
+            onClick={clickSmart}
+            data-tip='The sound cooldown increments based on how often it is pressed.'>
+            <span className='connector-option'>Smart Cooldown</span>
+            <span className={`connector-radio ${cooldownOption === 'smart' ? 'toggled' : ''}`}></span>
           </div>
           <div
             className='connector-options-wrapper'
