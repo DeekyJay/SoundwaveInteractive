@@ -1,6 +1,7 @@
 import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
 import { remote } from 'electron'
+import _ from 'lodash'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
 const Interactive = remote.require('beam-interactive-node')
@@ -15,6 +16,18 @@ let staticCooldown = 30000
 let cooldowns = []
 let smart_increments = []
 let smart_increment_value = 5000
+
+let current_cooldowns = []
+function setSmartCooldown (i, t) {
+  current_cooldowns[i] = 1
+  setTimeout(() => {
+    current_cooldowns[i] = 0
+  }, t)
+}
+
+function isCoolingDown (i) {
+  return current_cooldowns[i]
+}
 
 export const client = new Beam()
 const oAuthOpts = {
@@ -128,7 +141,7 @@ function handleReport (report) {
         }
         curCool = parseInt(curCool)
         const tactile = getTactileUpdate({ tactile: tac, cooldownType, pressedId, cooldown: curCool })
-        tactileResults.push(tactile)
+        if (tactile) tactileResults.push(tactile)
       })
       let progress = {
         tactile: tactileResults,
@@ -141,6 +154,8 @@ function handleReport (report) {
 }
 
 function getTactileUpdate (options) {
+  if (isCoolingDown(options.tactile.id)) return
+  if (options.pressedId === options.tactile.id) setSmartCooldown(options.pressedId, options.cooldown)
   let t = {
     id: options.tactile.id,
     progress: options.tactile.progress,
