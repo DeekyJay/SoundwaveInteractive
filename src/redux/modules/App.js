@@ -51,34 +51,35 @@ const syncStorageWithState = (state) => {
       shareAnalytics: state.shareAnalytics,
       tutMode: state.tutMode,
       tutStep: state.tutStep,
-      trayMinimize: state.trayMinimize
+      trayMinimize: false
+      // trayMinimize: state.trayMinimize
     }
     storage.set('app', data, (err) => {
       if (err) throw err
     })
-  }, 5000)
+  }, 1000)
 }
 
 // Action Creators
 export const actions = {
   initialize: (data) => {
     return (dispatch) => {
-      if (data.shareAnalytics !== undefined &&
-        data.shareAnalytics !== null) shareAnalytics(data.shareAnalytics)
-      ipcDispatch = dispatch
-      console.log(data)
-      if (data.globalVolume) Howler.volume(parseInt(data.globalVolume) * 0.01)
-      if (data.selectedOutput) dispatch(actions.setAudioDevice(data.selectedOutput))
       dispatch({
         type: constants.APP_INITIALIZE,
         payload: data
       })
+      if (_.has(data, 'shareAnalytics')) shareAnalytics(data.shareAnalytics)
+      ipcDispatch = dispatch
+      console.log(data)
+      if (_.has(data, 'globalVolume')) Howler.volume(parseInt(data.globalVolume) * 0.01)
+      if (_.has(data, 'selectedOutput')) dispatch(actions.setAudioDevice(data.selectedOutput))
     }
   },
   minimize: () => {
     return (dispatch, getState) => {
       const { app: { trayMinimize } } = getState()
-      if (trayMinimize) {
+      // TODO: Remove the && false when system tray is working
+      if (trayMinimize && false) {
         ipcRenderer.send('GET_TRAY_ICON')
         ipcRenderer.on('GET_TRAY_ICON', (event) => {
           mainWindow.hide()

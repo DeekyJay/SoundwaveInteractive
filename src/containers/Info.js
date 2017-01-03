@@ -41,6 +41,12 @@ export class Info extends React.Component {
             <InfoBullet text='Made by Derek Jensen' />
             <InfoBullet text='Copyright 2016 Derek Jensen. All rights reserved.' />
           </InfoGroup>
+          <div className='for-beam'>
+            <span className='made-with'>Made with</span>
+            <span className='heart'></span>
+            <span className='for-community'>for the community of</span>
+            <span className='beam-logo'></span>
+          </div>
         </div>
       </div>
     )

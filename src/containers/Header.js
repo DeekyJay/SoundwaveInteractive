@@ -34,12 +34,13 @@ export class Header extends React.Component {
     else shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive-releases/releases/latest')
   }
 
+  logout = () => {
+    this.props.authActions.logout()
+  }
+
   render () {
     const {
-      isAuthenticated, username, avatarUrl, hasUpdate,
-      authActions: {
-        logout
-      }
+      isAuthenticated, username, avatarUrl, hasUpdate
     } = this.props
     return (
       <div className='header-container'>
@@ -58,7 +59,7 @@ export class Header extends React.Component {
             </div>
             <div className='user-text'>
               <div className='user-name'>Hi, {username || 'User'}</div>
-              <div className='user-logout' onClick={logout}>Logout</div>
+              <div className='user-logout' onClick={this.logout}>Logout</div>
             </div>
           </div>
           : null}

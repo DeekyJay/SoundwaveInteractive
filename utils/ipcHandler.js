@@ -48,10 +48,20 @@ ipcMain.on('auth', (event) => {
   })
 })
 
-ipcMain.on('logout', (event) => {
-  session.defaultSession.clearStorageData(() => {
+ipcMain.on('logout', (event, { clear }) => {
+  console.log('LOGOUT')
+  session.defaultSession.clearStorageData({}, () => {
+    console.log('Storage Data Cleared')
     storage.remove('tokens', (err) => {
       console.log(err)
     })
   })
+  session.defaultSession.clearAuthCache({}, () => {
+    console.log('Auth Cache Cleared')
+  })
+  if (clear) {
+    session.defaultSession.clearCache(() => {
+      console.log('Cache Cleared')
+    })
+  }
 })
