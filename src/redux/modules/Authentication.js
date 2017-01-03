@@ -71,7 +71,7 @@ export const actions = {
         if (tokens.refresh && !checkStatus()) {
           auth.refresh()
           .then(response => {
-            console.log(response)
+            updateTokens(getTokens())
           })
         }
         getUserInfo()
@@ -101,8 +101,8 @@ export const actions = {
       }
     }
   },
-  logout: () => {
-    ipcRenderer.send('logout')
+  logout: (clear = false) => {
+    ipcRenderer.send('logout', { clear })
     return {
       type: constants.LOGOUT
     }

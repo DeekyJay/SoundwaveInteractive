@@ -31,11 +31,11 @@ export class ClearData extends React.Component {
   }
 
   clearAllData = () => {
-    this.clearSounds()
-    this.clearProfiles()
+    this.props.soundActions.clearAllSounds()
+    this.props.profileActions.clearProfiles()
     this.props.appActions.clearAppSettings()
     this.props.interactiveActions.clearInteractiveSettings()
-    this.props.authActions.logout()
+    this.props.authActions.logout(true)
   }
 
   render () {
