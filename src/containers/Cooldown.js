@@ -30,14 +30,14 @@ export class Cooldown extends React.Component {
               value={staticCooldown}
               onChange={this.updateField} />
           </div>
-          <div className='form-group'>
+          { /* <div className='form-group'>
             <label htmlFor='smartCooldown'>Smart Cooldown Increment Time (ms)</label>
             <input
               type='number'
               name='smartCooldown'
               value={smartCooldown}
               onChange={this.updateField} />
-          </div>
+          </div> */ }
         </div>
       </div>
     )
