@@ -140,6 +140,7 @@
     "react-ink": "^5.1.1",
     "react-onclickoutside": "^5.2.0",
     "react-redux": "^4.0.0",
+    "react-redux-toastr": "^4.4.2",
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",
     "react-slider": "^0.7.0",
@@ -151,7 +152,7 @@
     "redux-promise-middleware": "^2.4.0",
     "redux-raven-middleware": "^1.1.0",
     "redux-thunk": "^2.1.0",
-    "redux-toastr": "^1.1.2",
+    "redux-toastr": "^1.1.4",
     "sprintf-js": "^1.0.3",
     "validate.js": "^0.9.0",
     "webpack-target-electron-renderer": "^0.4.0"

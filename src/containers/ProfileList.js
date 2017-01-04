@@ -6,7 +6,7 @@ import ProfileItem from '../components/ProfileItem/ProfileItem'
 import Ink from '../components/Ink'
 import ReactToolTip from 'react-tooltip'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, profile, profileActions, selectProfile, selectedProfile}) => {
