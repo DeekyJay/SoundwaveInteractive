@@ -8,7 +8,7 @@ import { actions as appActions } from '../redux/modules/App'
 import { actions as interactiveActions } from '../redux/modules/Interactive'
 
 import Ink from '../components/Ink'
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 
 export class ClearData extends React.Component {
 

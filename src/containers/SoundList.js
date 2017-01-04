@@ -9,7 +9,7 @@ import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { Howl, Howler } from 'howler'
 console.log(Howler)
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 import ReactSlider from 'rc-slider'
 import Ink from '../components/Ink'
 import _ from 'lodash'

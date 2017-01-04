@@ -2,7 +2,7 @@ import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
 import analytics from '../utils/analytics'
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 
 // Constants
 export const constants = {
