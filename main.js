@@ -90,9 +90,9 @@ app.on('ready', () => {
     app.quit()
   })
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools()
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  mainWindow.openDevTools()
+  // }
 
   mainWindow.on('focus', function () {
     mainWindow.webContents.send('browser-window-focus')

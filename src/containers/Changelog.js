@@ -16,9 +16,7 @@ export class Changelog extends React.Component {
         <div className='info-wrapper'>
           <InfoGroup title='Some Changed Stuff' className='change'
             text={'Here are some changes we\'ve made since the last release.'}>
-            <InfoBullet text='Disabled Minimize To System Tray until depency bug is sorted.' />
-            <InfoBullet text='Solved issue with selected device not showing up as selected.' />
-            <InfoBullet text='Minor tweaks to saving data to local storage.' />
+            <InfoBullet text='Update core modules to fix connection issues.' />
           </InfoGroup>
         </div>
       </div>

@@ -128,6 +128,30 @@ export const actions = {
       dispatch(interactiveActions.updateCooldown())
     }
   },
+  unassignSound: (index) => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles } } = getState()
+      let newProfiles = Object.assign([], profiles)
+      let idx = 0
+      let profile = _.find(profiles, (p, i) => {
+        if (p.id === profileId) {
+          idx = i
+          return true
+        }
+      })
+      if (!profile) return
+      let newSounds = Object.assign([], profile.sounds)
+      newSounds[index] = undefined
+      profile.sounds = newSounds
+      newProfiles.splice(idx, 1, profile)
+      dispatch({
+        type: constants.ASSIGN_SOUNDS,
+        payload: { profiles: newProfiles }
+      })
+      dispatch(boardActions.updateGame())
+      dispatch(interactiveActions.updateCooldown())
+    }
+  },
   toggleLock: () => {
     return (dispatch, getState) => {
       const { profiles: { profileId, profiles } } = getState()

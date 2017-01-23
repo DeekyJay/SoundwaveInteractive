@@ -60,7 +60,7 @@ export function play (sprk) {
   if (shouldAnalytics) {
     console.log('PLAY SOUND')
     plays++
-    sparks += sprk
+    sparks += parseInt(sprk)
     clearTimeout(playTimeout)
     playTimeout = setTimeout(() => {
       const data = {
