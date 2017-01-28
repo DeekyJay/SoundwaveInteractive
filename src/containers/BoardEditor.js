@@ -9,6 +9,7 @@ import ReactToolTip from 'react-tooltip'
 import DevLabUtil from '../redux/utils/DevLabUtil'
 import _ from 'lodash'
 import Ink from '../components/Ink'
+import { ContextMenu, Item, Separator, ContextMenuProvider } from 'react-contexify'
 
 const largeGrid = DevLabUtil.makeGrid(16, 4)
 
@@ -53,8 +54,20 @@ export class BoardEditor extends React.Component {
     this.props.boardActions.getOwnedGames()
   }
 
+  playSound = (index) => {
+    this.props.soundActions.playSound(index)
+  }
+
   editSound = (index) => {
     this.props.soundActions.setupEdit(index)
+  }
+
+  unassignSound = (index) => {
+    this.props.profileActions.unassignSound(index)
+  }
+
+  stopAllSounds = () => {
+    this.props.soundActions.killAllSounds()
   }
 
   isDisabled = (step) => {
@@ -78,6 +91,10 @@ export class BoardEditor extends React.Component {
     return (
       <div className='board-editor-container'>
         <div className='board-editor-title'>Interactive Board{profile ? ' | ' + profile.name : null}</div>
+        <button type='button' className='btn btn-secondary board-stop-sounds' onClick={this.stopAllSounds}>
+          Stop All Sounds
+          <Ink />
+        </button>
         <div className='board-editor'>
         {hasSoundBoardGame
           ? this.renderBoard()
@@ -122,6 +139,7 @@ export class BoardEditor extends React.Component {
                   ? this.renderProfileGrid(large_grid)
                   : null}
               </div>
+              {this.renderButtonContexts(large_grid)}
             </div>
             {this.isProfileLocked() ? <div className='board-locked'><span className='sicon-lock' /></div> : null}
             <div className='board-actions'>
@@ -145,6 +163,32 @@ export class BoardEditor extends React.Component {
     )
   }
 
+  renderButtonContexts = (large_grid) => {
+    return (
+      <div className='board-context'>
+        {large_grid && large_grid.length
+          ? large_grid.map((button) => {
+            const playSound = this.playSound.bind(this, button.i)
+            const editSound = this.editSound.bind(this, button.i)
+            const unassignSound = this.unassignSound.bind(this, button.i)
+            return (
+              <ContextMenu id={'context-sound ' + button.i}>
+                <Item label='Play' icon={'sicon-play'} onClick={playSound}
+                  disabled={button.name === 'Unassigned'} />
+                <Separator />
+                <Item label='Edit' icon={'sicon-pencil'} onClick={editSound}
+                  disabled={button.name === 'Unassigned'} />
+                <Separator />
+                <Item label='Unassign' icon={'sicon-trash'} onClick={unassignSound}
+                  disabled={button.name === 'Unassigned'} />
+              </ContextMenu>
+            )
+          })
+          : null}
+      </div>
+    )
+  }
+
   renderProfileGrid = (large_grid) => {
     return (
       <ReactGridLayout
@@ -158,14 +202,16 @@ export class BoardEditor extends React.Component {
         verticalCompact>
         {
           large_grid.map((button) => {
-            const clickSound = this.editSound.bind(this, button.i)
+            const clickSound = this.playSound.bind(this, button.i)
             return (
               <div key={button.i} className='grid-button' onClick={clickSound} >
-                <div className='button-number'>#{button.i}</div>
-                <div className='button-name'>{button.name}</div>
-                <span className={`tactile tactile|${button.i}`}></span>
-                <Ink className={`tactile tactile|${button.i}`} />
-              </div>
+                <ContextMenuProvider id={'context-sound ' + button.i} >
+                  <div className='button-number'>#{button.i}</div>
+                  <div className='button-name'>{button.name}</div>
+                  <span className={`tactile tactile|${button.i}`}></span>
+                  <Ink className={`tactile tactile|${button.i}`} />
+                </ContextMenuProvider>
+            </div>
             )
           })
         }

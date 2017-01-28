@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.6",
+  "version": "0.9.11",
   "description": "Soundwave Interactive Beam Soundboard",
   "main": "main.js",
   "engines": {
@@ -9,15 +9,22 @@
   },
   "build": {
     "productName": "Soundwave Interactive",
-    "app-bundle-id": "SoundwaveInteractive",
+    "appId": "SoundwaveInteractive",
     "win": {
-      "iconUrl": "http://soundwave.deek.io/icon.ico",
-      "setupIcon": "app_build/ico_installer_win.ico"
+      "target": "squirrel",
+      "icon": "app_build/ico_installer_win.ico"
     },
-    "osx": {
+    "squirrelWindows": {
+      "iconUrl": "http://soundwave.deek.io/icon.ico"
+    },
+    "mac": {
       "icon": "app_build/ico_installer_mac.icns"
     },
-    "asar": true
+    "linux": {
+      "target": "deb"
+    },
+    "asar": true,
+    "copyright": "Copyright © 2016 Derek Jensen"
   },
   "directories": {
     "output": "release",
@@ -27,20 +34,20 @@
     "compile:prod": "better-npm-run compile:prod",
     "compile:electron": "better-npm-run compile:electron",
     "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "yarn run lint -- --fix",
     "start": "better-npm-run start",
     "start-app": "better-npm-run start-app",
     "start-app-hot": "better-npm-run start-app-hot",
     "dev": "better-npm-run dev",
-    "dev:nw": "npm run dev -- --nw",
-    "dev:no-debug": "npm run dev -- --no_debug",
+    "dev:nw": "yarn run dev -- --nw",
+    "dev:no-debug": "yarn run dev -- --no_debug",
     "test": "better-npm-run test",
-    "test:dev": "npm run test -- --watch",
-    "dist:pre": "node script/build-app-packagejson && install-app-deps && npm run compile:prod && npm run compile:electron",
-    "package-linux": "cross-env NODE_ENV=production npm run dist:pre && node script/download-node --p linux --a x64 --d && build --platform linux --arch x64",
-    "package-darwin": "cross-env NODE_ENV=production npm run dist:pre && build --platform darwin --arch x64 --dist",
-    "package-win32": "cross-env NODE_ENV=production npm run dist:pre && build --platform win32 --arch x64 --dist",
-    "package-all": "cross-env NODE_ENV=production npm run dist:pre && build --platform all --arch all --dist"
+    "test:dev": "yarn run test -- --watch",
+    "dist:pre": "node script/build-app-packagejson && install-app-deps && yarn run compile:prod && yarn run compile:electron",
+    "package-linux": "cross-env NODE_ENV=production yarn run dist:pre && build --linux",
+    "package-darwin": "cross-env NODE_ENV=production yarn run dist:pre && build --mac",
+    "package-win32": "cross-env NODE_ENV=production yarn run dist:pre && build --win",
+    "package-all": "cross-env NODE_ENV=production yarn run dist:pre && build -mwl"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -96,7 +103,10 @@
     "url": "git+https://github.com/DeekyJay/SoundwaveInteractive.git",
     "type": "git"
   },
-  "author": "Derek Jensen",
+  "author": {
+    "name": "Derek Jensen",
+    "email": "derek@deek.io"
+  },
   "license": "MIT",
   "companyName": "Derek Jensen",
   "dependencies": {
@@ -107,11 +117,10 @@
     "electron-gh-releases": "^2.0.4",
     "electron-json-storage": "^2.1.0",
     "electron-oauth2": "^2.3.1",
-    "electron-prebuilt": "^1.2.6",
     "es6-promise": "^3.2.1",
     "glob": "^7.0.3",
     "history": "^2.0.0",
-    "howler": "^1.1.29",
+    "howler": "^2.0.1",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.10.0",
     "moment": "^2.13.0",
@@ -125,12 +134,15 @@
     "react-bootstrap": "^0.28.5",
     "react-bootstrap-daterangepicker": "^3.0.0",
     "react-bootstrap-typeahead": "^0.5.0",
+    "react-contexify": "^1.1.0",
+    "react-context-menu": "^1.0.2",
     "react-dom": "^15.1.0",
     "react-dropzone": "^3.5.2",
     "react-grid-layout": "^0.12.7",
     "react-ink": "^5.1.1",
     "react-onclickoutside": "^5.2.0",
     "react-redux": "^4.0.0",
+    "react-redux-toastr": "^4.4.2",
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",
     "react-slider": "^0.7.0",
@@ -142,11 +154,9 @@
     "redux-promise-middleware": "^2.4.0",
     "redux-raven-middleware": "^1.1.0",
     "redux-thunk": "^2.1.0",
-    "redux-toastr": "^1.1.2",
     "sprintf-js": "^1.0.3",
     "validate.js": "^0.9.0",
-    "webpack-target-electron-renderer": "^0.4.0",
-    "winston": "^2.3.0"
+    "webpack-target-electron-renderer": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
@@ -168,18 +178,15 @@
     "chai-as-promised": "^5.1.0",
     "chai-enzyme": "^0.4.0",
     "chai-fs": "^0.1.0",
-    "cheerio": "^0.20.0",
     "codecov": "^1.0.1",
     "cross-env": "^1.0.7",
     "css-loader": "^0.23.0",
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
-    "devtron": "^1.3.0",
-    "electron-builder": "^3.25.0",
-    "electron-debug": "^0.5.2",
+    "electron": "^1.4.14",
+    "electron-builder": "^10.17.0",
+    "electron-debug": "^1.1.0",
     "electron-devtools-installer": "^2.0.1",
-    "electron-mocha": "^1.0.2",
-    "electron-prebuilt": "^0.36.12",
     "electron-react-devtools": "^0.4.0",
     "electron-rebuild": "^1.1.4",
     "enzyme": "^2.0.0",
@@ -225,8 +232,6 @@
     "node-binary": "^1.1.0",
     "node-sass": "^3.3.3",
     "nodemon": "^1.8.1",
-    "phantomjs-polyfill": "0.0.2",
-    "phantomjs-prebuilt": "^2.1.3",
     "postcss-loader": "^0.8.0",
     "react-addons-test-utils": "^0.14.0",
     "react-transform-catch-errors": "^1.0.2",
@@ -238,7 +243,6 @@
     "redux-mock-store": "^1.0.2",
     "rimraf": "^2.5.1",
     "sass-loader": "^3.0.0",
-    "spectron": "^1.37.0",
     "style-loader": "^0.13.0",
     "supertest": "^1.2.0",
     "url-loader": "^0.5.6",

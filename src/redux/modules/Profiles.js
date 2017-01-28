@@ -1,5 +1,5 @@
 import storage from 'electron-json-storage'
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
@@ -97,7 +97,10 @@ export const actions = {
         type: constants.SELECT_PROFILE,
         payload: { profileId: profileId }
       })
-      if (profileId) dispatch(boardActions.updateGame())
+      if (profileId) {
+        dispatch(interactiveActions.updateCooldown())
+        dispatch(boardActions.updateGame())
+      }
     }
   },
   assignSound: (index, sound) => {
@@ -115,6 +118,30 @@ export const actions = {
       if (!profile) return
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = sound.id
+      profile.sounds = newSounds
+      newProfiles.splice(idx, 1, profile)
+      dispatch({
+        type: constants.ASSIGN_SOUNDS,
+        payload: { profiles: newProfiles }
+      })
+      dispatch(boardActions.updateGame())
+      dispatch(interactiveActions.updateCooldown())
+    }
+  },
+  unassignSound: (index) => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles } } = getState()
+      let newProfiles = Object.assign([], profiles)
+      let idx = 0
+      let profile = _.find(profiles, (p, i) => {
+        if (p.id === profileId) {
+          idx = i
+          return true
+        }
+      })
+      if (!profile) return
+      let newSounds = Object.assign([], profile.sounds)
+      newSounds[index] = undefined
       profile.sounds = newSounds
       newProfiles.splice(idx, 1, profile)
       dispatch({

@@ -2,6 +2,7 @@ import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
 import analytics from '../utils/analytics'
+import { toastr } from 'react-redux-toastr'
 
 // Constants
 export const constants = {
@@ -13,6 +14,7 @@ export const constants = {
   UPDATE_RECONNECTION_TIMEOUT: 'UPDATE_RECONNECTION_TIMEOUT',
   COOLDOWN_UPDATED: 'COOLDOWN_UPDATED',
   UPDATE_STATIC_COOLDOWN: 'UPDATE_STATIC_COOLDOWN',
+  UPDATE_SMART_COOLDOWN: 'UPDATE_SMART_COOLDOWN',
   CLEAR_INTERACTIVE: 'CLEAR_INTERACTIVE'
 }
 
@@ -32,11 +34,12 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
   let cooldowns = []
   try {
     const profile = _.find(profiles, p => p.id === id)
-    profile.sounds.map((s, i) => {
+    for (let i = 0; i <= profile.sounds.length; i++) {
+      const s = profile.sounds[i]
       const sound = _.find(sounds, so => so.id === s)
       if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
       else cooldowns.push(0)
-    })
+    }
   } catch (err) {
     // Something happened, set the default amount
     for (let i = 0; i <= 50; i++) {
@@ -71,10 +74,11 @@ export const actions = {
   },
   updateCooldown: () => {
     return (dispatch, getState) => {
-      const { interactive: { storage: { cooldownOption, staticCooldown } },
+      const { interactive: { storage: { cooldownOption, staticCooldown, smartCooldown } },
         profiles: { profiles, profileId }, sounds: { sounds } } = getState()
       const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
-      beam.setCooldown(cooldownOption, staticCooldown, cooldowns)
+      // TODO: smart cooldown increment
+      beam.setCooldown(cooldownOption, staticCooldown, cooldowns, smartCooldown)
       dispatch({ type: constants.COOLDOWN_UPDATED })
     }
   },
@@ -111,10 +115,12 @@ export const actions = {
         })
         .catch(err => {
           dispatch({ type: 'GO_INTERACTIVE_REJECTED' })
+          toastr.error('Failed to Connect to Beam')
+          dispatch(actions.robotClosedEvent())
           throw err
         })
       } else {
-        dispatch({ type: 'STOP_INTERACTIVE' })
+        dispatch({ type: constants.STOP_INTERACTIVE })
         beam.stopInteractive(id, isDisconnect)
       }
     }
@@ -123,8 +129,11 @@ export const actions = {
     return (dispatch, getState) => {
       const { interactive: { isConnected, storage: { useReconnect, reconnectionTimeout } } } = getState()
       if (useReconnect && isConnected) {
-        dispatch({ type: 'STOP_INTERACTIVE' })
+        toastr.info('Connection Dropped. Reconnecting.')
+        dispatch({ type: constants.STOP_INTERACTIVE })
         setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
+      } else if (isConnected) {
+        dispatch({ type: constants.STOP_INTERACTIVE })
       }
     }
   },
@@ -137,9 +146,27 @@ export const actions = {
       dispatch(actions.updateCooldown())
     }
   },
+  updateSmartCooldown: (value) => {
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.UPDATE_SMART_COOLDOWN,
+        payload: { smartCooldown: parseInt(value) }
+      })
+      dispatch(actions.updateCooldown())
+    }
+  },
   clearInteractiveSettings: () => {
     return {
       type: constants.CLEAR_INTERACTIVE
+    }
+  },
+  pingError: () => {
+    toastr.error('Connection Error',
+      'Uh oh! We\'re struggling to shake hands with Beam. Make sure your firewall isn\'t blocking us!',
+      { timeOut: 15000 })
+    return (dispatch) => {
+      dispatch(actions.robotClosedEvent())
+      dispatch({ type: 'PING_ERROR' })
     }
   }
 }
@@ -230,6 +257,16 @@ const ACTION_HANDLERS = {
       }
     }
   },
+  UPDATE_SMART_COOLDOWN: (state, action) => {
+    const { payload: { smartCooldown } } = action
+    return {
+      ...state,
+      storage: {
+        ...state.storage,
+        smartCooldown
+      }
+    }
+  },
   CLEAR_INTERACTIVE: (state) => {
     return {
       ...state,
@@ -248,7 +285,8 @@ export const initialState = {
     cooldownOption: 'dynamic',
     staticCooldown: 5000,
     useReconnect: true,
-    reconnectionTimeout: 3000
+    reconnectionTimeout: 3000,
+    smartCooldown: 5000
   }
 }
 export default function (state = initialState, action) {

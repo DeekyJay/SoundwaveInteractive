@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as authActions } from '../redux/modules/Authentication'
 import { actions as appActions } from '../redux/modules/App'
+import { shell } from 'electron'
+const WIN32 = process.platform === 'win32'
 
 export class Header extends React.Component {
 
@@ -28,15 +30,17 @@ export class Header extends React.Component {
   }
 
   updateApp = () => {
-    this.props.appActions.update()
+    if (WIN32) this.props.appActions.update()
+    else shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive-releases/releases/latest')
+  }
+
+  logout = () => {
+    this.props.authActions.logout()
   }
 
   render () {
     const {
-      isAuthenticated, username, avatarUrl, hasUpdate,
-      authActions: {
-        logout
-      }
+      isAuthenticated, username, avatarUrl, hasUpdate
     } = this.props
     return (
       <div className='header-container'>
@@ -55,7 +59,7 @@ export class Header extends React.Component {
             </div>
             <div className='user-text'>
               <div className='user-name'>Hi, {username || 'User'}</div>
-              <div className='user-logout' onClick={logout}>Logout</div>
+              <div className='user-logout' onClick={this.logout}>Logout</div>
             </div>
           </div>
           : null}

@@ -40,10 +40,10 @@ const requirePath = process.env.NODE_ENV === 'development' ? './electron' : './d
 const utilsPath = process.env.NODE_ENV === 'development' ? './utils' : './dist/utils'
 const trayIconPath = process.env.NODE_ENV === 'development'
   ? `${__dirname}/src/static/tray.png`
-  : `/${__dirname}/dist/static/tray.png`
+  : `${__dirname}/dist/static/tray.png`
 const appIconPath = process.env.NODE_NEV === 'development'
   ? `${__dirname}/src/static/icon.png`
-  : `/${__dirname}/dist/static/icon.png`
+  : `${__dirname}/dist/static/icon.png`
 const appIcon = nativeImage.createFromPath(appIconPath)
 /**
  * Load squirrel handlers
@@ -91,9 +91,9 @@ app.on('ready', () => {
     app.quit()
   })
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools()
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  mainWindow.openDevTools()
+  // }
 
   mainWindow.on('focus', function () {
     mainWindow.webContents.send('browser-window-focus')
@@ -103,15 +103,24 @@ app.on('ready', () => {
   })
 })
 
+const WIN32 = process.platform === 'win32'
+
 ipcMain.on('CHECK_FOR_UPDATE', function (event) {
   console.log('CHECKING')
-  updater.check((err, status) => {
-    console.log(err, status)
-    if (!err && status) {
-      // Download the update
-      updater.download()
-    }
-  })
+  if (WIN32) {
+    updater.check((err, status) => {
+      console.log(err, status)
+      if (!err && status) {
+        // Download the update
+        updater.download()
+      }
+    })
+  } else {
+    updater._getLatestTag()
+    .then(tag => {
+      if (updater._newVersion(tag)) mainWindow.webContents.send('UPDATE_READY')
+    })
+  }
 })
 
 // When an update has been downloaded
@@ -159,3 +168,11 @@ function showApp () {
   if (app.dock) app.dock.show()
   tray.destroy()
 }
+
+// This seems bad...
+process.on('uncaughtException', function (error) {
+  console.log('UNCAUGHT ERROR', error)
+  if (error.stack.indexOf('WebSocket.ping') === -1) {
+    electron.dialog.showErrorBox('Uh Oh!', error.stack)
+  }
+})

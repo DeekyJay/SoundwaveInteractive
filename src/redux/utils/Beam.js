@@ -31,7 +31,7 @@ export function requestInteractive (channelID, versionId) {
 }
 
 export function requestStopInteractive (channelID, forcedDisconnect) {
-  if (!forcedDisconnect) return new Promise ((resolve, reject) => { resolve(true) })
+  if (!forcedDisconnect) return new Promise((resolve, reject) => { resolve(true) })
   return client.request('PUT', 'channels/' + channelID,
     {
       body: {
@@ -107,6 +107,7 @@ export function goInteractive (channelId, versionId) {
   .catch(err => {
     console.log(err)
     robotClosedEvent()
+    throw new Error('CONNECTION_ERROR')
   })
 }
 
@@ -116,7 +117,7 @@ export function goInteractive (channelId, versionId) {
 export function stopInteractive (channelId, forcedDisconnect) {
   return requestStopInteractive(channelId, forcedDisconnect)
   .then(() => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       ipcRenderer.send('STOP_ROBOT')
       ipcRenderer.once('STOP_ROBOT', (event, err) => {
         if (err) reject(err)
@@ -130,16 +131,29 @@ export function setupStore (_store) {
   store = _store
 }
 
-export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
-  ipcRenderer.send('setCooldown', _cooldownType, _staticCooldown, _cooldowns)
+export function setCooldown (_cooldownType, _staticCooldown, _cooldowns, _smart_increment_value) {
+  ipcRenderer.send('setCooldown', _cooldownType, _staticCooldown, _cooldowns, _smart_increment_value)
 }
 
 function robotClosedEvent () {
   store.dispatch(interactiveActions.robotClosedEvent())
 }
 
-ipcRenderer.on('robotClosedEvent', function (event) {
+ipcRenderer.on('robotClosedEvent', (e) => {
   robotClosedEvent()
+})
+
+ipcRenderer.on('playSound', (e, id) => {
+  store.dispatch(soundActions.playSound(id))
+})
+
+ipcRenderer.on('throwError', (e, data) => {
+  throw new Error(data.title, data.error)
+})
+
+ipcRenderer.on('log', (e, data) => {
+  const { arg1, arg2, arg3, arg4, arg5, arg6 } = data
+  console.log(arg1 || '', arg2 || '', arg3 || '', arg4 || '', arg5 || '', arg6 || '')
 })
 
 export default {

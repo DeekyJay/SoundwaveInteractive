@@ -1,5 +1,5 @@
 import storage from 'electron-json-storage'
-import { toastr } from 'redux-toastr'
+import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
@@ -7,8 +7,6 @@ import { actions as interactiveActions } from './Interactive'
 import { actions as boardActions } from './Board'
 import analytics from '../utils/analytics'
 import { Howl, Howler } from 'howler'
-Howler.usingWebAudio = true
-Howler.ctx = true
 // Constants
 export const constants = {
   SOUNDS_INITIALIZE: 'SOUNDS_INITIALIZE',
@@ -23,7 +21,8 @@ export const constants = {
   PLAY_SOUND_INTERRUPTED: 'PLAY_SOUND_INTERRUPTED',
   PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR',
   CLEAR_EDIT: 'CLEAR_EDIT',
-  SETUP_EDIT: 'SETUP_EDIT'
+  SETUP_EDIT: 'SETUP_EDIT',
+  KILL_ALL_SOUNDS: 'KILL_ALL_SOUNDS'
 }
 
 let timeout
@@ -52,24 +51,19 @@ export const actions = {
       const state = getState()
       let sounds = Object.assign([], state.sounds.sounds)
       files.map((file) => {
-        if (!_.find(sounds, (sound) => { return sound.path === file.path })) {
-          let splitName = file.name.split('.')
-          let name = ''
-          if (splitName.length > 1) {
-            delete splitName[splitName.length - 1]
-            let tempName = splitName.join('.')
-            name = tempName.substring(0, tempName.length - 1)
-          } else if (splitName.length === 1) {
-            name = splitName[0]
-          } else {
-            name = file.name
-          }
-          sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
-            sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
+        let splitName = file.name.split('.')
+        let name = ''
+        if (splitName.length > 1) {
+          delete splitName[splitName.length - 1]
+          let tempName = splitName.join('.')
+          name = tempName.substring(0, tempName.length - 1)
+        } else if (splitName.length === 1) {
+          name = splitName[0]
         } else {
-          toastr.warning('Duplicate Detected',
-            file.path + ' already exists in your library.')
+          name = file.name
         }
+        sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
+          sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
       })
       dispatch({
         type: constants.ADD_SOUNDS,
@@ -134,20 +128,24 @@ export const actions = {
         const profile = _.find(profiles, p => p.id === profileId)
         const soundId = profile.sounds[i]
         const sound = _.find(sounds, s => s.id === soundId)
-        const howl = new Howl({
-          urls: [sound.path],
+        let howl = new Howl({
+          src: [sound.path],
           html5: true,
-          buffer: true,
-          volume: parseFloat(sound.volume) * 0.01,
-          onend: () => {
-            dispatch({ type: constants.PLAY_SOUND_ENDED })
-          }
+          volume: parseFloat(sound.volume) * 0.01
         })
-        if (selectedOutput) howl._audioNode[0].setSinkId(selectedOutput)
-        howl.play()
+        if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
+        howl.once('end', () => {
+          howl.unload()
+          dispatch({ type: constants.PLAY_SOUND_ENDED })
+          howl = null
+        })
+        howl.once('load', () => {
+          howl.play()
+        })
         analytics.play(sound.sparks)
         dispatch({ type: constants.PLAY_SOUND_STARTED })
       } catch (err) {
+        console.log(err)
         dispatch({ type: constants.PLAY_SOUND_ERROR })
       }
     }
@@ -166,6 +164,12 @@ export const actions = {
         type: constants.SETUP_EDIT,
         payload: sound
       })
+    }
+  },
+  killAllSounds: () => {
+    Howler.unload()
+    return {
+      type: constants.KILL_ALL_SOUNDS
     }
   }
 }

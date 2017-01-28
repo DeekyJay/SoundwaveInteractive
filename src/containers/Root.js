@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { Provider, connect } from 'react-redux'
 import { Router } from 'react-router'
-import ReduxToastr from 'redux-toastr'
+import ReduxToastr from 'react-redux-toastr'
 import { bindActionCreators } from 'redux'
 import storage from 'electron-json-storage'
 import { actions as authActions } from '../redux/modules/Authentication'

@@ -53,15 +53,26 @@ export function updateSoundCount (currentSounds) {
   }
 }
 
-export function play (sparks) {
+let playTimeout
+let plays = 0
+let sparks = 0
+export function play (sprk) {
   if (shouldAnalytics) {
     console.log('PLAY SOUND')
-    const data = {
-      stat: {
-        sparks_spent: sparks
+    plays++
+    sparks += parseInt(sprk)
+    clearTimeout(playTimeout)
+    playTimeout = setTimeout(() => {
+      const data = {
+        stat: {
+          sparks_spent: sparks,
+          plays: plays
+        }
       }
-    }
-    fetch.post(`${config.API_BASE_URL}/stats/play`, data)
+      fetch.post(`${config.API_BASE_URL}/stats/play`, data)
+      plays = 0
+      sparks = 0
+    }, 3000)
   }
 }
 

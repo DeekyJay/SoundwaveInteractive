@@ -16,8 +16,8 @@ ipc.on('STOP_ROBOT', function (event) {
   }
 })
 
-ipc.on('setCooldown', function (event, _cooldownTypes, _staticCooldown, _cooldowns) {
-  setCooldown(_cooldownTypes, _staticCooldown, _cooldowns)
+ipc.on('setCooldown', function (event, _cooldownTypes, _staticCooldown, _cooldowns, _smart_increment_value) {
+  setCooldown(_cooldownTypes, _staticCooldown, _cooldowns, _smart_increment_value)
 })
 
 ipc.on('initHandshake', function (event, details, id) {
@@ -29,8 +29,23 @@ export function playSound (id) {
   sender.send('playSound', id)
 }
 
-export function robotClosedEvent() {
+export function robotClosedEvent () {
   sender.send('robotClosedEvent')
+}
+
+export function throwError (title, error) {
+  sender.send('throwError', { title, error })
+}
+
+export function log (arg1, arg2, arg3, arg4, arg5, arg6) {
+  sender.send('log', {
+    arg1,
+    arg2,
+    arg3,
+    arg4,
+    arg5,
+    arg6
+  })
 }
 
 export default {

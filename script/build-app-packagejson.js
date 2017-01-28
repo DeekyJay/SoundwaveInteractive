@@ -10,7 +10,7 @@ let jsonObj = {
   'productName': 'Soundwave Interactive',
   'version': version,
   'description': 'Soundwave Interactive Soundboard',
-  'author': 'Derek Jensen',
+  'author': 'Derek Jensen <derek@deek.io>',
   'private': false,
   'license': 'MIT',
   'homepage': 'github.com/DeekyJay',
