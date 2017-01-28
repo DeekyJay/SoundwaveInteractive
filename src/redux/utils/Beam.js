@@ -4,8 +4,8 @@ import { remote } from 'electron'
 import _ from 'lodash'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
-const Interactive = remote.require('beam-interactive-node')
-const Packets = remote.require('beam-interactive-node/dist/robot/packets').default
+const Interactive = require('beam-interactive-node')
+const Packets = require('beam-interactive-node/dist/robot/packets').default
 let robot
 let running
 let store
@@ -191,14 +191,17 @@ function initHandshake (id) {
     robot = new Interactive.Robot({
       remote: details.address,
       channel: id,
-      key: details.key
+      key: details.key,
+      debug: true
     })
+    console.log('Robot created.')
     robot.on('error', err => {
       if (err.stack.indexOf('Error.PingTimeoutError') > -1) store.dispatch(interactiveActions.pingError())
       if (err.code) throw new Error(err.code)
     })
     return new Promise((resolve, reject) => {
       return robot.handshake(err => {
+        console.log('Handshake Callback')
         if (err) {
           console.log('HANDSHAKE ERROR', err)
           reject(err)
