@@ -87,6 +87,7 @@ function getInteractiveControls (channelID) {
 function initHandshake (id) {
   return client.game.join(id)
   .then(function (details) {
+    console.log(details)
     ipcRenderer.send('initHandshake', details, id)
   })
 }
