@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.11-alpha",
+  "version": "0.9.12-alpha",
   "description": "Soundwave Interactive Beam Soundboard",
   "main": "main.js",
   "engines": {
