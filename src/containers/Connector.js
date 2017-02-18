@@ -73,13 +73,13 @@ export class Connector extends React.Component {
             <span className='connector-option'>Dynamic Cooldown</span>
             <span className={`connector-radio ${cooldownOption === 'dynamic' ? 'toggled' : ''}`}></span>
           </div>
-          <div
+          { /* <div
             className='connector-options-wrapper'
             onClick={clickSmart}
             data-tip='The sound cooldown increments based on how often it is pressed.'>
             <span className='connector-option'>Smart Cooldown (EXPERIMENTAL)</span>
             <span className={`connector-radio ${cooldownOption === 'smart' ? 'toggled' : ''}`}></span>
-          </div>
+          </div> */ }
           <div
             className='connector-options-wrapper'
             onClick={clickIndividual}

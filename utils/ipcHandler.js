@@ -18,7 +18,10 @@ const windowParams = {
   autoHideMenuBar: true,
   height: 800,
   icon: appIcon,
-  parent: mainWindow
+  parent: mainWindow,
+  webPreferences: {
+    sandbox: true
+  }
 }
 
 const options = {

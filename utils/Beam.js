@@ -133,6 +133,7 @@ export function initHandshake (details, id) {
     })
   })
   .catch(err => {
+    console.log(err)
     jumper.log('CAUGHT ERROR', err)
     if (err.res) {
       jumper.throwError('Error connecting to Interactive:' + err.res.body.mesage)
@@ -142,6 +143,7 @@ export function initHandshake (details, id) {
 }
 
 export function setCooldown (_cooldownType, _staticCooldown, _cooldowns) {
+  console.log(_cooldownType, _staticCooldown, _cooldowns)
   cooldownType = _cooldownType
   staticCooldown = _staticCooldown
   cooldowns = _cooldowns

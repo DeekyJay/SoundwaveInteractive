@@ -67,17 +67,29 @@ export const actions = {
         dispatch({
           type: 'SIGN_IN_PENDING'
         })
-        updateTokens(tokens)
-        if (tokens.refresh && !checkStatus()) {
-          auth.refresh()
-          .then(response => {
-            updateTokens(getTokens())
-          })
-        }
-        getUserInfo()
+        new Promise((resolve, reject) => {
+          updateTokens(tokens) // Set Token inside client
+          if (tokens.refresh) { // Do the tokens need to be refreshed
+            return auth.refresh()
+            .then(() => {
+              updateTokens(getTokens())
+              resolve(true)
+            })
+            .catch(err => {
+              console.log('Refresh Error', err)
+              reject(err)
+            })
+          } else {
+            resolve(true)
+          }
+        })
+        .then(() => {
+          return getUserInfo()
+        })
         .then(response => {
           const user = response.body
-          analytics.init(user.id, getTokens())
+          const newTokens = getTokens()
+          analytics.init(user.id, newTokens)
           .then(() => {
             dispatch({
               type: constants.SET_USER,
@@ -86,7 +98,7 @@ export const actions = {
             dispatch({
               type: constants.INITIALIZE,
               payload: {
-                tokens: tokens,
+                tokens: newTokens,
                 isAuthenticated: checkStatus()
               }
             })

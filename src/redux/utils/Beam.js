@@ -54,10 +54,9 @@ export function updateTokens (tokens) {
     access: tokens.access_token || tokens.access,
     refresh: tokens.refresh_token || tokens.refresh,
     expires: tokens.expires_in
-      ? Date.now() + tokens.expires_in * 1000
-      : tokens.expires
+      ? Date.now() + tokens.expires_in
+      : tokens.expires.toString()
   }
-  console.log(newTokens)
   auth.setTokens(newTokens)
   storage.set('tokens', auth.tokens)
 }
@@ -85,17 +84,22 @@ function getInteractiveControls (channelID) {
  * @param {Object} res - Result of the channel join
  */
 function initHandshake (id) {
+  console.log('init handshake')
   return client.game.join(id)
   .then(function (details) {
+    console.log('joined')
     console.log(details)
     ipcRenderer.send('initHandshake', details, id)
+  })
+  .catch(err => {
+    console.log('Join Error', err)
   })
 }
 
 export function goInteractive (channelId, versionId) {
+  console.log('go interactive')
   return requestInteractive(channelId, versionId)
   .then(res => {
-    console.log(res.body)
     if (res.body.interactiveGameId === 'You don\'t have access to that.') {
       throw Error('Permission Denied')
     } else {
