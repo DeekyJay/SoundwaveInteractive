@@ -8,6 +8,10 @@
     "npm": "^3.0.0"
   },
   "build": {
+    "directories": {
+      "output": "release",
+      "buildResources": "app_build"
+    },
     "productName": "Soundwave Interactive",
     "appId": "SoundwaveInteractive",
     "win": {
@@ -21,14 +25,11 @@
       "icon": "app_build/ico_installer_mac.icns"
     },
     "linux": {
-      "target": "deb"
+      "target": "deb",
+      "icon": "icons"
     },
     "asar": true,
     "copyright": "Copyright © 2016 Derek Jensen"
-  },
-  "directories": {
-    "output": "release",
-    "buildResources": "app_build"
   },
   "scripts": {
     "compile:prod": "better-npm-run compile:prod",
@@ -184,7 +185,8 @@
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
     "electron": "1.5.0",
-    "electron-builder": "^10.17.0",
+    "electron-builder": "^13.9.0",
+    "electron-builder-squirrel-windows": "^13.10.1",
     "electron-debug": "^1.1.0",
     "electron-devtools-installer": "^2.0.1",
     "electron-react-devtools": "^0.4.0",
