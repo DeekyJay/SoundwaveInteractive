@@ -34,7 +34,7 @@ const getCooldownsForProfile = (id, profiles, sounds, globalCooldown) => {
   let cooldowns = []
   try {
     const profile = _.find(profiles, p => p.id === id)
-    for (let i = 0; i <= profile.sounds.length; i++) {
+    for (let i = 0; i < profile.sounds.length; i++) {
       const s = profile.sounds[i]
       const sound = _.find(sounds, so => so.id === s)
       if (sound) cooldowns.push(parseInt(sound.cooldown) * 1000)
@@ -58,6 +58,7 @@ export const actions = {
         type: constants.INTERACTIVE_INITIALIZE,
         payload: { loadedState: data }
       })
+      console.log('Update cooldown')
       dispatch(actions.updateCooldown())
     }
   },
@@ -78,6 +79,8 @@ export const actions = {
         profiles: { profiles, profileId }, sounds: { sounds } } = getState()
       const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
       // TODO: smart cooldown increment
+      console.log('Cooldown Profile', JSON.stringify(cooldowns), JSON.stringify(profileId),
+        JSON.stringify(profiles), JSON.stringify(staticCooldown))
       beam.setCooldown(cooldownOption, staticCooldown, cooldowns, smartCooldown)
       dispatch({ type: constants.COOLDOWN_UPDATED })
     }

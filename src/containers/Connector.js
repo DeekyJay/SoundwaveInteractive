@@ -53,7 +53,7 @@ export class Connector extends React.Component {
     const clickStatic = this.setCooldownOption.bind(this, 'static')
     const clickDynamic = this.setCooldownOption.bind(this, 'dynamic')
     const clickIndividual = this.setCooldownOption.bind(this, 'individual')
-    // const clickSmart = this.setCooldownOption.bind(this, 'smart')
+    const clickSmart = this.setCooldownOption.bind(this, 'smart')
     return (
       <div className='connector-container'>
         <div className='connector-container-title'>Connection</div>

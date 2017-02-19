@@ -31,6 +31,11 @@ const syncStorageWithState = (state) => {
   }, 5000)
 }
 
+const scrubArray = (arr) => {
+  while (!arr[arr.length - 1]) arr.pop()
+  return arr
+}
+
 // Action Creators
 export const actions = {
   initialize: (data) => {
@@ -118,6 +123,32 @@ export const actions = {
       if (!profile) return
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = sound.id
+      newSounds = scrubArray(newSounds)
+      profile.sounds = newSounds
+      newProfiles.splice(idx, 1, profile)
+      dispatch({
+        type: constants.ASSIGN_SOUNDS,
+        payload: { profiles: newProfiles }
+      })
+      dispatch(boardActions.updateGame())
+      dispatch(interactiveActions.updateCooldown())
+    }
+  },
+  unassignSound: (index) => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles } } = getState()
+      let newProfiles = Object.assign([], profiles)
+      let idx = 0
+      let profile = _.find(profiles, (p, i) => {
+        if (p.id === profileId) {
+          idx = i
+          return true
+        }
+      })
+      if (!profile) return
+      let newSounds = Object.assign([], profile.sounds)
+      newSounds[index] = undefined
+      newSounds = scrubArray(newSounds)
       profile.sounds = newSounds
       newProfiles.splice(idx, 1, profile)
       dispatch({

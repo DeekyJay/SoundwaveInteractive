@@ -12,6 +12,8 @@ const ipcMain = electron.ipcMain
 const Tray = electron.Tray
 const Menu = electron.Menu
 
+let menu
+let template
 let mainWindow = null
 const appVersion = require('./package.json').version
 
@@ -84,6 +86,7 @@ app.on('ready', () => {
 
   // Load IPC handler
   require(utilsPath + '/ipcHandler')
+  require(utilsPath + '/jumper')
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -100,6 +103,7 @@ app.on('ready', () => {
   mainWindow.on('blur', function () {
     mainWindow.webContents.send('browser-window-blur')
   })
+  buildMenu(mainWindow)
 })
 
 const WIN32 = process.platform === 'win32'
@@ -166,6 +170,133 @@ function showApp () {
   mainWindow.show()
   if (app.dock) app.dock.show()
   tray.destroy()
+}
+
+
+function buildMenu (mainWindow) {
+  if (process.platform === 'darwin') {
+    template = [{
+      label: 'Soundwave Interactive',
+      submenu: [{
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        click () {
+          app.quit()
+        }
+      }]
+    }, {
+      label: 'Edit',
+      submenu: [{
+        label: 'Undo',
+        accelerator: 'Command+Z',
+        selector: 'undo:'
+      }, {
+        label: 'Redo',
+        accelerator: 'Shift+Command+Z',
+        selector: 'redo:'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Cut',
+        accelerator: 'Command+X',
+        selector: 'cut:'
+      }, {
+        label: 'Copy',
+        accelerator: 'Command+C',
+        selector: 'copy:'
+      }, {
+        label: 'Paste',
+        accelerator: 'Command+V',
+        selector: 'paste:'
+      }, {
+        label: 'Select All',
+        accelerator: 'Command+A',
+        selector: 'selectAll:'
+      }]
+    }, {
+      label: 'View',
+      submenu: (process.env.NODE_ENV === 'development') ? [{
+        label: 'Reload',
+        accelerator: 'Command+R',
+        click () {
+          mainWindow.reload()
+        }
+      }, {
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+Command+I',
+        click () {
+          mainWindow.toggleDevTools()
+        }
+      }] : [{
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+Command+I',
+        click () {
+          mainWindow.toggleDevTools()
+        }
+      }]
+    }, {
+      label: 'Window',
+      submenu: [{
+        label: 'Minimize',
+        accelerator: 'Command+M',
+        selector: 'performMiniaturize:'
+      }, {
+        label: 'Close',
+        accelerator: 'Command+W',
+        selector: 'performClose:'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Bring To Front',
+        selector: 'arrangeInFront:'
+      }]
+    }]
+
+    menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+  } else {
+    template = [{
+      label: 'File',
+      submenu: [{
+        label: 'Close',
+        accelerator: 'Ctrl+W',
+        click () {
+          mainWindow.close()
+        }
+      }]
+    }, {
+      label: 'View',
+      submenu: (process.env.NODE_ENV === 'development') ? [{
+        label: 'Reload',
+        accelerator: 'Ctrl+R',
+        click () {
+          mainWindow.reload()
+        }
+      }, {
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+Ctrl+I',
+        click () {
+          mainWindow.toggleDevTools()
+        }
+      }] : [{
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+Ctrl+I',
+        click () {
+          mainWindow.toggleDevTools()
+        }
+      }]
+    }, {
+      label: 'Help',
+      submenu: [{
+        label: 'Learn More',
+        click () {
+          shell.openExternal('https://soundwave.deek.io/wiki')
+        }
+      }]
+    }]
+    menu = Menu.buildFromTemplate(template)
+    mainWindow.setMenu(menu)
+  }
 }
 
 // This seems bad...

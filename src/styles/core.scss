@@ -287,5 +287,40 @@
     background: $beam-logo 0 0 no-repeat;
     background-size: 100%;
   }
+
+  .react-contexify-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  .react-contexify-menu {
+    position: fixed;
+    background-color: #3e3e3e;
+    border-radius: 2px;
+    border: 1px solid gray;
+    width: 100px;
+  }
+  .react-contexify-menu__item {
+    margin: 2px 0;
+    padding: 3px 0;
+    padding-left: 10px;
+    &:hover {
+      background: #636363;
+      cursor: pointer;
+    }
+    &.react-contexify-menu__item--disabled {
+      opacity: 0.2;
+    }
+  }
+  .react-contexify-menu__item__icon {
+    margin-right: 10px;
+  }
+  .react-contexify-menu__separator {
+    height: 1px;
+    background: gray;
+  }
 }
 /* Make standard style for this app */

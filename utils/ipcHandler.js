@@ -16,12 +16,12 @@ const scopes = ['user:details:self', 'channel:update:self', 'interactive:robot:s
 
 const windowParams = {
   autoHideMenuBar: true,
-  webPreferences: {
-    nodeIntegration: false
-  },
   height: 800,
   icon: appIcon,
-  parent: mainWindow
+  parent: mainWindow,
+  webPreferences: {
+    sandbox: true
+  }
 }
 
 const options = {

@@ -49,7 +49,7 @@ class Root extends React.Component {
 
   initializeModule = (file, actionsKey) => {
     console.log('Initializing ' + file)
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       storage.get(file, (error, data) => {
         if (error) reject(error)
         resolve(data)
@@ -63,10 +63,18 @@ class Root extends React.Component {
 
   componentWillMount () {
     this.initializeModule('tokens', 'authActions')
-    this.initializeModule('sounds', 'soundActions')
-    this.initializeModule('profiles', 'profileActions')
-    this.initializeModule('interactive', 'interactiveActions')
-    this.initializeModule('app', 'appActions')
+    .then(() => {
+      return this.initializeModule('sounds', 'soundActions')
+    })
+    .then(() => {
+      return this.initializeModule('profiles', 'profileActions')
+    })
+    .then(() => {
+      return this.initializeModule('interactive', 'interactiveActions')
+    })
+    .then(() => {
+      this.initializeModule('app', 'appActions')
+    })
     this.props.appActions.checkForUpdate()
     setInterval(() => {
       if (!this.props.app.hasUpdate) this.props.appActions.checkForUpdate()
