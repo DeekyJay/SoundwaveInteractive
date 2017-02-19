@@ -31,6 +31,11 @@ const syncStorageWithState = (state) => {
   }, 5000)
 }
 
+const scrubArray = (arr) => {
+  while (!arr[arr.length - 1]) arr.pop()
+  return arr
+}
+
 // Action Creators
 export const actions = {
   initialize: (data) => {
@@ -118,6 +123,7 @@ export const actions = {
       if (!profile) return
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = sound.id
+      newSounds = scrubArray(newSounds)
       profile.sounds = newSounds
       newProfiles.splice(idx, 1, profile)
       dispatch({
@@ -142,6 +148,7 @@ export const actions = {
       if (!profile) return
       let newSounds = Object.assign([], profile.sounds)
       newSounds[index] = undefined
+      newSounds = scrubArray(newSounds)
       profile.sounds = newSounds
       newProfiles.splice(idx, 1, profile)
       dispatch({
