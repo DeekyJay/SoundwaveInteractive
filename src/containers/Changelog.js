@@ -16,7 +16,7 @@ export class Changelog extends React.Component {
         <div className='info-wrapper'>
           <InfoGroup title='Some Changed Stuff' className='change'
             text={'Here are some changes we\'ve made since the last release.'}>
-            <InfoBullet text='Moved some robot logic to the main proccess for better performance.' />
+            <InfoBullet text='Moved some robot logic to the main process for better performance.' />
             <InfoBullet text='Resolved the issue of needing to relogin after 6 hours.' />
             <InfoBullet text='Resolved the issue with users being unable to login via Microsoft, Twitter, & Discord' />
             <InfoBullet text='Resolved the issue with cooldowns not being properly set at the start of the application' />
