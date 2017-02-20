@@ -39,7 +39,7 @@ export class Info extends React.Component {
           <InfoGroup title='App Info' className='app-info'
             text='App Information and License'>
             <InfoBullet text='Made by Derek Jensen' />
-            <InfoBullet text='Copyright 2016 Derek Jensen. All rights reserved.' />
+            <InfoBullet text='Copyright 2017 Derek Jensen. All rights reserved.' />
           </InfoGroup>
           <div className='for-beam'>
             <span className='made-with'>Made with</span>
