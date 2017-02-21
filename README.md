@@ -1,6 +1,6 @@
 # Soundwave Interactive
 The Interactive Sound Board for Beam
-#### Like this project and want to support me? [Paypal](https://www.paypal.me/deekyjay/20USD)
+Like this project and want to support me? [Paypal](https://www.paypal.me/deekyjay/20USD)
 
 ## Description
 Not all the interactive streams on Beam have to be playing a game!
@@ -11,12 +11,12 @@ Let them spice up the stream by triggering sound effects of your choice!
 Go [here](https://github.com/DeekyJay/SoundwaveInteractive/releases) to download the latest release.
 
 ## Screenshots
-![Soundwave Interactive Sound Board](http://i.imgur.com/WeikdDO.png)
+![Soundwave Interactive Sound Board](http://i.imgur.com/BmuYbgF.png)
 
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2016 Derek Jensen
+Copyright (c) 2017 Derek Jensen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
