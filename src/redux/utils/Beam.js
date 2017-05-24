@@ -149,7 +149,7 @@ export function updateControls (profile, sounds, layout) {
       control.on('mousedown', (inputEvent, participant) => {
         console.log(participant.username, inputEvent.input.controlID)
         const pressedId = inputEvent.input.controlID
-        store.dispatch(soundActions.playSound(pressedId))
+        store.dispatch(soundActions.playSound(pressedId, participant.username))
         .then(() => {
           console.log(cooldownType)
           if (cooldownType === 'individual') {

@@ -5,6 +5,8 @@ import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import { actions as interactiveActions } from './Interactive'
 import { actions as boardActions } from './Board'
+import winston from 'winston'
+winston.add(winston.transports.File, { filename: 'plays.log' })
 import analytics from '../utils/analytics'
 import { Howl, Howler } from 'howler'
 // Constants
@@ -120,7 +122,7 @@ export const actions = {
       type: constants.CLEAR_ALL_SOUNDS
     }
   },
-  playSound: (i) => {
+  playSound: (i, username) => {
     return (dispatch, getState) => {
       const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput } } = getState()
       return new Promise((resolve, reject) => {
@@ -143,6 +145,10 @@ export const actions = {
             howl.play()
           })
           howl.once('play', () => {
+            if (username) {
+              toastr.info(`${username} played ${sound.name}!`)
+              winston.info(`${username} played ${sound.name}!`)
+            }
             resolve()
           })
           howl.once('loaderror', () => {
