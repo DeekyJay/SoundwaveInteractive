@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import cuid from 'cuid'
 
 const createProfile = function (id, name) {
   const profile = {
@@ -14,7 +13,7 @@ export function makeDefaultControls () {
   let controls = []
   for (let i = 0; i < 16; i++) {
     const control = {
-      controlID: `${cuid()}`,
+      controlID: `${i}`,
       kind: 'button',
       position: getPositionForButton(i),
       text: 'Unassigned',

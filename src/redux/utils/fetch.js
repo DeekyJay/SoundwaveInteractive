@@ -1,5 +1,6 @@
 require('es6-promise').polyfill()
 import fetch from 'isomorphic-fetch'
+import config from '../../../package.json'
 
 function get (uri, data, headers = {}) {
   headers = setHeaders(headers)
@@ -41,6 +42,7 @@ function setHeaders (headers) {
   headers['Accept'] = 'application/json'
   headers['Content-Type'] = 'application/json'
   headers['X-Auth-Token'] = localStorage.getItem('si-token') || ''
+  headers['X-App-Version'] = config.version
   return headers
 }
 

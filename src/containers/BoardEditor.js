@@ -102,7 +102,7 @@ export class BoardEditor extends React.Component {
             {isGameCreating
               ? <div className='loading'></div>
               : <span>
-                Looks like you don't have a soundboard game in the Beam Dev Labs.
+                Looks like you don't have a soundboard game in the Interactive Studio.
                 <div className='add-game-container'>
                   <span className='add-game' onClick={this.createGame}>Create Soundboard<Ink /></span>
                 </div>

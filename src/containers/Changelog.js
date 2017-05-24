@@ -16,15 +16,17 @@ export class Changelog extends React.Component {
         <div className='info-wrapper'>
           <InfoGroup title='Some Changed Stuff' className='change'
             text={'Here are some changes we\'ve made since the last release.'}>
-            <InfoBullet text='Moved some robot logic to the main process for better performance.' />
-            <InfoBullet text='Resolved the issue of needing to relogin after 6 hours.' />
-            <InfoBullet text='Resolved the issue with users being unable to login via Microsoft, Twitter, & Discord' />
-            <InfoBullet text='Resolved the issue with cooldowns not being properly set at the start of the application' />
+            <InfoBullet text='Deprecated Interactive 1.0 and moved to Interactive 2.0.' />
+            <InfoBullet text='Better Error Handling Implemented.' />
+            <InfoBullet text='Removed background grid behind buttons, as they are much smaller with Interactive 2.0.' />
+            <InfoBullet text='Fixed bug where the user is unable to unassign a sound from a button.' />
+            <InfoBullet text='Unassigned buttons are now hidden from below the stream.' />
+            <InfoBullet text='Modified the error screen so the user knows the difference between failing to connect due to an error or firewall, or if they are restricted.' />
           </InfoGroup>
-          <InfoGroup title='Some New Stuff' className='new'
+          { /* <InfoGroup title='Some New Stuff' className='new'
             text={'Here are some additions we\'ve made since the last release.'}>
             <InfoBullet text='Added a right click context menu to the board sounds to allow the user to modify & unassign them.' />
-          </InfoGroup>
+          </InfoGroup> */ }
         </div>
       </div>
     )

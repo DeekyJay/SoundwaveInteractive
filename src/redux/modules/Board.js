@@ -130,7 +130,6 @@ export const actions = {
       .then(res => {
         let game = res.body
         console.log('Game', game)
-        // TODO: THIS IS WHERE WE NEED TO QUICKLY DO SOME MAGIC VIA CONVERTING THE OLD BOARD TO NEW BOARD
         let valid = true
         if (game.controlVersion === '1.0') {
           game = DevLabUtil.convertInteractiveOneToTwo(game)
@@ -168,7 +167,7 @@ export const actions = {
       })
       .catch(err => {
         dispatch({type: 'GET_OWNED_GAMES_REJECTED'})
-        toastr.error('Load Game Error', 'An error occured while loading the soundboard game.')
+        // toastr.error('Load Game Error', 'An error occured while loading the soundboard game.')
         throw err
       })
     }
@@ -369,7 +368,10 @@ export const initialState = {
   gameCreationError: false,
   isUpdating: false,
   updateError: false,
-  isLocked: false
+  isLocked: false,
+  board: {
+    scenes: []
+  }
 }
 export default function (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]

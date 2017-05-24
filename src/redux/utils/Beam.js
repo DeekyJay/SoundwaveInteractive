@@ -36,7 +36,12 @@ gclient.on('open', () => {
   console.log('Interactive 2.0 is connected!')
 })
 
-gclient.on('closed', () => {
+gclient.on('error', (err) => {
+  console.log('Error', err)
+  store.dispatch(interactiveActions.robotClosedEvent())
+})
+gclient.on('close', () => {
+  console.log('Closed')
   store.dispatch(interactiveActions.robotClosedEvent())
 })
 
