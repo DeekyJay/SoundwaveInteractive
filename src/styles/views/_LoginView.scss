@@ -11,6 +11,17 @@
   .login-text {
     margin-bottom: 20px;
   }
+  .secondary-button {
+    position: relative;
+    padding: 5px 15px;
+    font-size: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: $secondary-button-bg;
+    &:hover {
+      background: $secondary-button-bg-hover;
+    }
+  }
   .login-button {
     position: relative;
     padding: 10px 25px;

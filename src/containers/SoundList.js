@@ -3,12 +3,12 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { actions as soundActions } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
+import { actions as boardActions } from '../redux/modules/Board'
 import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
-import { Howl, Howler } from 'howler'
-console.log(Howler)
+import { Howl } from 'howler'
 import { toastr } from 'react-redux-toastr'
 import ReactSlider from 'rc-slider'
 import Ink from '../components/Ink'
@@ -38,12 +38,12 @@ const SortableList = SortableContainer(({ items, soundActions, selectSound, sele
 function isNumeric (n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
 }
-
 export class SoundList extends React.Component {
 
   static propTypes = {
     soundActions: PropTypes.object.isRequired,
     profileActions: PropTypes.object.isRequired,
+    boardActions: PropTypes.object.isRequired,
     sounds: PropTypes.array.isRequired,
     hasEdit: PropTypes.string,
     selectedOutput: PropTypes.string,
@@ -91,13 +91,27 @@ export class SoundList extends React.Component {
   }
 
   onSortMove = (e) => {
+    // const minEventTime = 500
+    // let now = new Date().getTime()
+    // lastEve = e
+    // if (!moveTimer) {
+    //   if (now - lastMoveFireTime > (minEventTime)) {
+    //     let id = moveEvent(lastEve)
+    //     if (typeof id === 'number') bActions.hoverButton(id)
+    //   }
+    //   moveTimer = setTimeout(function () {
+    //     moveTimer = null
+    //     lastMoveFireTime = new Date().getTime()
+    //     let id = moveEvent(lastEve)
+    //     if (typeof id === 'number') bActions.hoverButton(id)
+    //   }, minEventTime)
+    // }
   }
 
   onSortEnd = ({ oldIndex, newIndex }, e) => {
     this.setState({ ...this.state, dragMode: false }, () => {
       if (!document.elementFromPoint(e.x, e.y)) return
       const name = document.elementFromPoint(e.x, e.y).className
-      console.log('Drop Sound onto ' + name)
       const currentSound = this.props.sounds[oldIndex]
       if (name.startsWith('tactile tactile|')) {
         const index = name.split('|')[1]
@@ -116,6 +130,7 @@ export class SoundList extends React.Component {
             this.props.soundActions.sortSounds(oldIndex, newIndex)
         }
       }
+      this.props.boardActions.hoverButton(-1)
     })
   }
 
@@ -307,7 +322,6 @@ export class SoundList extends React.Component {
                   selectedSound={sound}
                   selectedProfile={selectedProfileArr}
                   onSortEnd={this.onSortEnd}
-                  onSortMove={this.onSortMove}
                   onSortStart={this.onSortStart}
                   distance={8} />
                 <Dropzone ref='dropzone' onDrop={this.handleDrop} className='drop-zone'
@@ -430,7 +444,8 @@ const mapStateToProps = (state) => ({
 /* istanbul ignore next */
 const mapDispatchToProps = (dispatch) => ({
   soundActions: bindActionCreators(soundActions, dispatch),
-  profileActions: bindActionCreators(profileActions, dispatch)
+  profileActions: bindActionCreators(profileActions, dispatch),
+  boardActions: bindActionCreators(boardActions, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SoundList)

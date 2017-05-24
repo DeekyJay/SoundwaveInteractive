@@ -11,7 +11,7 @@ import _ from 'lodash'
 import Ink from '../components/Ink'
 import { ContextMenu, Item, Separator, ContextMenuProvider } from 'react-contexify'
 
-const largeGrid = DevLabUtil.makeGrid(16, 4)
+const largeGrid = DevLabUtil.makeGrid(80, 20)
 
 export class BoardEditor extends React.Component {
 
@@ -134,7 +134,7 @@ export class BoardEditor extends React.Component {
           ? <div className='board-editor-wrapper'>
             <div className='board-background-grid'>
               <div className='board-wrapper'>
-                {this.renderBackgroundGridDetails('large', 16, 30, 600, [4, 4], 'grid-box')}
+                 { /* this.renderBackgroundGridDetails('large', 80, 7.5, 600, [0, 0], 'grid-box') */ }
                 {large_grid && large_grid.length
                   ? this.renderProfileGrid(large_grid)
                   : null}
@@ -194,56 +194,28 @@ export class BoardEditor extends React.Component {
       <ReactGridLayout
         layout={large_grid}
         className='profile-grid large'
-        cols={16}
-        rowHeight={30}
-        maxRows={4}
+        cols={80}
+        rowHeight={7.5}
         width={600}
-        margin={[4, 4]}
+        margin={[0, 0]}
         verticalCompact>
         {
           large_grid.map((button) => {
             const clickSound = this.playSound.bind(this, button.i)
             return (
-              <div key={button.i} className='grid-button' onClick={clickSound} >
+              <div key={button.i} className={`grid-button ${button.hover ? 'hover' : ''}`} onClick={clickSound} >
                 <ContextMenuProvider id={'context-sound ' + button.i} >
                   <div className='button-number'>#{button.i}</div>
                   <div className='button-name'>{button.name}</div>
                   <span className={`tactile tactile|${button.i}`}></span>
                   <Ink className={`tactile tactile|${button.i}`} />
                 </ContextMenuProvider>
-            </div>
+              </div>
             )
           })
         }
       </ReactGridLayout>
     )
-  }
-
-  renderBackgroundGrid = () => {
-    return (
-      <div className='background-grid-container'>
-        <div className='background-grid-row'>
-          {this.renderColumns()}
-        </div>
-        <div className='background-grid-row'>
-          {this.renderColumns()}
-        </div>
-        <div className='background-grid-row'>
-          {this.renderColumns()}
-        </div>
-        <div className='background-grid-row'>
-          {this.renderColumns()}
-        </div>
-      </div>
-    )
-  }
-
-  renderColumns = () => {
-    let arr = []
-    for (let i = 0; i < 16; i++) {
-      arr.push(<span className='background-grid-cube' />)
-    }
-    return arr
   }
 
   renderBackgroundGridDetails = (grid, cols, rowHeight, width, margin, box_class) => {

@@ -112,8 +112,7 @@ export const actions = {
         type: constants.EDIT_SOUND,
         payload: { sounds: newSounds }
       })
-      dispatch(interactiveActions.updateCooldown())
-      dispatch(boardActions.updateGame())
+      dispatch(interactiveActions.updateControls())
     }
   },
   clearAllSounds: () => {
@@ -124,30 +123,40 @@ export const actions = {
   playSound: (i) => {
     return (dispatch, getState) => {
       const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput } } = getState()
-      try {
-        const profile = _.find(profiles, p => p.id === profileId)
-        const soundId = profile.sounds[i]
-        const sound = _.find(sounds, s => s.id === soundId)
-        let howl = new Howl({
-          src: [sound.path],
-          html5: true,
-          volume: parseFloat(sound.volume) * 0.01
-        })
-        if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
-        howl.once('end', () => {
-          howl.unload()
-          dispatch({ type: constants.PLAY_SOUND_ENDED })
-          howl = null
-        })
-        howl.once('load', () => {
-          howl.play()
-        })
-        analytics.play(sound.sparks)
-        dispatch({ type: constants.PLAY_SOUND_STARTED })
-      } catch (err) {
-        console.log(err)
-        dispatch({ type: constants.PLAY_SOUND_ERROR })
-      }
+      return new Promise((resolve, reject) => {
+        try {
+          const profile = _.find(profiles, p => p.id === profileId)
+          const soundId = profile.sounds[i]
+          const sound = _.find(sounds, s => s.id === soundId)
+          let howl = new Howl({
+            src: [sound.path],
+            volume: parseFloat(sound.volume) * 0.01
+          })
+          // This is where we check to see if the selectedOutput actually exists, we might need to refresh the list and get the new output
+          if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
+          howl.once('end', () => {
+            howl.unload()
+            dispatch({ type: constants.PLAY_SOUND_ENDED })
+            howl = null
+          })
+          howl.once('load', () => {
+            howl.play()
+          })
+          howl.once('play', () => {
+            resolve()
+          })
+          howl.once('loaderror', () => {
+            reject(new Error('Error Loading File'))
+          })
+          analytics.play(sound.sparks)
+          dispatch({ type: constants.PLAY_SOUND_STARTED })
+        } catch (err) {
+          console.log('Sound Error')
+          console.log(err)
+          dispatch({ type: constants.PLAY_SOUND_ERROR })
+          reject(err)
+        }
+      })
     }
   },
   clearEdit: () => {

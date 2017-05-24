@@ -3,6 +3,7 @@ import storage from 'electron-json-storage'
 import _ from 'lodash'
 import analytics from '../utils/analytics'
 import { toastr } from 'react-redux-toastr'
+import { actions as boardActions } from './Board'
 
 // Constants
 export const constants = {
@@ -79,8 +80,6 @@ export const actions = {
         profiles: { profiles, profileId }, sounds: { sounds } } = getState()
       const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
       // TODO: smart cooldown increment
-      console.log('Cooldown Profile', JSON.stringify(cooldowns), JSON.stringify(profileId),
-        JSON.stringify(profiles), JSON.stringify(staticCooldown))
       beam.setCooldown(cooldownOption, staticCooldown, cooldowns, smartCooldown)
       dispatch({ type: constants.COOLDOWN_UPDATED })
     }
@@ -103,15 +102,19 @@ export const actions = {
   goInteractive: (isDisconnect) => {
     return (dispatch, getState) => {
       const { interactive: { isConnected },
-        board: { versionId },
-        auth: { user: { channel: { id } } }
+        board: { versionId, board: { scenes } },
+        auth: { tokens },
+        profiles: { profiles, profileId },
+        sounds: { sounds }
       } = getState()
+      const profile = _.find(profiles, p => p.id === profileId)
+      const controls = scenes[0].controls
       const shouldConnect = !isConnected
       if (shouldConnect) {
         dispatch({
           type: 'GO_INTERACTIVE_PENDING'
         })
-        beam.goInteractive(id, versionId)
+        beam.goInteractive(versionId, tokens.access, profile, sounds, controls)
         .then(res => {
           dispatch({ type: 'GO_INTERACTIVE_FULFILLED' })
           analytics.wentInteractive()
@@ -124,7 +127,7 @@ export const actions = {
         })
       } else {
         dispatch({ type: constants.STOP_INTERACTIVE })
-        beam.stopInteractive(id, isDisconnect)
+        beam.stopInteractive(isDisconnect)
       }
     }
   },
@@ -170,6 +173,20 @@ export const actions = {
     return (dispatch) => {
       dispatch(actions.robotClosedEvent())
       dispatch({ type: 'PING_ERROR' })
+    }
+  },
+  updateControls: () => {
+    return (dispatch, getState) => {
+      const { interactive: { isConnected },
+        board: { board: { scenes } },
+        profiles: { profiles, profileId },
+        sounds: { sounds }
+      } = getState()
+      const profile = _.find(profiles, p => p.id === profileId)
+      const controls = scenes[0].controls
+      dispatch(actions.updateCooldown())
+      dispatch(boardActions.updateLocalLayout({ scenes }))
+      if (isConnected) beam.updateControls(profile, sounds, controls)
     }
   }
 }

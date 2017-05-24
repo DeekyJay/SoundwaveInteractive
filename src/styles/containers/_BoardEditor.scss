@@ -198,13 +198,15 @@
             .react-grid-item {
               &.grid-box {
                 background: #32365e;
-                border: 2px dashed #5b6692;
-                border-radius: 2px;
+                border: 1px solid #5b6692;
               }
               &.grid-button {
                 background: #464b7a;
-                border-radius: 2px;
+                border: 1px solid #1e213d;
                 padding: 2px;
+                &.hover {
+                  background: radial-gradient(ellipse at center, #464b7a 61%,#6d68af 100%);
+                }
                 &:hover {
                   background: $board-btn-hover;
                 }

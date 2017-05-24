@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { actions } from '../../redux/modules/Authentication'
 import { bindActionCreators } from 'redux'
 import Ink from '../../components/Ink'
+import { shell } from 'electron'
 
 export class LoginView extends React.Component {
 
@@ -11,7 +12,8 @@ export class LoginView extends React.Component {
     isWaitingForOAuth: PropTypes.bool.isRequired,
     initialized: PropTypes.bool.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
-    denied: PropTypes.bool.isRequired
+    denied: PropTypes.bool.isRequired,
+    errored: PropTypes.bool.isRequired
   }
 
   signIn = () => {
@@ -20,6 +22,10 @@ export class LoginView extends React.Component {
 
   signOut = () => {
     this.props.actions.logout()
+  }
+
+  troubleshoot = () => {
+    shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive/wiki#connectivity-issues')
   }
 
   render () {
@@ -48,6 +54,23 @@ export class LoginView extends React.Component {
             </div>
           </div>
           : null}
+        {this.props.errored
+          ? <div className="denied">
+            <div>It appears we're having troubles contacting home.</div>
+            <br />
+            <div style={{ fontSize: '18px', color: 'gray' }}>You may need to allow this application through your firewall!</div>
+            <div style={{ fontSize: '18px', color: 'gray' }}>For more information on how to fix this, click below!</div>
+            <br />
+            <div className='secondary-button' onClick={this.troubleshoot}>
+              Troubleshooting Connectivity
+              <Ink />
+            </div>
+            <div className='login-button' onClick={this.signIn}>
+              Login
+              <Ink />
+            </div>
+          </div>
+          : null}
       </div>
     )
   }
@@ -58,7 +81,8 @@ const mapStateToProps = (state) => ({
   isWaitingForOAuth: state.auth.isWaitingForOAuth,
   initialized: state.auth.initialized,
   isAuthenticated: state.auth.isAuthenticated,
-  denied: state.auth.denied
+  denied: state.auth.denied,
+  errored: state.auth.errored
 })
 
 /* istanbul ignore next */

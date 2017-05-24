@@ -33,14 +33,16 @@ ipcMain.on('auth', (event) => {
   console.log(myApiOauth)
   myApiOauth.getAccessToken(options)
   .then(token => {
-    myApiOauth.refreshToken(token.refresh_token)
-    .then(newToken => {
-      event.sender.send('auth', newToken)
-    })
-    .catch(err => {
-      console.log(err)
-      event.sender.send('auth', false)
-    })
+    event.sender.send('auth', token)
+    // myApiOauth.refreshToken(token.refresh_token)
+    // .then(newToken => {
+    //   console.log(token, newToken)
+    //   event.sender.send('auth', newToken)
+    // })
+    // .catch(err => {
+    //   console.log(err)
+    //   event.sender.send('auth', false)
+    // })
   })
   .catch(err => {
     console.log(err)

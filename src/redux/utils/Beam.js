@@ -2,10 +2,53 @@ import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
-import { ipcRenderer } from 'electron'
+import { GameClient, setWebSocket, delay } from 'beam-interactive-node2'
+import ws from 'ws'
+import { controlsFromProfileAndLayout } from './DevLabUtil'
+setWebSocket(ws)
 let store
 
 export const client = new Beam()
+export const gclient = new GameClient()
+
+
+// Cooldown Related Variables
+let cooldownType = 'static'
+let staticCooldown = 30000
+let cooldowns = []
+let smart_increments = []
+let smart_increment_value = 5000
+
+let current_cooldowns = []
+function setSmartCooldown (i, t) {
+  current_cooldowns[i] = 1
+  setTimeout(() => {
+    current_cooldowns[i] = 0
+  }, t)
+}
+
+function isCoolingDown (i) {
+  return current_cooldowns[i]
+}
+
+// Setup the events for GameClinet
+gclient.on('open', () => {
+  console.log('Interactive 2.0 is connected!')
+})
+
+gclient.on('closed', () => {
+  store.dispatch(interactiveActions.robotClosedEvent())
+})
+
+gclient.state.on('participantJoin', participant => {
+  console.log(participant)
+  console.log(`${participant.username} (${participant.sessionID}) Joined!`)
+})
+
+gclient.state.on('participantLeave', participant => {
+  console.log(participant + 'Left')
+})
+
 const oAuthOpts = {
   clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe'
 }
@@ -18,30 +61,6 @@ export function checkStatus () {
   return auth.isAuthenticated()
 }
 
-export function requestInteractive (channelID, versionId) {
-  return client.request('PUT', 'channels/' + channelID,
-    {
-      body: {
-        interactive: true,
-        interactiveGameId: versionId
-      },
-      json: true
-    }
-  )
-}
-
-export function requestStopInteractive (channelID, forcedDisconnect) {
-  if (!forcedDisconnect) return new Promise((resolve, reject) => { resolve(true) })
-  return client.request('PUT', 'channels/' + channelID,
-    {
-      body: {
-        interactive: false
-      },
-      json: true
-    }
-  )
-}
-
 export function getUserInfo () {
   return client.request('GET', '/users/current')
   .then(response => {
@@ -50,6 +69,7 @@ export function getUserInfo () {
 }
 
 export function updateTokens (tokens) {
+  console.log(tokens)
   const newTokens = {
     access: tokens.access_token || tokens.access,
     refresh: tokens.refresh_token || tokens.refresh,
@@ -66,70 +86,35 @@ export function getTokens () {
 }
 
 /**
-* Get's the controls of the interactive app running on a channel
-* @param {string} channelID - The ID of the channel
-*/
-function getInteractiveControls (channelID) {
-  return client.request('GET', 'interactive/' + channelID)
-  .then(res => {
-    return res.body.version.controls
-  }, function () {
-    throw new Error('Incorrect Version ID or Share Code in your config file')
-  })
-}
-
-/**
  * Initialize and start Hanshake with Interactive app
  * @param {int} id - Channel ID
  * @param {Object} res - Result of the channel join
  */
-function initHandshake (id) {
+function initHandshake (versionId, token, profile, sounds, layout) {
   console.log('init handshake')
-  return client.game.join(id)
-  .then(function (details) {
-    console.log('joined')
-    console.log(details)
-    ipcRenderer.send('initHandshake', details, id)
+  return gclient.open({
+    authToken: token,
+    versionId: versionId
+  })
+  .then(() => {
+    return updateControls(profile, sounds, layout)
   })
   .catch(err => {
     console.log('Join Error', err)
   })
 }
 
-export function goInteractive (channelId, versionId) {
+
+export function goInteractive (versionId, token, profile, sounds, layout) {
   console.log('go interactive')
-  return requestInteractive(channelId, versionId)
-  .then(res => {
-    if (res.body.interactiveGameId === 'You don\'t have access to that.') {
-      throw Error('Permission Denied')
-    } else {
-      return getInteractiveControls(channelId)
-    }
-  })
-  .then(res => {
-    return initHandshake(channelId)
-  })
-  .catch(err => {
-    console.log(err)
-    robotClosedEvent()
-    throw new Error('CONNECTION_ERROR')
-  })
+  return initHandshake(versionId, token, profile, sounds, layout)
 }
 
 /**
  * Stops the connection to Beam.
  */
 export function stopInteractive (channelId, forcedDisconnect) {
-  return requestStopInteractive(channelId, forcedDisconnect)
-  .then(() => {
-    return new Promise((resolve, reject) => {
-      ipcRenderer.send('STOP_ROBOT')
-      ipcRenderer.once('STOP_ROBOT', (event, err) => {
-        if (err) reject(err)
-        else resolve(true)
-      })
-    })
-  })
+  gclient.close()
 }
 
 export function setupStore (_store) {
@@ -137,40 +122,66 @@ export function setupStore (_store) {
 }
 
 export function setCooldown (_cooldownType, _staticCooldown, _cooldowns, _smart_increment_value) {
-  ipcRenderer.send('setCooldown', _cooldownType, _staticCooldown, _cooldowns, _smart_increment_value)
+  cooldownType = _cooldownType
+  staticCooldown = _staticCooldown
+  cooldowns = _cooldowns
 }
 
-function robotClosedEvent () {
-  store.dispatch(interactiveActions.robotClosedEvent())
+export function updateControls (profile, sounds, layout) {
+  const controls = controlsFromProfileAndLayout(profile, sounds, layout)
+  let scene
+  return gclient.synchronizeScenes()
+  .then(() => {
+    scene = gclient.state.getScene('default')
+    return scene.deleteAllControls()
+  })
+  .then(() => delay(500))
+  .then(() => {
+    return scene.createControls(controls)
+  })
+  .then(controls => {
+    controls.forEach(control => {
+      control.on('mousedown', (inputEvent, participant) => {
+        console.log(participant.username, inputEvent.input.controlID)
+        const pressedId = inputEvent.input.controlID
+        store.dispatch(soundActions.playSound(pressedId))
+        .then(() => {
+          console.log(cooldownType)
+          if (cooldownType === 'individual') {
+            control.setCooldown(cooldowns[parseInt(pressedId)])
+          } else if (cooldownType === 'static') {
+            controls.forEach(c => c.setCooldown(staticCooldown))
+          } else if (cooldownType === 'dynamic') {
+            controls.forEach(c => c.setCooldown(cooldowns[parseInt(pressedId)]))
+          }
+          if (inputEvent.transactionID) {
+            gclient.captureTransaction(inputEvent.transactionID)
+            .then(() => {
+              console.log(`Charged ${participant.username} ${control.sparks} sparks for playing that sound!`)
+            })
+          }
+        })
+        .catch(err => {
+          // No Transactions
+          console.log('YOU JUST SAVED SPARKS BRUH')
+          throw err
+        })
+      })
+    })
+    gclient.ready(true)
+  })
 }
-
-ipcRenderer.on('robotClosedEvent', (e) => {
-  robotClosedEvent()
-})
-
-ipcRenderer.on('playSound', (e, id) => {
-  store.dispatch(soundActions.playSound(id))
-})
-
-ipcRenderer.on('throwError', (e, data) => {
-  throw new Error(data.title, data.error)
-})
-
-ipcRenderer.on('log', (e, data) => {
-  const { arg1, arg2, arg3, arg4, arg5, arg6 } = data
-  console.log(arg1 || '', arg2 || '', arg3 || '', arg4 || '', arg5 || '', arg6 || '')
-})
 
 export default {
   client,
   auth,
   checkStatus,
-  requestInteractive,
   getUserInfo,
   updateTokens,
   getTokens,
   goInteractive,
   stopInteractive,
   setupStore,
-  setCooldown
+  setCooldown,
+  updateControls
 }
