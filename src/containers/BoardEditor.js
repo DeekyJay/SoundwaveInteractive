@@ -201,7 +201,7 @@ export class BoardEditor extends React.Component {
         verticalCompact>
         {
           large_grid.map((button) => {
-            const clickSound = this.playSound.bind(this, button.i)
+            const clickSound = button.name !== 'Unassigned' ? this.playSound.bind(this, button.i) : () => {}
             return (
               <div key={button.i} className={`grid-button ${button.hover ? 'hover' : ''}`} onClick={clickSound} >
                 <ContextMenuProvider id={'context-sound ' + button.i} >

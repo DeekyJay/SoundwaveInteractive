@@ -51,8 +51,7 @@ const syncStorageWithState = (state) => {
       shareAnalytics: state.shareAnalytics,
       tutMode: state.tutMode,
       tutStep: state.tutStep,
-      trayMinimize: false
-      // trayMinimize: state.trayMinimize
+      trayMinimize: state.trayMinimize
     }
     storage.set('app', data, (err) => {
       if (err) throw err
