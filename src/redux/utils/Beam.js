@@ -11,7 +11,11 @@ let store
 export const client = new Beam()
 export const gclient = new GameClient()
 
-
+let playing = false
+function playTimeout () {
+  playing = true
+  setTimeout(() => { playing = false }, 500)
+}
 // Cooldown Related Variables
 let cooldownType = 'static'
 let staticCooldown = 30000
@@ -116,7 +120,7 @@ export function goInteractive (versionId, token, profile, sounds, layout) {
 }
 
 /**
- * Stops the connection to Beam.
+ * Stops the connection to Mixer.
  */
 export function stopInteractive (channelId, forcedDisconnect) {
   gclient.close()
@@ -147,30 +151,34 @@ export function updateControls (profile, sounds, layout) {
   .then(controls => {
     controls.forEach(control => {
       control.on('mousedown', (inputEvent, participant) => {
-        console.log(participant.username, inputEvent.input.controlID)
-        const pressedId = inputEvent.input.controlID
-        store.dispatch(soundActions.playSound(pressedId, participant.username))
-        .then(() => {
-          console.log(cooldownType)
-          if (cooldownType === 'individual') {
-            control.setCooldown(cooldowns[parseInt(pressedId)])
-          } else if (cooldownType === 'static') {
-            controls.forEach(c => c.setCooldown(staticCooldown))
-          } else if (cooldownType === 'dynamic') {
-            controls.forEach(c => c.setCooldown(cooldowns[parseInt(pressedId)]))
-          }
-          if (inputEvent.transactionID) {
-            gclient.captureTransaction(inputEvent.transactionID)
-            .then(() => {
-              console.log(`Charged ${participant.username} ${control.sparks} sparks for playing that sound!`)
-            })
-          }
-        })
-        .catch(err => {
-          // No Transactions
-          console.log('YOU JUST SAVED SPARKS BRUH')
-          throw err
-        })
+        if (!playing) {
+          playTimeout()
+          console.log(participant.username, inputEvent.input.controlID)
+          const pressedId = inputEvent.input.controlID
+          store.dispatch(soundActions.playSound(pressedId, participant.username))
+          .then(() => {
+            if (cooldownType === 'individual') {
+              control.setCooldown(cooldowns[parseInt(pressedId)])
+            } else if (cooldownType === 'static') {
+              controls.forEach(c => c.setCooldown(staticCooldown))
+            } else if (cooldownType === 'dynamic') {
+              controls.forEach(c => c.setCooldown(cooldowns[parseInt(pressedId)]))
+            }
+            if (inputEvent.transactionID) {
+              gclient.captureTransaction(inputEvent.transactionID)
+              .then(() => {
+                console.log(`Charged ${participant.username} ${control.sparks} sparks for playing that sound!`)
+              })
+            }
+          })
+          .catch(err => {
+            // No Transactions
+            console.log('YOU JUST SAVED SPARKS BRUH')
+            throw err
+          })
+        } else {
+          console.log('Looks like you need a time out!')
+        }
       })
     })
     gclient.ready(true)

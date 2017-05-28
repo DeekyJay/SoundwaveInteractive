@@ -23,9 +23,12 @@ const getGridFromButtons = (controls, profile, sounds) => {
     controls.scenes[0].controls.map(button => {
       // Grabbing the first blueprint -- Will it always be the large grid?
       const position = _.find(button.position, b => b.size === 'large')
-      const soundId = profile.sounds[button.controlID]
-      const sound = _.find(sounds, s => s.id === soundId)
-      let name = sound && sound.name ? sound.name : 'Unassigned'
+      let soundId, sound, name
+      if (profile && profile.sounds) {
+        soundId = profile.sounds[button.controlID]
+      }
+      if (soundId) sound = _.find(sounds, s => s.id === soundId)
+      name = sound && sound.name ? sound.name : 'Unassigned'
       large_grid.push({
         w: position.width,
         h: position.height,

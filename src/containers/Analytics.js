@@ -29,7 +29,7 @@ export class Analytics extends React.Component {
           </div>
           <div className='form-info'>* The data uploaded includes the following: Total sparks spent, total
               sounds imported, total profiles created, current amount of sounds imported, current amount of profiles,
-               total sound plays, and total connects to Beam. This information is publicly available.
+               total sound plays, and total connects to Mixer. This information is publicly available.
           </div>
         </div>
       </div>

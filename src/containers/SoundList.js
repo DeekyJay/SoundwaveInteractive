@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { actions as soundActions } from '../redux/modules/Sounds'
+import { actions as soundActions, getDeviceIdForOutput } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import { actions as boardActions } from '../redux/modules/Board'
 import SoundItem from '../components/SoundItem/SoundItem'
@@ -47,6 +47,7 @@ export class SoundList extends React.Component {
     sounds: PropTypes.array.isRequired,
     hasEdit: PropTypes.string,
     selectedOutput: PropTypes.string,
+    outputs: PropTypes.array.isRequired,
     tutMode: PropTypes.bool.isRequired,
     tutStep: PropTypes.number,
     profiles: PropTypes.array.isRequired,
@@ -181,14 +182,15 @@ export class SoundList extends React.Component {
 
   playSound = () => {
     const { sound } = this.state
-    const { selectedOutput } = this.props
+    const { selectedOutput, outputs } = this.props
+    const sinkId = getDeviceIdForOutput(outputs, selectedOutput)
     if (sound) {
       let howl = new Howl({
         src: [sound.path],
         html5: true,
         volume: parseFloat(sound.volume) * 0.01
       })
-      if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
+      if (sinkId) howl._sounds[0]._node.setSinkId(sinkId)
       howl.once('end', () => {
         howl.unload()
         this.setState({ ...this.state, isPlaying: false, howl: null })
@@ -435,6 +437,7 @@ const mapStateToProps = (state) => ({
   sounds: state.sounds.sounds,
   hasEdit: state.sounds.hasEdit,
   selectedOutput: state.app.selectedOutput,
+  outputs: state.app.outputs,
   tutMode: state.app.tutMode,
   tutStep: state.app.tutStep,
   profiles: state.profiles.profiles,

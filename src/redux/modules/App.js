@@ -79,7 +79,7 @@ export const actions = {
     return (dispatch, getState) => {
       const { app: { trayMinimize } } = getState()
       // TODO: Remove the && false when system tray is working
-      if (trayMinimize && false) {
+      if (trayMinimize) {
         ipcRenderer.send('GET_TRAY_ICON')
         ipcRenderer.on('GET_TRAY_ICON', (event) => {
           mainWindow.hide()

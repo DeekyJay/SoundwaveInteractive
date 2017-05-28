@@ -68,12 +68,12 @@ export class Soundboard extends React.Component {
       case 1:
         return 'Let\'s get started! Here is a quick overview of the new soundboard!'
       case 2:
-        return 'Sound Library - Import all your sounds here! Set the names as you\'d see them on Beam with ' +
+        return 'Sound Library - Import all your sounds here! Set the names as you\'d see them on Mixer with ' +
           'the proper cooldown and spark cost!'
       case 3:
         return 'Profiles - Create these to represent a collection of sounds you want on your soundboard.'
       case 4:
-        return 'Interactive Board - How your board looks on Beam! Want to update a button? ' +
+        return 'Interactive Board - How your board looks on Mixer! Want to update a button? ' +
           'Drag and drop a sound onto it!'
       case 5:
         return 'Connection - Here are a couple different options for cooldown. Hover over them see what they do! ' +

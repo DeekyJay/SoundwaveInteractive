@@ -4,7 +4,6 @@ import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import { actions as interactiveActions } from './Interactive'
-import { actions as boardActions } from './Board'
 import winston from 'winston'
 winston.add(winston.transports.File, { filename: 'plays.log' })
 import analytics from '../utils/analytics'
@@ -25,6 +24,12 @@ export const constants = {
   CLEAR_EDIT: 'CLEAR_EDIT',
   SETUP_EDIT: 'SETUP_EDIT',
   KILL_ALL_SOUNDS: 'KILL_ALL_SOUNDS'
+}
+
+export function getDeviceIdForOutput (outputs, selectedOutput) {
+  const output = _.find(outputs, o => o.label === selectedOutput)
+  if (output) return output.deviceId
+  else return null
 }
 
 let timeout
@@ -124,7 +129,8 @@ export const actions = {
   },
   playSound: (i, username) => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput } } = getState()
+      const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput, outputs } } = getState()
+      const sinkId = getDeviceIdForOutput(outputs, selectedOutput)
       return new Promise((resolve, reject) => {
         try {
           const profile = _.find(profiles, p => p.id === profileId)
@@ -135,7 +141,7 @@ export const actions = {
             volume: parseFloat(sound.volume) * 0.01
           })
           // This is where we check to see if the selectedOutput actually exists, we might need to refresh the list and get the new output
-          if (selectedOutput) howl._sounds[0]._node.setSinkId(selectedOutput)
+          if (sinkId) howl._sounds[0]._node.setSinkId(sinkId)
           howl.once('end', () => {
             howl.unload()
             dispatch({ type: constants.PLAY_SOUND_ENDED })

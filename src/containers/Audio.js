@@ -29,7 +29,7 @@ export class Audio extends React.Component {
 
   componentWillReceiveProps (props) {
     if (this.props.globalVolume !== props.globalVolume) {
-      this.setState({ ...this.state, globalVolume: props.globalVolume})
+      this.setState({ ...this.state, globalVolume: props.globalVolume })
     }
   }
 
@@ -61,7 +61,7 @@ export class Audio extends React.Component {
               {outputs && outputs.length
                 ? outputs.map(o => {
                   return (
-                    <option key={o.deviceId} value={o.deviceId}>{o.label}</option>
+                    <option key={o.deviceId} value={o.label}>{o.label}</option>
                   )
                 })
                 : null}
@@ -77,12 +77,12 @@ export class Audio extends React.Component {
               onChange={this.setVolume} />
             <span className='volume'>{globalVolume}%</span>
           </div>
-          { /* <div
+          <div
             className='form-group'
             onClick={this.checkChanged}>
             <span className='checkbox-label'>Minimize to System Tray</span>
             <span className={`custom-checkbox ${trayMinimize ? 'sicon-round-check' : ''}`}></span>
-          </div> */ }
+          </div>
         </div>
       </div>
     )

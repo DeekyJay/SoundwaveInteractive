@@ -1,9 +1,9 @@
 # Soundwave Interactive
-The Interactive Sound Board for Beam
+The Interactive Sound Board for Mixer
 Like this project and want to support me? [Paypal](https://www.paypal.me/deekyjay/20USD)
 
 ## Description
-Not all the interactive streams on Beam have to be playing a game!
+Not all the interactive streams on Mixer have to be playing a game!
 Want to get your viewers interacting with you while you stream?
 Let them spice up the stream by triggering sound effects of your choice!
 

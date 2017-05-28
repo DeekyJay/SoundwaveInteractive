@@ -147,7 +147,7 @@ export class BoardEditor extends React.Component {
                 <div className={!this.isProfileLocked() ? 'sicon-lock' : 'sicon-unlock'}></div>
                 <Ink />
               </div>
-              <div className='board-action fetch' data-tip='Load Changes from Beam' onClick={this.getGame}>
+              <div className='board-action fetch' data-tip='Load Changes from Mixer' onClick={this.getGame}>
                 <div className='sicon-cloud-fetch'></div>
                 <Ink />
               </div>

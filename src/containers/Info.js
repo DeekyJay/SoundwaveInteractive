@@ -14,10 +14,10 @@ export class Info extends React.Component {
   goToLink = (e) => {
     switch (e.target.name) {
       case 'wiki':
-        shell.openExternal('https://github.com/DeekyJay/BeamSoundlyInteractive/wiki')
+        shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive/wiki')
         break
       case 'forums':
-        shell.openExternal('https://forums.beam.pro/')
+        shell.openExternal('https://forums.mixer.com/')
         break
     }
   }
@@ -34,18 +34,18 @@ export class Info extends React.Component {
           <InfoGroup title='Knowledgebase' className='know'
             text={'Looking for useful information? Check out these useful links'}>
             <li><a name='wiki' onClick={this.goToLink}>Wiki</a></li>
-            <li><a name='forums' onClick={this.goToLink}>Beam Forums</a></li>
+            <li><a name='forums' onClick={this.goToLink}>Mixer Forums</a></li>
           </InfoGroup>
           <InfoGroup title='App Info' className='app-info'
             text='App Information and License'>
             <InfoBullet text='Made by Derek Jensen' />
             <InfoBullet text='Copyright 2017 Derek Jensen. All rights reserved.' />
           </InfoGroup>
-          <div className='for-beam'>
+          <div className='for-mixer'>
             <span className='made-with'>Made with</span>
             <span className='heart'></span>
             <span className='for-community'>for the community of</span>
-            <span className='beam-logo'></span>
+            <span className='mixer-logo'></span>
           </div>
         </div>
       </div>
