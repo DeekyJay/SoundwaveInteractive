@@ -1,4 +1,5 @@
 import Beam from 'beam-client-node'
+import MixerSocket from 'beam-client-node/lib/ws'
 import storage from 'electron-json-storage'
 import { actions as soundActions } from '../modules/Sounds'
 import { actions as interactiveActions } from '../modules/Interactive'
@@ -100,6 +101,7 @@ export function getTokens () {
  * @param {Object} res - Result of the channel join
  */
 function initHandshake (versionId, token, profile, sounds, layout) {
+  let userId, channelId, username
   console.log('init handshake')
   return gclient.open({
     authToken: token,
@@ -107,6 +109,19 @@ function initHandshake (versionId, token, profile, sounds, layout) {
   })
   .then(() => {
     return updateControls(profile, sounds, layout)
+  })
+  .then(() => {
+    return getUserInfo()
+  })
+  .then(res => {
+    userId = res.body.id
+    channelId = res.body.channel.id
+    username = res.body.username
+    return client.chat.join(channelId)
+  })
+  .then(res => {
+    console.log(res.body)
+    return createChatSocket(userId, channelId, username, res.body.endpoints, res.body.authkey)
   })
   .catch(err => {
     console.log('Join Error', err)
@@ -185,6 +200,44 @@ export function updateControls (profile, sounds, layout) {
   })
 }
 
+// Chat Related Functionality
+let chat
+function createChatSocket (userId, channelId, username, endpoints, authkey) {
+  const socket = new MixerSocket(endpoints).boot()
+
+  // You don't need to wait for the socket to connect before calling methods,
+  // we spool them and run them when connected automatically!
+  socket.auth(channelId, userId, authkey)
+  .then(() => {
+    console.log('You are now authenticated!')
+    // Send a chat message
+    return socket.call('whisper', [username, 'Soundwave Interactive has connected to chat!'])
+  })
+  .catch(error => {
+    console.log('Oh no! An error occurred!', error)
+  })
+
+  // Listen to chat messages, note that you will also receive your own!
+  socket.on('ChatMessage', data => {
+    console.log('We got a ChatMessage packet!')
+    console.log(data)
+    console.log(data.message)
+  })
+
+  // Listen to socket errors, you'll need to handle these!
+  socket.on('error', error => {
+    console.error('Socket error', error)
+  })
+
+  chat = socket
+}
+
+export function sendWhisperCommand (command) {
+  if (!chat) return
+  console.log('Whispering StreamJar the command: !' + command)
+  chat.call('whisper', ['StreamJar', '!' + command])
+}
+
 export default {
   client,
   auth,
@@ -196,5 +249,6 @@ export default {
   stopInteractive,
   setupStore,
   setCooldown,
-  updateControls
+  updateControls,
+  sendWhisperCommand
 }

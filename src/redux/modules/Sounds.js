@@ -1,5 +1,6 @@
 import storage from 'electron-json-storage'
 import { toastr } from 'react-redux-toastr'
+import beam from '../utils/Beam'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
@@ -70,7 +71,7 @@ export const actions = {
           name = file.name
         }
         sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
-          sparks: state.sounds.default_sparks, volume: state.sounds.default_volume })
+          sparks: state.sounds.default_sparks, volume: state.sounds.default_volume, command: state.sounds.command })
       })
       dispatch({
         type: constants.ADD_SOUNDS,
@@ -102,7 +103,7 @@ export const actions = {
       analytics.updateSoundCount(newSounds.length)
     }
   },
-  editSound: (id, cooldown, sparks, name, volume) => {
+  editSound: (id, cooldown, sparks, name, volume, command) => {
     return (dispatch, getState) => {
       const { sounds: { sounds } } = getState()
       const newSounds = Object.assign([], sounds)
@@ -112,6 +113,7 @@ export const actions = {
           sound.sparks = sparks
           sound.name = name
           sound.volume = volume
+          sound.command = command
         }
       })
       toastr.success('Sound Updated!')
@@ -136,6 +138,7 @@ export const actions = {
           const profile = _.find(profiles, p => p.id === profileId)
           const soundId = profile.sounds[i]
           const sound = _.find(sounds, s => s.id === soundId)
+          console.log(sound)
           let howl = new Howl({
             src: [sound.path],
             volume: parseFloat(sound.volume) * 0.01
@@ -149,6 +152,7 @@ export const actions = {
           })
           howl.once('load', () => {
             howl.play()
+            if (sound.command) beam.sendWhisperCommand(sound.command)
           })
           howl.once('play', () => {
             if (username) {

@@ -1,18 +1,24 @@
 import { ipcMain, session, nativeImage, BrowserWindow } from 'electron'
 const mainWindow = BrowserWindow.getAllWindows()[0]
 import electronAuth from 'electron-oauth2'
-import Beam from 'beam-client-node'
 import storage from 'electron-json-storage'
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
-const beam = new Beam()
 var config = {
   clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe',
-  authorizationUrl: beam.buildAddress(beam.urls.public, '/oauth/authorize'),
-  tokenUrl: beam.buildAddress(beam.urls.api, '/oauth/token'),
+  authorizationUrl: 'https://mixer.com/oauth/authorize',
+  tokenUrl: 'https://mixer.com/api/v1/oauth/token',
   useBasicAuthorizationHeader: false,
   redirectUri: 'http://soundwave.pewf.co'
 }
-const scopes = ['user:details:self', 'channel:update:self', 'interactive:robot:self', 'interactive:manage:self']
+const scopes = [
+  'user:details:self',
+  'channel:update:self',
+  'interactive:robot:self',
+  'interactive:manage:self',
+  'chat:chat',
+  'chat:connect',
+  'chat:whisper'
+]
 
 const windowParams = {
   autoHideMenuBar: true,

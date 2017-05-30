@@ -66,7 +66,8 @@ export class SoundList extends React.Component {
         cooldown: '',
         sparks: '',
         name: '',
-        volume: ''
+        volume: '',
+        command: ''
       }
     }
   }
@@ -165,7 +166,8 @@ export class SoundList extends React.Component {
         cooldown: s.cooldown,
         sparks: s.sparks,
         name: s.name,
-        volume: s.volume
+        volume: s.volume,
+        command: s.command
       }
     })
   }
@@ -223,7 +225,7 @@ export class SoundList extends React.Component {
   }
 
   editSound = () => {
-    const { editId, edit_inputs: { cooldown, sparks, name, volume } } = this.state
+    const { editId, edit_inputs: { cooldown, sparks, name, volume, command } } = this.state
     if (!isNumeric(cooldown) || parseInt(cooldown) < 0) {
       toastr.error('Edit Error', 'Cooldown must be a number 0 or greater.')
       return
@@ -232,7 +234,7 @@ export class SoundList extends React.Component {
       toastr.error('Edit Error', 'Sparks must be a number 0 or greater.')
       return
     }
-    this.props.soundActions.editSound(editId, cooldown, sparks, name, volume)
+    this.props.soundActions.editSound(editId, cooldown, sparks, name, volume, command)
     this.cancelEdit()
   }
 
@@ -244,7 +246,8 @@ export class SoundList extends React.Component {
         cooldown: '',
         sparks: '',
         name: '',
-        volume: ''
+        volume: '',
+        command: ''
       }
     })
   }
@@ -310,9 +313,6 @@ export class SoundList extends React.Component {
             <div className='sound-list-col-header active top' data-tip='Active In Profile'>
               <span className='sicon-check'></span>
             </div>
-            {/*<div className='sound-list-col-header folder top' data-tip='Location'>
-              <span className='sicon-folder'></span>
-            </div>*/}
           </div>
           <div className='sound-list-items'>
             {sounds && sounds.length
@@ -370,6 +370,17 @@ export class SoundList extends React.Component {
                     value={edit_inputs.name}
                     autoFocus
                     placeholder='Name' />
+                </div>
+                <div className='form-input'>
+                  <div className='form-label'>StreamJar Command</div>
+                  <input
+                    type='text'
+                    name='command'
+                    onChange={this.updateValue}
+                    onKeyPress={this.handlePress}
+                    value={edit_inputs.command}
+                    autoFocus
+                    placeholder='StreamJar Command (Ex: s1)' />
                 </div>
                 <div className='form-input'>
                   <div className='form-label'>Volume | <span className='volume'>{edit_inputs.volume}%</span></div>
