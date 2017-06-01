@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.13-alpha",
+  "version": "0.9.15-alpha",
   "description": "Soundwave Interactive Mixer Soundboard",
   "main": "main.js",
   "engines": {
@@ -29,7 +29,7 @@
       "icon": "icons"
     },
     "asar": true,
-    "copyright": "Copyright © 2016 Derek Jensen"
+    "copyright": "Copyright © 2017 Derek Jensen"
   },
   "scripts": {
     "compile:prod": "better-npm-run compile:prod",

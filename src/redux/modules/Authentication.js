@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron'
 import { auth, checkStatus, updateTokens, getUserInfo, getTokens } from '../utils/Beam'
 import { push } from 'react-router-redux'
 import analytics from '../utils/analytics'
+
 // Constants
 export const constants = {
   SIGN_IN: 'SIGN_IN',
@@ -68,7 +69,9 @@ export const actions = {
     }
   },
   initialize: (tokens) => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const { app } = getState()
+      console.log(app)
       if (tokens.access && tokens.refresh && tokens.expires) {
         dispatch({
           type: 'SIGN_IN_PENDING'
@@ -122,6 +125,8 @@ export const actions = {
             }
           })
         })
+      } else {
+        dispatch({ type: constants.INITIALIZE })
       }
     }
   },
@@ -136,10 +141,12 @@ export const actions = {
 const ACTION_HANDLERS = {
   INITIALIZE: (state, action) => {
     const { payload } = action
+    console.log('INIT', payload)
     return {
       ...state,
       ...payload,
       initialized: true,
+      initializing: false,
       errored: false,
       denied: false
     }
@@ -202,6 +209,7 @@ const ACTION_HANDLERS = {
 // Reducer
 export const initialState = {
   initialized: false,
+  initializing: true,
   isAuthenticated: false,
   isWaitingForOAuth: false,
   tokens: '',

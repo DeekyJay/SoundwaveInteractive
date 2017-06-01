@@ -5,6 +5,7 @@ import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
 import { actions as interactiveActions } from './Interactive'
+import { actions as soundActions } from './Sounds'
 import analytics from '../utils/analytics'
 
 // Constants
@@ -38,9 +39,12 @@ const scrubArray = (arr) => {
 // Action Creators
 export const actions = {
   initialize: (data) => {
-    return {
-      type: constants.PROFILES_INITIALIZE,
-      payload: { loadedState: data }
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.PROFILES_INITIALIZE,
+        payload: { loadedState: data }
+      })
+      dispatch(soundActions.updateHowls())
     }
   },
   addProfile: (name) => {
@@ -102,6 +106,7 @@ export const actions = {
         payload: { profileId: profileId }
       })
       if (profileId) {
+        dispatch(soundActions.updateHowls())
         dispatch(interactiveActions.updateControls())
       }
     }
@@ -128,6 +133,7 @@ export const actions = {
         type: constants.ASSIGN_SOUNDS,
         payload: { profiles: newProfiles }
       })
+      dispatch(soundActions.updateHowls())
       dispatch(interactiveActions.updateControls())
     }
   },
@@ -157,6 +163,7 @@ export const actions = {
           type: constants.ASSIGN_SOUNDS,
           payload: { profiles: newProfiles }
         })
+        dispatch(soundActions.updateHowls())
         dispatch(interactiveActions.updateControls())
       }
     }

@@ -24,7 +24,8 @@ export const constants = {
   PLAY_SOUND_ERROR: 'PLAY_SOUND_ERROR',
   CLEAR_EDIT: 'CLEAR_EDIT',
   SETUP_EDIT: 'SETUP_EDIT',
-  KILL_ALL_SOUNDS: 'KILL_ALL_SOUNDS'
+  KILL_ALL_SOUNDS: 'KILL_ALL_SOUNDS',
+  UPDATE_HOWLS: 'UPDATE_HOWLS'
 }
 
 export function getDeviceIdForOutput (outputs, selectedOutput) {
@@ -35,9 +36,11 @@ export function getDeviceIdForOutput (outputs, selectedOutput) {
 
 let timeout
 const syncStorageWithState = (state) => {
+  let saveState = Object.assign({}, state)
+  delete saveState['howls']
   clearTimeout(timeout)
   timeout = setTimeout(() => {
-    storage.set('sounds', state, (err) => {
+    storage.set('sounds', saveState, (err) => {
       if (err) {
         console.log('SOUNDS')
         throw err
@@ -131,29 +134,24 @@ export const actions = {
   },
   playSound: (i, username) => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles }, sounds: { sounds }, app: { selectedOutput, outputs } } = getState()
+      const { profiles: { profileId, profiles }, sounds: { sounds, howls }, app: { selectedOutput, outputs } } = getState()
       const sinkId = getDeviceIdForOutput(outputs, selectedOutput)
       return new Promise((resolve, reject) => {
         try {
           const profile = _.find(profiles, p => p.id === profileId)
           const soundId = profile.sounds[i]
           const sound = _.find(sounds, s => s.id === soundId)
-          console.log(sound)
-          let howl = new Howl({
-            src: [sound.path],
-            volume: parseFloat(sound.volume) * 0.01
-          })
+          // let howl = new Howl({
+          //   src: [sound.path],
+          //   volume: parseFloat(sound.volume) * 0.01
+          // })
+          let howl = howls[i]
           // This is where we check to see if the selectedOutput actually exists, we might need to refresh the list and get the new output
           if (sinkId) howl._sounds[0]._node.setSinkId(sinkId)
           howl.once('end', () => {
-            howl.unload()
             dispatch({ type: constants.PLAY_SOUND_ENDED })
-            howl = null
           })
-          howl.once('load', () => {
-            howl.play()
-            if (sound.command) beam.sendWhisperCommand(sound.command)
-          })
+          howl.play()
           howl.once('play', () => {
             if (username) {
               toastr.info(`${username} played ${sound.name}!`)
@@ -164,7 +162,7 @@ export const actions = {
           howl.once('loaderror', () => {
             reject(new Error('Error Loading File'))
           })
-          analytics.play(sound.sparks)
+          if (username) analytics.play(sound.sparks)
           dispatch({ type: constants.PLAY_SOUND_STARTED })
         } catch (err) {
           console.log('Sound Error')
@@ -195,6 +193,29 @@ export const actions = {
     Howler.unload()
     return {
       type: constants.KILL_ALL_SOUNDS
+    }
+  },
+  updateHowls: () => {
+    return (dispatch, getState) => {
+      const { profiles: { profileId, profiles }, sounds: { sounds } } = getState()
+      let howls = []
+      const profile = _.find(profiles, p => p.id === profileId)
+      if (profile) {
+        profile.sounds.map(soundId => {
+          const sound = _.find(sounds, s => s.id === soundId)
+          if (sound) {
+            let howl = new Howl({
+              src: [sound.path],
+              volume: parseFloat(sound.volume) * 0.01
+            })
+            howls.push(howl)
+          } else howls.push(null)
+        })
+      }
+      dispatch({
+        type: constants.UPDATE_HOWLS,
+        payload: { howls: howls }
+      })
     }
   }
 }
@@ -253,11 +274,20 @@ const ACTION_HANDLERS = {
       ...state,
       hasEdit: payload
     }
+  },
+  UPDATE_HOWLS: (state, actions) => {
+    const { payload: { howls } } = actions
+    console.log(howls)
+    return {
+      ...state,
+      howls: howls
+    }
   }
 }
 // Reducer
 export const initialState = {
   sounds: [],
+  howls: [],
   default_cooldown: 15,
   default_sparks: 100,
   default_volume: 100,

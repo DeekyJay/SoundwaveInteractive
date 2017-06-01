@@ -15,7 +15,7 @@
     display: inline-block;
   }
   .board-editor {
-    background: $bg;
+    background: $board-bg;
     border-radius: 3px;
     height: calc(100% - 30px);
     display: flex;
@@ -201,7 +201,7 @@
                 border: 1px solid #5b6692;
               }
               &.grid-button {
-                background: #464b7a;
+                background: $grid-button-bg;
                 border: 1px solid #1e213d;
                 padding: 2px;
                 &.hover {

@@ -107,7 +107,7 @@ export class Connector extends React.Component {
           </div>
         </div>
         <div className='connect-container'>
-          <button type='button' onClick={this.goInteractive}>
+          <button type='button' onClick={this.goInteractive} disabled={isConnecting} >
             {isConnecting
               ? <span>Connecting...</span>
               : <span>

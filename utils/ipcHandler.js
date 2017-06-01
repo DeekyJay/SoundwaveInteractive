@@ -14,10 +14,7 @@ const scopes = [
   'user:details:self',
   'channel:update:self',
   'interactive:robot:self',
-  'interactive:manage:self',
-  'chat:chat',
-  'chat:connect',
-  'chat:whisper'
+  'interactive:manage:self'
 ]
 
 const windowParams = {

@@ -11,25 +11,30 @@ For example:
 @import './themes/default';
 */
 
-$bg: #1e213d;
-$table-bg: #464b7a;
-$content-bg: #32365e;
+$bg: #202640;
+$board-bg: #303c6b;
+$table-bg: #3f5588;
+$content-bg: #293250;
 $nav-bg: #2b76c2;
 $nav-bg-hover: #418cd8;
 $nav-bg-focus: #2669ac;
-$border: #5C5FBD;
-$table-border: #414377;
+$border: #797979;
+$table-border: #344c6f;
 $minor: #8C89B9;
-$col-bg: linear-gradient(to bottom, #526aaf 0%,#575f96 100%);
+$col-bg: linear-gradient(to bottom, #5280af 0%,#5d8cca 100%);
+$col-bg-border-bottom: 2px solid #344c6f;
 $search-bg: linear-gradient(to bottom, #586cbc 1%,#5e65a3 100%);
-$edit-bg: rgba(99, 112, 171, 0.95);
+$edit-bg: rgba(73, 94, 154, 0.95);
 $primary-button-bg: #2b76c2;
 $secondary-button-bg: gray;
 $secondary-button-bg-hover: #8e8e8e;
 $item-hover-bg: rgba(255, 255, 255, 0.1);
-$item-selected-bg: #6d72a2;
+$item-selected-bg: #678fc1;
 $item-border: #7678b7;
-$board-btn-hover: #6d72a2;
+$board-btn-hover: #6b94d2;
+$grid-button-bg: #4e7bbd;
+$input-bg: #3f577a;
+$setting-input-bg: #354e73;
 
 $loading: url('../styles/images/loading.gif');
 $heart: url('../styles/images/heart.png');

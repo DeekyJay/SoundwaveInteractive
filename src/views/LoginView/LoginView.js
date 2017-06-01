@@ -13,7 +13,8 @@ export class LoginView extends React.Component {
     initialized: PropTypes.bool.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
     denied: PropTypes.bool.isRequired,
-    errored: PropTypes.bool.isRequired
+    errored: PropTypes.bool.isRequired,
+    initializing: PropTypes.bool.isRequired
   }
 
   signIn = () => {
@@ -29,9 +30,11 @@ export class LoginView extends React.Component {
   }
 
   render () {
+    const { isAuthenticated, isWaitingForOAuth, initializing, initialized, denied, errored } = this.props
+    const showLogin = !isAuthenticated && !isWaitingForOAuth && !initializing && initialized
     return (
       <div className='login-container'>
-        {!this.props.isAuthenticated && !this.props.isWaitingForOAuth || !this.props.initialized
+        {showLogin
           ? <div className='login-content'>
             <div className='login-text'>
               You're almost there.<br />Login so we can get started!
@@ -43,9 +46,9 @@ export class LoginView extends React.Component {
           </div>
           : <div className='login-content'>
             <div className='loading'></div>
-            <div className='login-minor-text'>Waiting for Authorization . . .</div>
+            {!this.props.initializing ? <div className='login-minor-text'>Waiting for Authorization . . .</div> : null}
           </div>}
-        {this.props.denied
+        {denied
           ? <div className="denied">
             <span>Whoa there! We aren't quite ready for you to use Soundwave Interactive yet!</span>
             <div className='login-button' onClick={this.signOut}>
@@ -54,7 +57,7 @@ export class LoginView extends React.Component {
             </div>
           </div>
           : null}
-        {this.props.errored
+        {errored
           ? <div className="denied">
             <div>It appears we're having troubles contacting home.</div>
             <br />
@@ -82,7 +85,8 @@ const mapStateToProps = (state) => ({
   initialized: state.auth.initialized,
   isAuthenticated: state.auth.isAuthenticated,
   denied: state.auth.denied,
-  errored: state.auth.errored
+  errored: state.auth.errored,
+  initializing: state.auth.initializing
 })
 
 /* istanbul ignore next */
