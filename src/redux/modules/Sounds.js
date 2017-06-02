@@ -1,6 +1,5 @@
 import storage from 'electron-json-storage'
 import { toastr } from 'react-redux-toastr'
-import beam from '../utils/Beam'
 import _ from 'lodash'
 import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'

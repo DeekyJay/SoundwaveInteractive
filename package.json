@@ -1,6 +1,6 @@
 {
   "name": "SoundwaveInteractive",
-  "version": "0.9.15-alpha",
+  "version": "0.9.15",
   "description": "Soundwave Interactive Mixer Soundboard",
   "main": "main.js",
   "engines": {
