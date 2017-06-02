@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron'
 import { auth, checkStatus, updateTokens, getUserInfo, getTokens } from '../utils/Beam'
 import { push } from 'react-router-redux'
 import analytics from '../utils/analytics'
+
 // Constants
 export const constants = {
   SIGN_IN: 'SIGN_IN',
@@ -49,9 +50,15 @@ export const actions = {
             dispatch(push('/'))
           })
           .catch(err => {
-            dispatch({
-              type: 'SIGN_IN_DENIED'
-            })
+            if (err.response && err.response.status && err.response.status === 401) {
+              dispatch({
+                type: 'SIGN_IN_DENIED'
+              })
+            } else {
+              dispatch({
+                type: 'SIGN_IN_ERROR'
+              })
+            }
           })
         })
       }
@@ -62,7 +69,9 @@ export const actions = {
     }
   },
   initialize: (tokens) => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const { app } = getState()
+      console.log(app)
       if (tokens.access && tokens.refresh && tokens.expires) {
         dispatch({
           type: 'SIGN_IN_PENDING'
@@ -105,11 +114,19 @@ export const actions = {
             dispatch(push('/'))
           })
           .catch(err => {
-            dispatch({
-              type: 'SIGN_IN_DENIED'
-            })
+            if (err.response && err.response.status && err.response.status === 401) {
+              dispatch({
+                type: 'SIGN_IN_DENIED'
+              })
+            } else {
+              dispatch({
+                type: 'SIGN_IN_ERROR'
+              })
+            }
           })
         })
+      } else {
+        dispatch({ type: constants.INITIALIZE })
       }
     }
   },
@@ -124,17 +141,23 @@ export const actions = {
 const ACTION_HANDLERS = {
   INITIALIZE: (state, action) => {
     const { payload } = action
+    console.log('INIT', payload)
     return {
       ...state,
       ...payload,
-      initialized: true
+      initialized: true,
+      initializing: false,
+      errored: false,
+      denied: false
     }
   },
   SIGN_IN: (state, action) => {
     const { payload } = action
     return {
       ...state,
-      ...payload
+      ...payload,
+      errored: false,
+      denied: false
     }
   },
   SIGN_IN_PENDING: (state) => {
@@ -172,18 +195,27 @@ const ACTION_HANDLERS = {
   SIGN_IN_DENIED: (state) => {
     return {
       ...state,
-      denied: true
+      denied: true,
+      errored: false
+    }
+  },
+  SIGN_IN_ERROR: (state) => {
+    return {
+      ...state,
+      errored: true
     }
   }
 }
 // Reducer
 export const initialState = {
   initialized: false,
+  initializing: true,
   isAuthenticated: false,
   isWaitingForOAuth: false,
   tokens: '',
   user: {},
-  denied: false
+  denied: false,
+  errored: false
 }
 
 export default function (state = initialState, action) {

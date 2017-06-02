@@ -20,7 +20,7 @@ export function init (userId, tokens) {
     }
   })
   .catch(err => {
-    console.log(err)
+    console.log('Error', err)
     throw err
   })
 }

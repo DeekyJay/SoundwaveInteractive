@@ -5,7 +5,7 @@ import cuid from 'cuid'
 import { arrayMove } from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
 import { actions as interactiveActions } from './Interactive'
-import { actions as boardActions } from './Board'
+import { actions as soundActions } from './Sounds'
 import analytics from '../utils/analytics'
 
 // Constants
@@ -32,16 +32,19 @@ const syncStorageWithState = (state) => {
 }
 
 const scrubArray = (arr) => {
-  while (!arr[arr.length - 1]) arr.pop()
+  while (arr.length > 0 && !arr[arr.length - 1]) arr.pop()
   return arr
 }
 
 // Action Creators
 export const actions = {
   initialize: (data) => {
-    return {
-      type: constants.PROFILES_INITIALIZE,
-      payload: { loadedState: data }
+    return (dispatch, getState) => {
+      dispatch({
+        type: constants.PROFILES_INITIALIZE,
+        payload: { loadedState: data }
+      })
+      dispatch(soundActions.updateHowls())
     }
   },
   addProfile: (name) => {
@@ -103,8 +106,8 @@ export const actions = {
         payload: { profileId: profileId }
       })
       if (profileId) {
-        dispatch(interactiveActions.updateCooldown())
-        dispatch(boardActions.updateGame())
+        dispatch(soundActions.updateHowls())
+        dispatch(interactiveActions.updateControls())
       }
     }
   },
@@ -130,8 +133,8 @@ export const actions = {
         type: constants.ASSIGN_SOUNDS,
         payload: { profiles: newProfiles }
       })
-      dispatch(boardActions.updateGame())
-      dispatch(interactiveActions.updateCooldown())
+      dispatch(soundActions.updateHowls())
+      dispatch(interactiveActions.updateControls())
     }
   },
   unassignSound: (index) => {
@@ -145,18 +148,24 @@ export const actions = {
           return true
         }
       })
-      if (!profile) return
-      let newSounds = Object.assign([], profile.sounds)
-      newSounds[index] = undefined
-      newSounds = scrubArray(newSounds)
-      profile.sounds = newSounds
-      newProfiles.splice(idx, 1, profile)
-      dispatch({
-        type: constants.ASSIGN_SOUNDS,
-        payload: { profiles: newProfiles }
-      })
-      dispatch(boardActions.updateGame())
-      dispatch(interactiveActions.updateCooldown())
+      if (!profile) {
+        dispatch({
+          type: constants.ASSIGN_SOUNDS,
+          payload: { profiles: profiles }
+        })
+      } else {
+        let newSounds = Object.assign([], profile.sounds)
+        newSounds[index] = null
+        newSounds = scrubArray(newSounds)
+        profile.sounds = newSounds
+        newProfiles.splice(idx, 1, profile)
+        dispatch({
+          type: constants.ASSIGN_SOUNDS,
+          payload: { profiles: newProfiles }
+        })
+        dispatch(soundActions.updateHowls())
+        dispatch(interactiveActions.updateControls())
+      }
     }
   },
   toggleLock: () => {

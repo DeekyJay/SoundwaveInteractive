@@ -93,7 +93,7 @@ export class Connector extends React.Component {
           <div
             className='connector-options-wrapper'
             onClick={this.toggleReconnect}
-            data-tip='Auto reconnect if the connection to Beam drops.'>
+            data-tip='Auto reconnect if the connection to Mixer drops.'>
             <span className='connector-option'>Auto Reconnect</span>
             <span className={`connector-checkbox ${useReconnect ? 'sicon-round-check' : ''}`}></span>
           </div>
@@ -107,7 +107,7 @@ export class Connector extends React.Component {
           </div>
         </div>
         <div className='connect-container'>
-          <button type='button' onClick={this.goInteractive}>
+          <button type='button' onClick={this.goInteractive} disabled={isConnecting} >
             {isConnecting
               ? <span>Connecting...</span>
               : <span>

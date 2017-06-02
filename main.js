@@ -86,7 +86,6 @@ app.on('ready', () => {
 
   // Load IPC handler
   require(utilsPath + '/ipcHandler')
-  require(utilsPath + '/jumper')
 
   mainWindow.on('closed', () => {
     mainWindow = null

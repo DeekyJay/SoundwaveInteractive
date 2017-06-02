@@ -56,13 +56,18 @@ class Root extends React.Component {
       })
     })
     .then(data => {
-      if (data && this.props[actionsKey]) this.props[actionsKey].initialize(data)
-      else throw new Error('Could not find ' + actionsKey + ' in props.')
+      if (data && this.props[actionsKey]) {
+        this.props[actionsKey].initialize(data)
+        return data
+      } else throw new Error('Could not find ' + actionsKey + ' in props.')
     })
   }
 
   componentWillMount () {
-    this.initializeModule('tokens', 'authActions')
+    this.initializeModule('app', 'appActions')
+    .then(data => {
+      return this.initializeModule('tokens', 'authActions')
+    })
     .then(() => {
       return this.initializeModule('sounds', 'soundActions')
     })
@@ -71,9 +76,6 @@ class Root extends React.Component {
     })
     .then(() => {
       return this.initializeModule('interactive', 'interactiveActions')
-    })
-    .then(() => {
-      this.initializeModule('app', 'appActions')
     })
     this.props.appActions.checkForUpdate()
     setInterval(() => {
