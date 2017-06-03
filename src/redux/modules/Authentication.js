@@ -87,6 +87,9 @@ export const actions = {
             .catch(err => {
               console.log('Refresh Error', err)
               reject(err)
+              dispatch({
+                type: 'SIGN_IN_ERROR'
+              })
             })
           } else {
             resolve(true)
