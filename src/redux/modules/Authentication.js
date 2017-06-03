@@ -28,38 +28,9 @@ export const actions = {
               type: 'SIGN_IN_REJECTED'
             })
           } else {
-            dispatch(actions.signIn(tokens))
+            updateTokens(tokens)
+            dispatch(actions.initialize(getTokens()))
           }
-        })
-      } else {
-        updateTokens(tokens)
-        getUserInfo()
-        .then(response => {
-          const user = response.body
-          analytics.init(user.id, getTokens())
-          .then(() => {
-            dispatch({
-              type: constants.SIGN_IN,
-              payload: {
-                tokens: tokens,
-                isAuthenticated: checkStatus(),
-                user: user,
-                isWaitingForOAuth: false
-              }
-            })
-            dispatch(push('/'))
-          })
-          .catch(err => {
-            if (err.response && err.response.status && err.response.status === 401) {
-              dispatch({
-                type: 'SIGN_IN_DENIED'
-              })
-            } else {
-              dispatch({
-                type: 'SIGN_IN_ERROR'
-              })
-            }
-          })
         })
       }
     }
@@ -70,8 +41,6 @@ export const actions = {
   },
   initialize: (tokens) => {
     return (dispatch, getState) => {
-      const { app } = getState()
-      console.log(app)
       if (tokens.access && tokens.refresh && tokens.expires) {
         dispatch({
           type: 'SIGN_IN_PENDING'
@@ -185,7 +154,8 @@ const ACTION_HANDLERS = {
   LOGOUT: (state) => {
     return {
       ...initialState,
-      initialized: false
+      initializing: false,
+      initialized: true
     }
   },
   SET_USER: (state, action) => {
