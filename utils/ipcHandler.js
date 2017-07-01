@@ -33,9 +33,7 @@ const options = {
 
 ipcMain.on('auth', (event) => {
   const myApiOauth = electronAuth(config, windowParams)
-  console.log('Time to Auth')
   console.log(myApiOauth)
-  console.log(config)
   myApiOauth.getAccessToken(options)
   .then(token => {
     event.sender.send('auth', token)
