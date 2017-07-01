@@ -4,11 +4,11 @@ import electronAuth from 'electron-oauth2'
 import storage from 'electron-json-storage'
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 var config = {
-  clientId: 'ff6aea1186cb70e1d8446662ba9e00535ac7ed7326464971',
+  clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe',
   authorizationUrl: 'https://mixer.com/oauth/authorize',
   tokenUrl: 'https://mixer.com/api/v1/oauth/token',
   useBasicAuthorizationHeader: false,
-  redirectUri: 'https://deek.io'
+  redirectUri: 'https://soundwave.deek.io'
 }
 const scopes = [
   'user:details:self',

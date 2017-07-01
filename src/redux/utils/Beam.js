@@ -59,7 +59,7 @@ gclient.state.on('participantLeave', participant => {
 })
 
 const oAuthOpts = {
-  clientId: 'ff6aea1186cb70e1d8446662ba9e00535ac7ed7326464971'
+  clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe'
 }
 export const auth = client.use('oauth', oAuthOpts)
 
