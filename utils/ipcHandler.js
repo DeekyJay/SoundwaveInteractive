@@ -4,11 +4,11 @@ import electronAuth from 'electron-oauth2'
 import storage from 'electron-json-storage'
 const appIcon = nativeImage.createFromPath('./app_build/icon.ico')
 var config = {
-  clientId: '50b52c44b50315edb7da13945c35ff5a34bdbc6a05030abe',
+  clientId: 'ff6aea1186cb70e1d8446662ba9e00535ac7ed7326464971',
   authorizationUrl: 'https://mixer.com/oauth/authorize',
   tokenUrl: 'https://mixer.com/api/v1/oauth/token',
   useBasicAuthorizationHeader: false,
-  redirectUri: 'http://soundwave.pewf.co'
+  redirectUri: 'https://deek.io'
 }
 const scopes = [
   'user:details:self',
@@ -33,7 +33,9 @@ const options = {
 
 ipcMain.on('auth', (event) => {
   const myApiOauth = electronAuth(config, windowParams)
+  console.log('Time to Auth')
   console.log(myApiOauth)
+  console.log(config)
   myApiOauth.getAccessToken(options)
   .then(token => {
     event.sender.send('auth', token)
