@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from './logger'
 
 const createProfile = function (id, name) {
   const profile = {
@@ -55,7 +56,7 @@ export function controlsFromProfileAndLayout (profile, sounds, layout) {
 }
 
 export function convertInteractiveOneToTwo (game) {
-  console.log('Convert Interactive 1.0 to 2.0')
+  logger.log('info', 'Convert Interactive 1.0 to 2.0')
   game.controlVersion = '2.0'
   let controls = []
   game.controls.tactiles.forEach(tactile => {

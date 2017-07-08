@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { actions as soundActions, getDeviceIdForOutput } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import { actions as boardActions } from '../redux/modules/Board'
+import logger from '../redux/utils/logger'
 import SoundItem from '../components/SoundItem/SoundItem'
 import ReactToolTip from 'react-tooltip'
 import Dropzone from 'react-dropzone'
@@ -136,14 +137,14 @@ export class SoundList extends React.Component {
   }
 
   _delete = (currentSound, oldIndex) => {
-    console.log('Deleting a sound')
+    logger.log('info', 'Deleting a sound')
     const { sound } = this.state
     let s
     let i
     if (!currentSound) s = sound
     else s = currentSound
     if (!s) return
-    console.log(s)
+    logger.log('info', s)
     if (!oldIndex && oldIndex !== 0) i = this.props.sounds.findIndex(sound => sound.id === s.id)
     else i = oldIndex
     this.props.soundActions.removeSound(i)

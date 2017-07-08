@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron'
 import { auth, checkStatus, updateTokens, getUserInfo, getTokens } from '../utils/Beam'
 import { push } from 'react-router-redux'
 import analytics from '../utils/analytics'
+import logger from '../utils/logger'
 
 // Constants
 export const constants = {
@@ -54,7 +55,7 @@ export const actions = {
               resolve(true)
             })
             .catch(err => {
-              console.log('Refresh Error', err)
+              logger.log('info', 'Refresh Error', err)
               reject(err)
               dispatch({
                 type: 'SIGN_IN_ERROR'
@@ -70,7 +71,7 @@ export const actions = {
         .then(response => {
           const user = response.body
           const newTokens = getTokens()
-          analytics.init(user.id, newTokens)
+          analytics.init(user.id, newTokens, user.username)
           .then(() => {
             dispatch({
               type: constants.SET_USER,
@@ -113,7 +114,7 @@ export const actions = {
 const ACTION_HANDLERS = {
   INITIALIZE: (state, action) => {
     const { payload } = action
-    console.log('INIT', payload)
+    logger.log('info', 'INIT', payload)
     return {
       ...state,
       ...payload,

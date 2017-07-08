@@ -172,7 +172,7 @@ export class BoardEditor extends React.Component {
             const editSound = this.editSound.bind(this, button.i)
             const unassignSound = this.unassignSound.bind(this, button.i)
             return (
-              <ContextMenu id={'context-sound ' + button.i}>
+              <ContextMenu id={'context-sound ' + button.i} style={{}}>
                 <Item label='Play' icon={'sicon-play'} onClick={playSound}
                   disabled={button.name === 'Unassigned'} />
                 <Separator />
@@ -204,7 +204,7 @@ export class BoardEditor extends React.Component {
             const clickSound = button.name !== 'Unassigned' ? this.playSound.bind(this, button.i) : () => {}
             return (
               <div key={button.i} className={`grid-button ${button.hover ? 'hover' : ''}`} onClick={clickSound} >
-                <ContextMenuProvider id={'context-sound ' + button.i} >
+                <ContextMenuProvider id={'context-sound ' + button.i} style={{}}>
                   <div className='button-number'>#{button.i}</div>
                   <div className='button-name'>{button.name}</div>
                   <span className={`tactile tactile|${button.i}`}></span>

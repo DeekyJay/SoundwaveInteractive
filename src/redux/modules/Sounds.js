@@ -7,6 +7,7 @@ import { actions as interactiveActions } from './Interactive'
 import winston from 'winston'
 winston.add(winston.transports.File, { filename: 'plays.log' })
 import analytics from '../utils/analytics'
+import logger from '../utils/logger'
 import { Howl, Howler } from 'howler'
 // Constants
 export const constants = {
@@ -41,7 +42,6 @@ const syncStorageWithState = (state) => {
   timeout = setTimeout(() => {
     storage.set('sounds', saveState, (err) => {
       if (err) {
-        console.log('SOUNDS')
         throw err
       }
     })
@@ -164,8 +164,7 @@ export const actions = {
           if (username) analytics.play(sound.sparks)
           dispatch({ type: constants.PLAY_SOUND_STARTED })
         } catch (err) {
-          console.log('Sound Error')
-          console.log(err)
+          logger.log('info', 'Sound Error', err)
           dispatch({ type: constants.PLAY_SOUND_ERROR })
           reject(err)
         }
@@ -276,7 +275,7 @@ const ACTION_HANDLERS = {
   },
   UPDATE_HOWLS: (state, actions) => {
     const { payload: { howls } } = actions
-    console.log(howls)
+    logger.log('info', howls)
     return {
       ...state,
       howls: howls

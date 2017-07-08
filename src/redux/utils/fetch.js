@@ -1,6 +1,7 @@
 require('es6-promise').polyfill()
 import fetch from 'isomorphic-fetch'
 import config from '../../../package.json'
+import logger from './logger'
 
 function get (uri, data, headers = {}) {
   headers = setHeaders(headers)
@@ -24,7 +25,7 @@ function put (uri, data, headers = {}) {
 }
 
 function handleResponse (res) {
-  console.log(res)
+  logger.log('info', 'Response', res)
   if (res.status === 200) return res.json()
   else {
     const error = new Error('HTTP Status: ' + res.status + ' ' + res.statusText)
@@ -34,7 +35,7 @@ function handleResponse (res) {
 }
 
 function requestError (err) {
-  console.log(err)
+  logger.log('info', 'RequestError', err)
   throw err
 }
 

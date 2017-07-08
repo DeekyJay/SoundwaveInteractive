@@ -36,6 +36,7 @@ ipcMain.on('auth', (event) => {
   console.log(myApiOauth)
   myApiOauth.getAccessToken(options)
   .then(token => {
+    console.log(token)
     event.sender.send('auth', token)
     // myApiOauth.refreshToken(token.refresh_token)
     // .then(newToken => {

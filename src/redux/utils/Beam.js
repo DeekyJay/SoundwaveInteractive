@@ -5,6 +5,7 @@ import { actions as interactiveActions } from '../modules/Interactive'
 import { GameClient, setWebSocket, delay } from 'beam-interactive-node2'
 import ws from 'ws'
 import { controlsFromProfileAndLayout } from './DevLabUtil'
+import logger from './logger'
 setWebSocket(ws)
 let store
 
@@ -37,25 +38,25 @@ function isCoolingDown (i) {
 
 // Setup the events for GameClinet
 gclient.on('open', () => {
-  console.log('Interactive 2.0 is connected!')
+  logger.log('info', 'Interactive 2.0 is connected!')
 })
 
 gclient.on('error', (err) => {
-  console.log('Error', err)
+  logger.log('info', 'Error', err)
   store.dispatch(interactiveActions.robotClosedEvent())
 })
 gclient.on('close', () => {
-  console.log('Closed')
+  logger.log('info', 'Closed')
   store.dispatch(interactiveActions.robotClosedEvent())
 })
 
 gclient.state.on('participantJoin', participant => {
-  console.log(participant)
-  console.log(`${participant.username} (${participant.sessionID}) Joined!`)
+  logger.log('info', participant)
+  logger.log('info', `${participant.username} (${participant.sessionID}) Joined!`)
 })
 
 gclient.state.on('participantLeave', participant => {
-  console.log(participant + 'Left')
+  logger.log('info', participant + 'Left')
 })
 
 const oAuthOpts = {
@@ -64,7 +65,7 @@ const oAuthOpts = {
 export const auth = client.use('oauth', oAuthOpts)
 
 export function checkStatus () {
-  console.log(auth.isAuthenticated()
+  logger.log('info', auth.isAuthenticated()
   ? '########### User is Authenticated ###########'
   : '########### User Auth FAILED ###########')
   return auth.isAuthenticated()
@@ -78,7 +79,7 @@ export function getUserInfo () {
 }
 
 export function updateTokens (tokens) {
-  console.log(tokens)
+  logger.log('info', tokens)
   const newTokens = {
     access: tokens.access_token || tokens.access,
     refresh: tokens.refresh_token || tokens.refresh,
@@ -100,7 +101,7 @@ export function getTokens () {
  * @param {Object} res - Result of the channel join
  */
 function initHandshake (versionId, token, profile, sounds, layout) {
-  console.log('init handshake')
+  logger.log('info', 'init handshake')
   return gclient.open({
     authToken: token,
     versionId: versionId
@@ -109,14 +110,13 @@ function initHandshake (versionId, token, profile, sounds, layout) {
     return updateControls(profile, sounds, layout)
   })
   .catch(err => {
-    console.log('Join Error', err)
+    logger.log('info', 'Join Error', err)
     throw err
   })
 }
 
-
 export function goInteractive (versionId, token, profile, sounds, layout) {
-  console.log('go interactive')
+  logger.log('info', 'go interactive')
   return initHandshake(versionId, token, profile, sounds, layout)
 }
 
@@ -132,6 +132,8 @@ export function setupStore (_store) {
 }
 
 export function setCooldown (_cooldownType, _staticCooldown, _cooldowns, _smart_increment_value) {
+  logger.log('info', 'Cooldown Type |', _cooldownType, '| Static Cooldown |',
+    _staticCooldown, '| Cooldowns |', _cooldowns)
   cooldownType = _cooldownType
   staticCooldown = _staticCooldown
   cooldowns = _cooldowns
@@ -154,7 +156,7 @@ export function updateControls (profile, sounds, layout) {
       control.on('mousedown', (inputEvent, participant) => {
         if (!playing) {
           playTimeout()
-          console.log(participant.username, inputEvent.input.controlID)
+          logger.log('info', participant.username, inputEvent.input.controlID)
           const pressedId = inputEvent.input.controlID
           store.dispatch(soundActions.playSound(pressedId, participant.username))
           .then(() => {
@@ -168,17 +170,18 @@ export function updateControls (profile, sounds, layout) {
             if (inputEvent.transactionID) {
               gclient.captureTransaction(inputEvent.transactionID)
               .then(() => {
-                console.log(`Charged ${participant.username} ${control.sparks} sparks for playing that sound!`)
+                logger.log('info', control)
+                logger.log('info', `Charged ${participant.username} ${control.cost} sparks for playing that sound!`)
               })
             }
           })
           .catch(err => {
             // No Transactions
-            console.log('YOU JUST SAVED SPARKS BRUH')
+            logger.log('info', 'YOU JUST SAVED SPARKS BRUH')
             throw err
           })
         } else {
-          console.log('Looks like you need a time out!')
+          logger.log('info', 'Looks like you need a time out!')
         }
       })
     })

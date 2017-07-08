@@ -9,6 +9,7 @@ import { actions as appActions } from '../redux/modules/App'
 import { actions as soundActions } from '../redux/modules/Sounds'
 import { actions as profileActions } from '../redux/modules/Profiles'
 import { actions as interactiveActions } from '../redux/modules/Interactive'
+import logger from '../redux/utils/logger'
 
 /* istanbul ignore next */
 class Root extends React.Component {
@@ -48,7 +49,7 @@ class Root extends React.Component {
   }
 
   initializeModule = (file, actionsKey) => {
-    console.log('Initializing ' + file)
+    logger.log('info', 'Initializing ' + file)
     return new Promise((resolve, reject) => {
       storage.get(file, (error, data) => {
         if (error) reject(error)

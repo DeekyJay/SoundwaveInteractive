@@ -2,6 +2,7 @@ import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
 import analytics from '../utils/analytics'
+import logger from '../utils/logger'
 import { toastr } from 'react-redux-toastr'
 import { actions as boardActions } from './Board'
 
@@ -25,7 +26,7 @@ const syncStorageWithState = (state) => {
   timeout = setTimeout(() => {
     storage.set('interactive', state.storage, (err) => {
       if (err) {
-        console.log('INTERACTIVE', err)
+        logger.log('info', 'INTERACTIVE', err)
       }
     })
   }, 5000)
@@ -59,7 +60,7 @@ export const actions = {
         type: constants.INTERACTIVE_INITIALIZE,
         payload: { loadedState: data }
       })
-      console.log('Update cooldown')
+      logger.log('info', 'Update cooldown')
       dispatch(actions.updateCooldown())
     }
   },
@@ -182,11 +183,11 @@ export const actions = {
         profiles: { profiles, profileId },
         sounds: { sounds }
       } = getState()
+      const profile = _.find(profiles, p => p.id === profileId)
+      const controls = scenes[0].controls
+      dispatch(actions.updateCooldown())
+      dispatch(boardActions.updateLocalLayout({ scenes }))
       if (isConnected) {
-        const profile = _.find(profiles, p => p.id === profileId)
-        const controls = scenes[0].controls
-        dispatch(actions.updateCooldown())
-        dispatch(boardActions.updateLocalLayout({ scenes }))
         beam.updateControls(profile, sounds, controls)
       }
     }

@@ -1,9 +1,8 @@
-import storage from 'electron-json-storage'
 import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
 import { client } from '../utils/Beam'
-import { actions as interactiveActions } from './Interactive'
+import logger from '../utils/logger'
 
 // Constants
 export const constants = {
@@ -48,7 +47,7 @@ const getGridFromButtons = (controls, profile, sounds) => {
 const DEVLAB_APP_NAME = 'Soundwave Interactive Soundboard'
 
 function createGameAndVersion (controls, userId) {
-  console.log('Time to create game and version')
+  logger.log('info', 'Time to create game and version')
   const data = {
     name: DEVLAB_APP_NAME,
     description: 'Soundwave Interactive Personal Soundboard',
@@ -58,7 +57,7 @@ function createGameAndVersion (controls, userId) {
   let gameId, versionId
   return client.game.create({ body: data, json: true })
   .then(res => {
-    console.log('Created Game, update it Interactive 2.0')
+    logger.log('info', 'Created Game, update it Interactive 2.0')
     return client.request('PUT', `/interactive/games/${res.body.id}`, { body: { controlVersion: '2.0' }, json: true })
   })
   .then(res => {
@@ -132,17 +131,17 @@ export const actions = {
       })
       .then(res => {
         let game = res.body
-        console.log('Game', game)
+        logger.log('info', 'Game', game)
         let valid = true
         if (game.controlVersion === '1.0') {
           game = DevLabUtil.convertInteractiveOneToTwo(game)
           valid = false
         }
         if (!valid) {
-          console.log('Not Valid, Delete it, Create it', gameId)
+          logger.log('info', 'Not Valid, Delete it, Create it', gameId)
           return client.request('DELETE', `/interactive/games/${gameId}`)
           .then(() => {
-            console.log('Game deleted!')
+            logger.log('info', 'Game deleted!')
             return createGameAndVersion(game.controls, user.id)
           })
           .then(newGame => {

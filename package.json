@@ -122,7 +122,7 @@
     "es6-promise": "^3.2.1",
     "glob": "^7.0.3",
     "history": "^2.0.0",
-    "howler": "^2.0.1",
+    "howler": "^2.0.4",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.10.0",
     "moment": "^2.13.0",
@@ -137,7 +137,7 @@
     "react-bootstrap-daterangepicker": "^3.0.0",
     "react-bootstrap-typeahead": "^0.5.0",
     "react-contexify": "^1.1.0",
-    "react-context-menu": "^1.0.2",
+    "react-context-menu": "^1.1.0",
     "react-dom": "^15.1.0",
     "react-dropzone": "^3.5.2",
     "react-grid-layout": "^0.12.7",
@@ -159,7 +159,8 @@
     "sprintf-js": "^1.0.3",
     "validate.js": "^0.9.0",
     "webpack-target-electron-renderer": "^0.4.0",
-    "winston": "^2.3.1"
+    "winston": "^2.3.1",
+    "winston-loggly-bulk": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
@@ -186,7 +187,7 @@
     "css-loader": "^0.23.0",
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
-    "electron": "1.6.8",
+    "electron": "^1.6.11",
     "electron-builder": "^13.9.0",
     "electron-builder-squirrel-windows": "^13.10.1",
     "electron-debug": "^1.1.0",

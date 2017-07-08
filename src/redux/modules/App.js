@@ -69,7 +69,6 @@ export const actions = {
       })
       if (_.has(data, 'shareAnalytics')) shareAnalytics(data.shareAnalytics)
       ipcDispatch = dispatch
-      console.log(data)
       if (_.has(data, 'globalVolume')) Howler.volume(parseInt(data.globalVolume) * 0.01)
       if (_.has(data, 'selectedOutput')) dispatch(actions.setAudioDevice(data.selectedOutput))
     }

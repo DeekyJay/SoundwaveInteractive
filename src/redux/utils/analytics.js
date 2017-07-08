@@ -1,26 +1,32 @@
 import fetch from './fetch'
 import config from '../../app.config'
+import logger from './logger'
+
 let shouldAnalytics = true
 // If this is the first login, create a new account,
 // if not, validify that they are credentials for the user and save them.
-export function init (userId, tokens) {
+export function init (userId, tokens, username) {
   const data = {
     user: {
       userId: userId,
       token: tokens
     }
   }
-  console.log('ANALYTICS INIT', data)
+  logger.log('info', 'ANALYTICS INIT', data)
   return fetch.post(`${config.API_BASE_URL}/auth`, data)
   .then(res => {
     // API is now authenticated with Beam.
+    logger.log('info', res)
     console.log(res)
     if (res.token) {
       localStorage.setItem('si-token', res.token)
     }
+    if (res.user.debug) {
+      logger.init(username)
+    }
   })
   .catch(err => {
-    console.log('Error', err)
+    logger.log('info', 'Error', err)
     throw err
   })
 }
@@ -31,7 +37,7 @@ export function wentInteractive () {
 
 export function updateProfiles (currentProfiles) {
   if (shouldAnalytics) {
-    console.log('Update Profiles')
+    logger.log('info', 'Update Profiles')
     const data = {
       stat: {
         current_profiles: currentProfiles
@@ -43,7 +49,7 @@ export function updateProfiles (currentProfiles) {
 
 export function updateSoundCount (currentSounds) {
   if (shouldAnalytics) {
-    console.log('Update Sound Count')
+    logger.log('info', 'Update Sound Count')
     const data = {
       stat: {
         current_sounds: currentSounds
@@ -58,7 +64,7 @@ let plays = 0
 let sparks = 0
 export function play (sprk) {
   if (shouldAnalytics) {
-    console.log('PLAY SOUND')
+    logger.log('info', 'PLAY SOUND')
     plays++
     sparks += parseInt(sprk)
     clearTimeout(playTimeout)
