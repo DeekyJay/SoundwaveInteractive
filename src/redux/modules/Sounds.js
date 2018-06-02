@@ -1,13 +1,23 @@
 import storage from 'electron-json-storage'
-import { toastr } from 'react-redux-toastr'
+import {
+  toastr
+} from 'react-redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
-import { arrayMove } from 'react-sortable-hoc'
-import { actions as interactiveActions } from './Interactive'
+import {
+  arrayMove
+} from 'react-sortable-hoc'
+import {
+  actions as interactiveActions
+} from './Interactive'
 import winston from 'winston'
-winston.add(winston.transports.File, { filename: 'plays.log' })
-import analytics from '../utils/analytics'
-import { Howl, Howler } from 'howler'
+winston.add(winston.transports.File, {
+  filename: 'plays.log'
+})
+import {
+  Howl,
+  Howler
+} from 'howler'
 // Constants
 export const constants = {
   SOUNDS_INITIALIZE: 'SOUNDS_INITIALIZE',
@@ -27,7 +37,7 @@ export const constants = {
   UPDATE_HOWLS: 'UPDATE_HOWLS'
 }
 
-export function getDeviceIdForOutput (outputs, selectedOutput) {
+export function getDeviceIdForOutput(outputs, selectedOutput) {
   const output = _.find(outputs, o => o.label === selectedOutput)
   if (output) return output.deviceId
   else return null
@@ -53,7 +63,9 @@ export const actions = {
   initialize: (data) => {
     return {
       type: constants.SOUNDS_INITIALIZE,
-      payload: { loadedState: data }
+      payload: {
+        loadedState: data
+      }
     }
   },
   addSounds: (files) => {
@@ -72,42 +84,65 @@ export const actions = {
         } else {
           name = file.name
         }
-        sounds.push({ id: cuid(), name: name, path: file.path, cooldown: state.sounds.default_cooldown,
-          sparks: state.sounds.default_sparks, volume: state.sounds.default_volume, command: state.sounds.command })
+        sounds.push({
+          id: cuid(),
+          name: name,
+          path: file.path,
+          cooldown: state.sounds.default_cooldown,
+          sparks: state.sounds.default_sparks,
+          volume: state.sounds.default_volume,
+          command: state.sounds.command
+        })
       })
       dispatch({
         type: constants.ADD_SOUNDS,
-        payload: { sounds: sounds }
+        payload: {
+          sounds: sounds
+        }
       })
-      analytics.updateSoundCount(sounds.length)
     }
   },
   sortSounds: (oldIndex, newIndex) => {
     return (dispatch, getState) => {
-      const { sounds: { sounds } } = getState()
+      const {
+        sounds: {
+          sounds
+        }
+      } = getState()
       const sortedSounds = arrayMove(sounds, oldIndex, newIndex)
       dispatch({
         type: constants.SORT_SOUNDS,
-        payload: { sounds: sortedSounds }
+        payload: {
+          sounds: sortedSounds
+        }
       })
     }
   },
   removeSound: (index) => {
     return (dispatch, getState) => {
-      const { sounds: { sounds } } = getState()
+      const {
+        sounds: {
+          sounds
+        }
+      } = getState()
       const newSounds = Object.assign([], sounds)
       const removedSound = newSounds.splice(index, 1)
       toastr.success(removedSound[0].name + ' Removed!')
       dispatch({
         type: constants.REMOVE_SOUND,
-        payload: { sounds: newSounds }
+        payload: {
+          sounds: newSounds
+        }
       })
-      analytics.updateSoundCount(newSounds.length)
     }
   },
   editSound: (id, cooldown, sparks, name, volume, command) => {
     return (dispatch, getState) => {
-      const { sounds: { sounds } } = getState()
+      const {
+        sounds: {
+          sounds
+        }
+      } = getState()
       const newSounds = Object.assign([], sounds)
       newSounds.map((sound) => {
         if (sound.id === id) {
@@ -121,7 +156,9 @@ export const actions = {
       toastr.success('Sound Updated!')
       dispatch({
         type: constants.EDIT_SOUND,
-        payload: { sounds: newSounds }
+        payload: {
+          sounds: newSounds
+        }
       })
       dispatch(interactiveActions.updateControls())
     }
@@ -133,22 +170,36 @@ export const actions = {
   },
   playSound: (i, username) => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles }, sounds: { sounds, howls }, app: { selectedOutput, outputs } } = getState()
+      const {
+        profiles: {
+          profileId,
+          profiles
+        },
+        sounds: {
+          sounds
+        },
+        app: {
+          selectedOutput,
+          outputs
+        }
+      } = getState()
       const sinkId = getDeviceIdForOutput(outputs, selectedOutput)
       return new Promise((resolve, reject) => {
         try {
           const profile = _.find(profiles, p => p.id === profileId)
           const soundId = profile.sounds[i]
           const sound = _.find(sounds, s => s.id === soundId)
-          // let howl = new Howl({
-          //   src: [sound.path],
-          //   volume: parseFloat(sound.volume) * 0.01
-          // })
-          let howl = howls[i]
-          // This is where we check to see if the selectedOutput actually exists, we might need to refresh the list and get the new output
+          let howl = new Howl({
+            src: [sound.path],
+            volume: parseFloat(sound.volume) * 0.01
+          })
+          // This is where we check to see if the selectedOutput actually exists,
+          // we might need to refresh the list and get the new output
           if (sinkId) howl._sounds[0]._node.setSinkId(sinkId)
           howl.once('end', () => {
-            dispatch({ type: constants.PLAY_SOUND_ENDED })
+            dispatch({
+              type: constants.PLAY_SOUND_ENDED
+            })
           })
           howl.play()
           howl.once('play', () => {
@@ -161,12 +212,15 @@ export const actions = {
           howl.once('loaderror', () => {
             reject(new Error('Error Loading File'))
           })
-          if (username) analytics.play(sound.sparks)
-          dispatch({ type: constants.PLAY_SOUND_STARTED })
+          dispatch({
+            type: constants.PLAY_SOUND_STARTED
+          })
         } catch (err) {
           console.log('Sound Error')
           console.log(err)
-          dispatch({ type: constants.PLAY_SOUND_ERROR })
+          dispatch({
+            type: constants.PLAY_SOUND_ERROR
+          })
           reject(err)
         }
       })
@@ -179,7 +233,12 @@ export const actions = {
   },
   setupEdit: (index) => {
     return (dispatch, getState) => {
-      const { profiles: { profiles, profileId } } = getState()
+      const {
+        profiles: {
+          profiles,
+          profileId
+        }
+      } = getState()
       const profile = _.find(profiles, p => p.id === profileId)
       let sound = profile ? profile.sounds[index] : null
       dispatch({
@@ -193,63 +252,60 @@ export const actions = {
     return {
       type: constants.KILL_ALL_SOUNDS
     }
-  },
-  updateHowls: () => {
-    return (dispatch, getState) => {
-      const { profiles: { profileId, profiles }, sounds: { sounds } } = getState()
-      let howls = []
-      const profile = _.find(profiles, p => p.id === profileId)
-      if (profile) {
-        profile.sounds.map(soundId => {
-          const sound = _.find(sounds, s => s.id === soundId)
-          if (sound) {
-            let howl = new Howl({
-              src: [sound.path],
-              volume: parseFloat(sound.volume) * 0.01
-            })
-            howls.push(howl)
-          } else howls.push(null)
-        })
-      }
-      dispatch({
-        type: constants.UPDATE_HOWLS,
-        payload: { howls: howls }
-      })
-    }
   }
 }
 // Action handlers
 const ACTION_HANDLERS = {
   SOUNDS_INITIALIZE: (state, actions) => {
-    const { payload: { loadedState } } = actions
+    const {
+      payload: {
+        loadedState
+      }
+    } = actions
     return {
       ...state,
       ...loadedState
     }
   },
   ADD_SOUNDS: (state, actions) => {
-    const { payload: { sounds } } = actions
+    const {
+      payload: {
+        sounds
+      }
+    } = actions
     return {
       ...state,
       sounds: sounds
     }
   },
   SORT_SOUNDS: (state, actions) => {
-    const { payload: { sounds } } = actions
+    const {
+      payload: {
+        sounds
+      }
+    } = actions
     return {
       ...state,
       sounds: sounds
     }
   },
   REMOVE_SOUND: (state, actions) => {
-    const { payload: { sounds } } = actions
+    const {
+      payload: {
+        sounds
+      }
+    } = actions
     return {
       ...state,
       sounds: sounds
     }
   },
   EDIT_SOUND: (state, actions) => {
-    const { payload: { sounds } } = actions
+    const {
+      payload: {
+        sounds
+      }
+    } = actions
     return {
       ...state,
       sounds: sounds
@@ -268,15 +324,20 @@ const ACTION_HANDLERS = {
     }
   },
   SETUP_EDIT: (state, actions) => {
-    const { payload } = actions
+    const {
+      payload
+    } = actions
     return {
       ...state,
       hasEdit: payload
     }
   },
   UPDATE_HOWLS: (state, actions) => {
-    const { payload: { howls } } = actions
-    console.log(howls)
+    const {
+      payload: {
+        howls
+      }
+    } = actions
     return {
       ...state,
       howls: howls

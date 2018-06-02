@@ -121,7 +121,7 @@
           border-right: 2px solid $table-border;
         }
         &.drag {
-          box-shadow: inset 0 0 6px 0 hsla(0,0%,100%,.5);
+          box-shadow: inset 0 0 6px 0 hsla(0, 0%, 100%, .5);
         }
         &.disabled {
           opacity: 0.3;
@@ -183,8 +183,7 @@
   display: inline-block;
   font-size: 18px;
   padding-top: 5px;
-  padding-bottom: 5px;
-  // border-top: 1px solid $item-border;
+  padding-bottom: 5px; // border-top: 1px solid $item-border;
   // border-bottom: 1px solid $item-border;
   // background: $table-bg;
   text-overflow: ellipsis;

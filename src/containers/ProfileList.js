@@ -10,7 +10,7 @@ import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, profile, profileActions, selectProfile, selectedProfile}) => {
-  return (<ProfileItem index={index} profile={profile}
+  return (<ProfileItem index={index || 0} profile={profile}
     profileActions={profileActions} selectProfile={selectProfile}
     selectedProfile={selectedProfile} />)
 })
@@ -18,7 +18,7 @@ const SortableList = SortableContainer(({ items, profileActions, selectProfile, 
   return (
     <span>
       {items.map((value, index) =>
-        <SortableItem key={`item-${index}`} index={index}
+        <SortableItem key={`item-${index}`} index={index || 0}
           profile={value} profileActions={profileActions} selectProfile={selectProfile}
           selectedProfile={selectedProfile} />
       )}

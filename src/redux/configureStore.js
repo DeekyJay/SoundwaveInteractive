@@ -8,8 +8,7 @@ import RavenMiddleware from 'redux-raven-middleware'
 /* istanbul ignore next */
 export default function configureStore (initialState = {}, history) {
   // Compose final middleware and use devtools in debug environment
-  let middleware = applyMiddleware(thunk, promiseMiddleware(), routerMiddleware(history),
-  RavenMiddleware('https://9cbd4903ac0f4175bef8d33a7b13b628@sentry.io/109325'))
+  let middleware = applyMiddleware(thunk, promiseMiddleware(), routerMiddleware(history))
   if (__DEBUG__) {
     const devTools = window.devToolsExtension
       ? window.devToolsExtension()

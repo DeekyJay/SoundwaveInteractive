@@ -152,6 +152,7 @@ export function updateControls (profile, sounds, layout) {
   .then(controls => {
     controls.forEach(control => {
       control.on('mousedown', (inputEvent, participant) => {
+        console.log(inputEvent, participant)
         if (!playing) {
           playTimeout()
           console.log(participant.username, inputEvent.input.controlID)
@@ -159,8 +160,11 @@ export function updateControls (profile, sounds, layout) {
           store.dispatch(soundActions.playSound(pressedId, participant.username))
           .then(() => {
             if (cooldownType === 'individual') {
+              console.log('here', cooldowns[parseInt(pressedId)])
               control.setCooldown(cooldowns[parseInt(pressedId)])
+              console.log('set cooldown')
             } else if (cooldownType === 'static') {
+              console.log(controls);
               controls.forEach(c => c.setCooldown(staticCooldown))
             } else if (cooldownType === 'dynamic') {
               controls.forEach(c => c.setCooldown(cooldowns[parseInt(pressedId)]))

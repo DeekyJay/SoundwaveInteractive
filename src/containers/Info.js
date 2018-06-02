@@ -34,12 +34,11 @@ export class Info extends React.Component {
           <InfoGroup title='Knowledgebase' className='know'
             text={'Looking for useful information? Check out these useful links'}>
             <li><a name='wiki' onClick={this.goToLink}>Wiki</a></li>
-            <li><a name='forums' onClick={this.goToLink}>Mixer Forums</a></li>
           </InfoGroup>
           <InfoGroup title='App Info' className='app-info'
             text='App Information and License'>
             <InfoBullet text='Made by Derek Jensen' />
-            <InfoBullet text='Copyright 2017 Derek Jensen. All rights reserved.' />
+            <InfoBullet text='Copyright 2018 Derek Jensen. All rights reserved.' />
           </InfoGroup>
           <div className='for-mixer'>
             <span className='made-with'>Made with</span>

@@ -16,7 +16,7 @@ import _ from 'lodash'
 
 const SortableItem = SortableElement(({index, sound, soundActions, selectSound, selectedSound, isActive}) => {
   return (<SoundItem index={index} sound={sound} soundActions={soundActions}
-    selectSound={selectSound} selectedSound={selectedSound} isActive={isActive} />)
+    selectSound={selectSound} selectedSound={selectedSound} isActive={!!isActive} />)
 })
 const SortableList = SortableContainer(({ items, soundActions, selectSound, selectedSound, selectedProfile }) => {
   return (

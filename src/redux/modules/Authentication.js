@@ -1,7 +1,16 @@
-import { ipcRenderer } from 'electron'
-import { auth, checkStatus, updateTokens, getUserInfo, getTokens } from '../utils/Beam'
-import { push } from 'react-router-redux'
-import analytics from '../utils/analytics'
+import {
+  ipcRenderer
+} from 'electron'
+import {
+  auth,
+  checkStatus,
+  updateTokens,
+  getUserInfo,
+  getTokens
+} from '../utils/Beam'
+import {
+  push
+} from 'react-router-redux'
 
 // Constants
 export const constants = {
@@ -36,8 +45,7 @@ export const actions = {
     }
   },
   validateToken: () => {
-    return (dispatch, getState) => {
-    }
+    return (dispatch, getState) => {}
   },
   initialize: (tokens) => {
     return (dispatch, getState) => {
@@ -46,35 +54,35 @@ export const actions = {
           type: 'SIGN_IN_PENDING'
         })
         new Promise((resolve, reject) => {
-          updateTokens(tokens) // Set Token inside client
-          if (tokens.refresh) { // Do the tokens need to be refreshed
-            return auth.refresh()
-            .then(() => {
-              updateTokens(getTokens())
+            updateTokens(tokens) // Set Token inside client
+            if (tokens.refresh) { // Do the tokens need to be refreshed
+              return auth.refresh()
+                .then(() => {
+                  updateTokens(getTokens())
+                  resolve(true)
+                })
+                .catch(err => {
+                  console.log('Refresh Error', err)
+                  reject(err)
+                  dispatch({
+                    type: 'SIGN_IN_ERROR'
+                  })
+                })
+            } else {
               resolve(true)
-            })
-            .catch(err => {
-              console.log('Refresh Error', err)
-              reject(err)
-              dispatch({
-                type: 'SIGN_IN_ERROR'
-              })
-            })
-          } else {
-            resolve(true)
-          }
-        })
-        .then(() => {
-          return getUserInfo()
-        })
-        .then(response => {
-          const user = response.body
-          const newTokens = getTokens()
-          analytics.init(user.id, newTokens)
+            }
+          })
           .then(() => {
+            return getUserInfo()
+          })
+          .then(response => {
+            const user = response.body
+            const newTokens = getTokens()
             dispatch({
               type: constants.SET_USER,
-              payload: { user: user }
+              payload: {
+                user: user
+              }
             })
             dispatch({
               type: constants.INITIALIZE,
@@ -85,25 +93,17 @@ export const actions = {
             })
             dispatch(push('/'))
           })
-          .catch(err => {
-            if (err.response && err.response.status && err.response.status === 401) {
-              dispatch({
-                type: 'SIGN_IN_DENIED'
-              })
-            } else {
-              dispatch({
-                type: 'SIGN_IN_ERROR'
-              })
-            }
-          })
-        })
       } else {
-        dispatch({ type: constants.INITIALIZE })
+        dispatch({
+          type: constants.INITIALIZE
+        })
       }
     }
   },
   logout: (clear = false) => {
-    ipcRenderer.send('logout', { clear })
+    ipcRenderer.send('logout', {
+      clear
+    })
     return {
       type: constants.LOGOUT
     }
@@ -112,7 +112,9 @@ export const actions = {
 // Action handlers
 const ACTION_HANDLERS = {
   INITIALIZE: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     console.log('INIT', payload)
     return {
       ...state,
@@ -124,7 +126,9 @@ const ACTION_HANDLERS = {
     }
   },
   SIGN_IN: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload,
@@ -145,7 +149,11 @@ const ACTION_HANDLERS = {
     }
   },
   VALIDATE_TOKEN: (state, action) => {
-    const { payload: { isAuthenticated } } = action
+    const {
+      payload: {
+        isAuthenticated
+      }
+    } = action
     return {
       ...state,
       isAuthenticated: isAuthenticated
@@ -159,7 +167,9 @@ const ACTION_HANDLERS = {
     }
   },
   SET_USER: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
