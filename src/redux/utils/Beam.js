@@ -20,20 +20,6 @@ function playTimeout () {
 let cooldownType = 'static'
 let staticCooldown = 30000
 let cooldowns = []
-let smart_increments = []
-let smart_increment_value = 5000
-
-let current_cooldowns = []
-function setSmartCooldown (i, t) {
-  current_cooldowns[i] = 1
-  setTimeout(() => {
-    current_cooldowns[i] = 0
-  }, t)
-}
-
-function isCoolingDown (i) {
-  return current_cooldowns[i]
-}
 
 // Setup the events for GameClinet
 gclient.on('open', () => {
@@ -114,7 +100,6 @@ function initHandshake (versionId, token, profile, sounds, layout) {
   })
 }
 
-
 export function goInteractive (versionId, token, profile, sounds, layout) {
   console.log('go interactive')
   return initHandshake(versionId, token, profile, sounds, layout)
@@ -160,11 +145,8 @@ export function updateControls (profile, sounds, layout) {
           store.dispatch(soundActions.playSound(pressedId, participant.username))
           .then(() => {
             if (cooldownType === 'individual') {
-              console.log('here', cooldowns[parseInt(pressedId)])
               control.setCooldown(cooldowns[parseInt(pressedId)])
-              console.log('set cooldown')
             } else if (cooldownType === 'static') {
-              console.log(controls);
               controls.forEach(c => c.setCooldown(staticCooldown))
             } else if (cooldownType === 'dynamic') {
               controls.forEach(c => c.setCooldown(cooldowns[parseInt(pressedId)]))
