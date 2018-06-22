@@ -1,9 +1,7 @@
-import storage from 'electron-json-storage'
 import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
 import { client } from '../utils/Beam'
-import { actions as interactiveActions } from './Interactive'
 
 // Constants
 export const constants = {

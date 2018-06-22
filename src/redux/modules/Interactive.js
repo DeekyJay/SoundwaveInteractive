@@ -262,13 +262,13 @@ export const actions = {
           sounds
         }
       } = getState()
+      dispatch(boardActions.updateLocalLayout({
+        scenes
+      }))
       if (isConnected) {
         const profile = _.find(profiles, p => p.id === profileId)
         const controls = scenes[0].controls
         dispatch(actions.updateCooldown())
-        dispatch(boardActions.updateLocalLayout({
-          scenes
-        }))
         beam.updateControls(profile, sounds, controls)
       }
     }

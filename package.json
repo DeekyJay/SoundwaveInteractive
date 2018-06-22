@@ -19,7 +19,7 @@
       "icon": "app_build/ico_installer_win.ico"
     },
     "squirrelWindows": {
-      "iconUrl": "http://soundwave.deek.io/icon.ico"
+      "iconUrl": "http://deek.io/icon.ico"
     },
     "mac": {
       "icon": "app_build/ico_installer_mac.icns"
@@ -29,7 +29,7 @@
       "icon": "icons"
     },
     "asar": true,
-    "copyright": "Copyright © 2017 Derek Jensen"
+    "copyright": "Copyright © 2018 Derek Jensen"
   },
   "scripts": {
     "compile:prod": "better-npm-run compile:prod",

@@ -190,7 +190,6 @@ export class BoardEditor extends React.Component {
   }
 
   renderProfileGrid = (large_grid) => {
-    console.log(large_grid)
     return (
       <ReactGridLayout
         layout={large_grid}
