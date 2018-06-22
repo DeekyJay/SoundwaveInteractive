@@ -17,8 +17,8 @@ export class NavBall extends React.Component {
       case 'twitter':
         shell.openExternal('https://twitter.com/DeekyJay')
         break
-      case 'discord':
-        shell.openExternal('https://discord.gg/QfeWGyc')
+      case 'mixer':
+        shell.openExternal('https://mixer.com/Deeky')
         break
       case 'github':
         shell.openExternal('https://github.com/DeekyJay')
@@ -40,8 +40,8 @@ export class NavBall extends React.Component {
         <div onClick={this.link} className='social-media twitter' data-tip='Twitter'>
           <Ink className='ink twitter' />
         </div>
-        <div onClick={this.link} className='social-media discord' data-tip='Discord'>
-          <Ink className='ink discord' />
+        <div onClick={this.link} className='social-media mixer' data-tip='Mixer'>
+          <Ink className='ink mixer' />
         </div>
         <div className='navball'>
           <div className='nav-item board' onClick={navigateSoundboard}>

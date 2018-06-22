@@ -50,7 +50,7 @@ function createGameAndVersion (controls, userId) {
   const data = {
     name: DEVLAB_APP_NAME,
     description: 'Soundwave Interactive Personal Soundboard',
-    installation: 'Download the app at http://soundwave.deek.io/',
+    installation: 'Download the app at https://github.com/DeekyJay/SoundwaveInteractive',
     ownerId: userId
   }
   let gameId, versionId

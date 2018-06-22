@@ -85,9 +85,15 @@
     top: calc(10% - 32.5px);
     background-image: url('./images/twitter.png')
   }
-  &.discord {
+  &.mixer {
     top: calc(25% - 32.5px);
-    background-image: url('./images/discord.png')
+    background-color: white;
+    background-image: url('./images/mixer.png');
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    width: 65px;
+    height: 65px;
   }
   &.github {
     top: calc(75% - 32.5px);

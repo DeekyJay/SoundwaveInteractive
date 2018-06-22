@@ -8,7 +8,7 @@ var config = {
   authorizationUrl: 'https://mixer.com/oauth/authorize',
   tokenUrl: 'https://mixer.com/api/v1/oauth/token',
   useBasicAuthorizationHeader: false,
-  redirectUri: 'https://soundwave.deek.io'
+  redirectUri: 'https://deek.io'
 }
 const scopes = [
   'user:details:self',

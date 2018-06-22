@@ -289,7 +289,7 @@ function buildMenu (mainWindow) {
       submenu: [{
         label: 'Learn More',
         click () {
-          shell.openExternal('https://soundwave.deek.io/wiki')
+          shell.openExternal('https://github.com/DeekyJay/SoundwaveInteractive/wiki')
         }
       }]
     }]
