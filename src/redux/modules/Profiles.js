@@ -1,12 +1,19 @@
 import storage from 'electron-json-storage'
-import { toastr } from 'react-redux-toastr'
+import {
+  toastr
+} from 'react-redux-toastr'
 import _ from 'lodash'
 import cuid from 'cuid'
-import { arrayMove } from 'react-sortable-hoc'
+import {
+  arrayMove
+} from 'react-sortable-hoc'
 import DevLabUtil from '../utils/DevLabUtil'
-import { actions as interactiveActions } from './Interactive'
-import { actions as soundActions } from './Sounds'
-import analytics from '../utils/analytics'
+import {
+  actions as interactiveActions
+} from './Interactive'
+import {
+  actions as soundActions
+} from './Sounds'
 
 // Constants
 export const constants = {
@@ -42,50 +49,71 @@ export const actions = {
     return (dispatch, getState) => {
       dispatch({
         type: constants.PROFILES_INITIALIZE,
-        payload: { loadedState: data }
+        payload: {
+          loadedState: data
+        }
       })
-      dispatch(soundActions.updateHowls())
     }
   },
   addProfile: (name) => {
     return (dispatch, getState) => {
-      const { profiles: { profiles } } = getState()
+      const {
+        profiles: {
+          profiles
+        }
+      } = getState()
       let newProfiles = Object.assign([], profiles)
       const newProfile = DevLabUtil.createProfile(cuid(), name)
       newProfiles.push(newProfile)
       dispatch({
         type: constants.ADD_PROFILE,
-        payload: { profiles: newProfiles }
+        payload: {
+          profiles: newProfiles
+        }
       })
-      analytics.updateProfiles(newProfiles.length)
     }
   },
   sortProfiles: (oldIndex, newIndex) => {
     return (dispatch, getState) => {
-      const { profiles: { profiles } } = getState()
+      const {
+        profiles: {
+          profiles
+        }
+      } = getState()
       const sortedProfiles = arrayMove(profiles, oldIndex, newIndex)
       dispatch({
         type: constants.SORT_PROFILES,
-        payload: { profiles: sortedProfiles }
+        payload: {
+          profiles: sortedProfiles
+        }
       })
     }
   },
   removeProfile: (index) => {
     return (dispatch, getState) => {
-      const { profiles: { profiles } } = getState()
+      const {
+        profiles: {
+          profiles
+        }
+      } = getState()
       const newProfiles = Object.assign([], profiles)
       const removeProfile = newProfiles.splice(index, 1)
       toastr.success(removeProfile[0].name + ' Removed!')
       dispatch({
         type: constants.REMOVE_PROFILE,
-        payload: { profiles: newProfiles }
+        payload: {
+          profiles: newProfiles
+        }
       })
-      analytics.updateProfiles(newProfiles.length)
     }
   },
   editProfile: (id, name) => {
     return (dispatch, getState) => {
-      const { profiles: { profiles } } = getState()
+      const {
+        profiles: {
+          profiles
+        }
+      } = getState()
       const newProfiles = Object.assign([], profiles)
       newProfiles.map((profile) => {
         if (profile.id === id) {
@@ -95,7 +123,9 @@ export const actions = {
       toastr.success('Profile Updated!')
       dispatch({
         type: constants.EDIT_PROFILE,
-        payload: { profiles: newProfiles }
+        payload: {
+          profiles: newProfiles
+        }
       })
     }
   },
@@ -103,10 +133,11 @@ export const actions = {
     return (dispatch) => {
       dispatch({
         type: constants.SELECT_PROFILE,
-        payload: { profileId: profileId }
+        payload: {
+          profileId: profileId
+        }
       })
       if (profileId) {
-        dispatch(soundActions.updateHowls())
         dispatch(interactiveActions.updateControls())
       }
     }
@@ -114,7 +145,12 @@ export const actions = {
   assignSound: (index, sound) => {
     if (!sound) return
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles } } = getState()
+      const {
+        profiles: {
+          profileId,
+          profiles
+        }
+      } = getState()
       let newProfiles = Object.assign([], profiles)
       let idx = 0
       let profile = _.find(profiles, (p, i) => {
@@ -131,15 +167,21 @@ export const actions = {
       newProfiles.splice(idx, 1, profile)
       dispatch({
         type: constants.ASSIGN_SOUNDS,
-        payload: { profiles: newProfiles }
+        payload: {
+          profiles: newProfiles
+        }
       })
-      dispatch(soundActions.updateHowls())
       dispatch(interactiveActions.updateControls())
     }
   },
   unassignSound: (index) => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles } } = getState()
+      const {
+        profiles: {
+          profileId,
+          profiles
+        }
+      } = getState()
       let newProfiles = Object.assign([], profiles)
       let idx = 0
       let profile = _.find(profiles, (p, i) => {
@@ -151,7 +193,9 @@ export const actions = {
       if (!profile) {
         dispatch({
           type: constants.ASSIGN_SOUNDS,
-          payload: { profiles: profiles }
+          payload: {
+            profiles: profiles
+          }
         })
       } else {
         let newSounds = Object.assign([], profile.sounds)
@@ -161,16 +205,22 @@ export const actions = {
         newProfiles.splice(idx, 1, profile)
         dispatch({
           type: constants.ASSIGN_SOUNDS,
-          payload: { profiles: newProfiles }
+          payload: {
+            profiles: newProfiles
+          }
         })
-        dispatch(soundActions.updateHowls())
         dispatch(interactiveActions.updateControls())
       }
     }
   },
   toggleLock: () => {
     return (dispatch, getState) => {
-      const { profiles: { profileId, profiles } } = getState()
+      const {
+        profiles: {
+          profileId,
+          profiles
+        }
+      } = getState()
       const newProfiles = Object.assign([], profiles)
       for (let i = 0; i <= newProfiles.length; i++) {
         if (newProfiles[i].id === profileId) {
@@ -180,12 +230,13 @@ export const actions = {
       }
       dispatch({
         type: constants.TOGGLE_PROFILE_LOCK,
-        payload: { profiles: newProfiles }
+        payload: {
+          profiles: newProfiles
+        }
       })
     }
   },
   clearProfiles: () => {
-    analytics.updateProfiles(0)
     return {
       type: constants.CLEAR_ALL_PROFILES
     }
@@ -194,56 +245,88 @@ export const actions = {
 // Action handlers
 const ACTION_HANDLERS = {
   PROFILES_INITIALIZE: (state, actions) => {
-    const { payload: { loadedState } } = actions
+    const {
+      payload: {
+        loadedState
+      }
+    } = actions
     return {
       ...state,
       ...loadedState
     }
   },
   ADD_PROFILE: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles
     }
   },
   SORT_PROFILES: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles
     }
   },
   REMOVE_PROFILE: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles
     }
   },
   EDIT_PROFILE: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles
     }
   },
   SELECT_PROFILE: (state, actions) => {
-    const { payload: { profileId } } = actions
+    const {
+      payload: {
+        profileId
+      }
+    } = actions
     return {
       ...state,
       profileId: profileId
     }
   },
   ASSIGN_SOUNDS: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles
     }
   },
   TOGGLE_PROFILE_LOCK: (state, actions) => {
-    const { payload: { profiles } } = actions
+    const {
+      payload: {
+        profiles
+      }
+    } = actions
     return {
       ...state,
       profiles: profiles

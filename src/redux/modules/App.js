@@ -1,11 +1,18 @@
-import { remote, ipcRenderer } from 'electron'
+import {
+  remote,
+  ipcRenderer
+} from 'electron'
 import _ from 'lodash'
 import storage from 'electron-json-storage'
-import { Howler } from 'howler'
+import {
+  Howler
+} from 'howler'
 Howler.usingWebAudio = false
-import { shareAnalytics } from '../utils/analytics'
 
-const { BrowserWindow, app } = remote
+const {
+  BrowserWindow,
+  app
+} = remote
 const mainWindow = BrowserWindow.getAllWindows()[0]
 
 // Constants
@@ -22,7 +29,6 @@ export const constants = {
   SET_AUDIO_DEVICE: 'SET_AUDIO_DEVICE',
   SET_GLOBAL_VOLUME: 'SET_GLOBAL_VOLUME',
   APP_INITIALIZE: 'APP_INITIALIZE',
-  TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
   UPDATE_TUT: 'UPDATE_TUT',
   CLEAR_APP: 'CLEAR_APP',
   TOGGLE_TRAY: 'TOGGLE_TRAY'
@@ -48,7 +54,6 @@ const syncStorageWithState = (state) => {
     const data = {
       globalVolume: state.globalVolume,
       selectedOutput: state.selectedOutput,
-      shareAnalytics: state.shareAnalytics,
       tutMode: state.tutMode,
       tutStep: state.tutStep,
       trayMinimize: state.trayMinimize
@@ -67,7 +72,6 @@ export const actions = {
         type: constants.APP_INITIALIZE,
         payload: data
       })
-      if (_.has(data, 'shareAnalytics')) shareAnalytics(data.shareAnalytics)
       ipcDispatch = dispatch
       console.log(data)
       if (_.has(data, 'globalVolume')) Howler.volume(parseInt(data.globalVolume) * 0.01)
@@ -76,7 +80,11 @@ export const actions = {
   },
   minimize: () => {
     return (dispatch, getState) => {
-      const { app: { trayMinimize } } = getState()
+      const {
+        app: {
+          trayMinimize
+        }
+      } = getState()
       // TODO: Remove the && false when system tray is working
       if (trayMinimize) {
         ipcRenderer.send('GET_TRAY_ICON')
@@ -100,7 +108,9 @@ export const actions = {
     else mainWindow.unmaximize()
     return {
       type: constants.MAXIMIZE,
-      payload: { maximized: mainWindow.isMaximized() }
+      payload: {
+        maximized: mainWindow.isMaximized()
+      }
     }
   },
   close: () => {
@@ -111,20 +121,26 @@ export const actions = {
   },
   fullscreen: (flag) => {
     flag
-      ? mainWindow.setFullScreen(flag)
-      : mainWindow.setFullScreen(!mainWindow.isFullScreen())
+      ?
+      mainWindow.setFullScreen(flag) :
+      mainWindow.setFullScreen(!mainWindow.isFullScreen())
     return {
       type: constants.FULLSCREEN,
-      payload: { fullscreen: mainWindow.isFullScreen() }
+      payload: {
+        fullscreen: mainWindow.isFullScreen()
+      }
     }
   },
   alwaysOnTop: (flag) => {
     flag
-      ? mainWindow.setAlwaysOnTop(flag)
-      : mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
+      ?
+      mainWindow.setAlwaysOnTop(flag) :
+      mainWindow.setAlwaysOnTop(!mainWindow.isAlwaysOnTop())
     return {
       type: constants.ALWAYS_ON_TOP,
-      payload: { alwaysOnTop: mainWindow.isAlwaysOnTop() }
+      payload: {
+        alwaysOnTop: mainWindow.isAlwaysOnTop()
+      }
     }
   },
   checkForUpdate: () => {
@@ -147,44 +163,44 @@ export const actions = {
   getAudioDevices: () => {
     return (dispatch, getState) => {
       navigator.mediaDevices.enumerateDevices()
-      .then(devices => {
-        const audioOutputs = _.filter(devices, d => d.kind === 'audiooutput')
-        dispatch({
-          type: constants.GET_AUDIO_DEVICES,
-          payload: { outputs: audioOutputs }
+        .then(devices => {
+          const audioOutputs = _.filter(devices, d => d.kind === 'audiooutput')
+          dispatch({
+            type: constants.GET_AUDIO_DEVICES,
+            payload: {
+              outputs: audioOutputs
+            }
+          })
         })
-      })
-      .catch(err => {
-        console.log(err)
-      })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   setAudioDevice: (id) => {
     return {
       type: constants.SET_AUDIO_DEVICE,
-      payload: { id: id }
+      payload: {
+        id: id
+      }
     }
   },
   setGlobalVolume: (volume) => {
     Howler.volume(parseFloat(volume) * 0.01)
     return {
       type: constants.SET_GLOBAL_VOLUME,
-      payload: { globalVolume: volume }
-    }
-  },
-  toggleAnalytics: () => {
-    return (dispatch, getState) => {
-      const { app: { shareAnalytics: flag } } = getState()
-      shareAnalytics(!flag)
-      dispatch({
-        type: constants.TOGGLE_ANALYTICS,
-        payload: { shareAnalytics: !flag }
-      })
+      payload: {
+        globalVolume: volume
+      }
     }
   },
   nextTutStep: () => {
     return (dispatch, getState) => {
-      const { app: { tutStep } } = getState()
+      const {
+        app: {
+          tutStep
+        }
+      } = getState()
       if (tutStep === 6) {
         dispatch({
           type: constants.UPDATE_TUT,
@@ -210,10 +226,16 @@ export const actions = {
   },
   toggleTray: () => {
     return (dispatch, getState) => {
-      const { app: { trayMinimize } } = getState()
+      const {
+        app: {
+          trayMinimize
+        }
+      } = getState()
       dispatch({
         type: constants.TOGGLE_TRAY,
-        payload: { trayMinimize: !trayMinimize }
+        payload: {
+          trayMinimize: !trayMinimize
+        }
       })
     }
   }
@@ -232,7 +254,9 @@ const ACTION_HANDLERS = {
     }
   },
   MAXIMIZE: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
@@ -244,35 +268,47 @@ const ACTION_HANDLERS = {
     }
   },
   FULLSCREEN: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
     }
   },
   ALWAYS_ON_TOP: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
     }
   },
   CHECK_FOR_UPDATE: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
     }
   },
   GET_AUDIO_DEVICES: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     return {
       ...state,
       ...payload
     }
   },
   SET_AUDIO_DEVICE: (state, action) => {
-    const { payload: { id } } = action
+    const {
+      payload: {
+        id
+      }
+    } = action
     const newState = {
       ...state,
       selectedOutput: id
@@ -281,16 +317,9 @@ const ACTION_HANDLERS = {
     return newState
   },
   SET_GLOBAL_VOLUME: (state, action) => {
-    const { payload } = action
-    const newState = {
-      ...state,
-      ...payload
-    }
-    syncStorageWithState(newState)
-    return newState
-  },
-  TOGGLE_ANALYTICS: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     const newState = {
       ...state,
       ...payload
@@ -305,7 +334,9 @@ const ACTION_HANDLERS = {
     }
   },
   UPDATE_TUT: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     const newState = {
       ...state,
       ...payload
@@ -317,7 +348,6 @@ const ACTION_HANDLERS = {
     let data = {
       selectedOutput: null,
       globalVolume: 100,
-      shareAnalytics: true,
       tutMode: true,
       tutStep: 1
     }
@@ -327,7 +357,9 @@ const ACTION_HANDLERS = {
     }
   },
   TOGGLE_TRAY: (state, action) => {
-    const { payload } = action
+    const {
+      payload
+    } = action
     const newState = {
       ...state,
       ...payload
@@ -348,7 +380,6 @@ export const initialState = {
   outputs: [],
   selectedOutput: null,
   globalVolume: 100,
-  shareAnalytics: true,
   tutMode: true,
   tutStep: 1,
   trayMinimize: false

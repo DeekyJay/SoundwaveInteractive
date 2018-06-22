@@ -1,5 +1,4 @@
 .content-container {
-  background: $content-bg;
   text-align: left;
   position: absolute;
   top: 20px;
@@ -7,7 +6,6 @@
   left: 100px;
   bottom: 20px;
   border-radius: 4px;
-  border: 1px solid $border;
   display: none;
   opacity: 0;
   &.active {
@@ -17,7 +15,8 @@
   .content-header {
     font-size: 22px;
     height: 38px;
-    padding-left: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
     border-bottom: 1px solid $border;
   }
   .content-body {

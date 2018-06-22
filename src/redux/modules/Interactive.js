@@ -1,9 +1,12 @@
 import beam from '../utils/Beam'
 import storage from 'electron-json-storage'
 import _ from 'lodash'
-import analytics from '../utils/analytics'
-import { toastr } from 'react-redux-toastr'
-import { actions as boardActions } from './Board'
+import {
+  toastr
+} from 'react-redux-toastr'
+import {
+  actions as boardActions
+} from './Board'
 
 // Constants
 export const constants = {
@@ -57,7 +60,9 @@ export const actions = {
     return (dispatch) => {
       dispatch({
         type: constants.INTERACTIVE_INITIALIZE,
-        payload: { loadedState: data }
+        payload: {
+          loadedState: data
+        }
       })
       console.log('Update cooldown')
       dispatch(actions.updateCooldown())
@@ -76,17 +81,39 @@ export const actions = {
   },
   updateCooldown: () => {
     return (dispatch, getState) => {
-      const { interactive: { storage: { cooldownOption, staticCooldown, smartCooldown } },
-        profiles: { profiles, profileId }, sounds: { sounds } } = getState()
+      const {
+        interactive: {
+          storage: {
+            cooldownOption,
+            staticCooldown,
+            smartCooldown
+          }
+        },
+        profiles: {
+          profiles,
+          profileId
+        },
+        sounds: {
+          sounds
+        }
+      } = getState()
       const cooldowns = getCooldownsForProfile(profileId, profiles, sounds, staticCooldown)
       // TODO: smart cooldown increment
       beam.setCooldown(cooldownOption, staticCooldown, cooldowns, smartCooldown)
-      dispatch({ type: constants.COOLDOWN_UPDATED })
+      dispatch({
+        type: constants.COOLDOWN_UPDATED
+      })
     }
   },
   toggleAutoReconnect: () => {
     return (dispatch, getState) => {
-      const { interactive: { storage: { useReconnect } } } = getState()
+      const {
+        interactive: {
+          storage: {
+            useReconnect
+          }
+        }
+      } = getState()
       dispatch({
         type: constants.TOGGLE_AUTO_RECONNECT,
         payload: !useReconnect
@@ -101,11 +128,26 @@ export const actions = {
   },
   goInteractive: (isDisconnect) => {
     return (dispatch, getState) => {
-      const { interactive: { isConnected },
-        board: { versionId, board: { scenes } },
-        auth: { tokens },
-        profiles: { profiles, profileId },
-        sounds: { sounds }
+      const {
+        interactive: {
+          isConnected
+        },
+        board: {
+          versionId,
+          board: {
+            scenes
+          }
+        },
+        auth: {
+          tokens
+        },
+        profiles: {
+          profiles,
+          profileId
+        },
+        sounds: {
+          sounds
+        }
       } = getState()
       const profile = _.find(profiles, p => p.id === profileId)
       const controls = scenes[0].controls
@@ -115,31 +157,50 @@ export const actions = {
           type: 'GO_INTERACTIVE_PENDING'
         })
         beam.goInteractive(versionId, tokens.access, profile, sounds, controls)
-        .then(res => {
-          dispatch({ type: 'GO_INTERACTIVE_FULFILLED' })
-          analytics.wentInteractive()
-        })
-        .catch(err => {
-          dispatch({ type: 'GO_INTERACTIVE_REJECTED' })
-          toastr.error('Failed to Connect to Beam')
-          dispatch(actions.robotClosedEvent())
-          throw err
-        })
+          .then(res => {
+            dispatch({
+              type: 'GO_INTERACTIVE_FULFILLED'
+            })
+          })
+          .catch(err => {
+            dispatch({
+              type: 'GO_INTERACTIVE_REJECTED'
+            })
+            toastr.error('Failed to Connect to Beam')
+            dispatch(actions.robotClosedEvent())
+            throw err
+          })
       } else {
-        dispatch({ type: constants.STOP_INTERACTIVE })
+        dispatch({
+          type: constants.STOP_INTERACTIVE
+        })
         beam.stopInteractive(isDisconnect)
       }
     }
   },
   robotClosedEvent: () => {
     return (dispatch, getState) => {
-      const { interactive: { isConnected, storage: { useReconnect, reconnectionTimeout } } } = getState()
+      const {
+        interactive: {
+          isConnected,
+          storage: {
+            useReconnect,
+            reconnectionTimeout
+          }
+        }
+      } = getState()
       if (useReconnect && isConnected) {
         toastr.info('Connection Dropped. Reconnecting.')
-        dispatch({ type: constants.STOP_INTERACTIVE })
-        setTimeout(() => { dispatch(actions.goInteractive()) }, reconnectionTimeout)
+        dispatch({
+          type: constants.STOP_INTERACTIVE
+        })
+        setTimeout(() => {
+          dispatch(actions.goInteractive())
+        }, reconnectionTimeout)
       } else if (isConnected) {
-        dispatch({ type: constants.STOP_INTERACTIVE })
+        dispatch({
+          type: constants.STOP_INTERACTIVE
+        })
       }
     }
   },
@@ -147,7 +208,9 @@ export const actions = {
     return (dispatch, getState) => {
       dispatch({
         type: constants.UPDATE_STATIC_COOLDOWN,
-        payload: { staticCooldown: parseInt(value) }
+        payload: {
+          staticCooldown: parseInt(value)
+        }
       })
       dispatch(actions.updateCooldown())
     }
@@ -156,7 +219,9 @@ export const actions = {
     return (dispatch, getState) => {
       dispatch({
         type: constants.UPDATE_SMART_COOLDOWN,
-        payload: { smartCooldown: parseInt(value) }
+        payload: {
+          smartCooldown: parseInt(value)
+        }
       })
       dispatch(actions.updateCooldown())
     }
@@ -168,25 +233,42 @@ export const actions = {
   },
   pingError: () => {
     toastr.error('Connection Error',
-      'Uh oh! We\'re struggling to shake hands with Beam. Make sure your firewall isn\'t blocking us!',
-      { timeOut: 15000 })
+      'Uh oh! We\'re struggling to shake hands with Beam. Make sure your firewall isn\'t blocking us!', {
+        timeOut: 15000
+      })
     return (dispatch) => {
       dispatch(actions.robotClosedEvent())
-      dispatch({ type: 'PING_ERROR' })
+      dispatch({
+        type: 'PING_ERROR'
+      })
     }
   },
   updateControls: () => {
     return (dispatch, getState) => {
-      const { interactive: { isConnected },
-        board: { board: { scenes } },
-        profiles: { profiles, profileId },
-        sounds: { sounds }
+      const {
+        interactive: {
+          isConnected
+        },
+        board: {
+          board: {
+            scenes
+          }
+        },
+        profiles: {
+          profiles,
+          profileId
+        },
+        sounds: {
+          sounds
+        }
       } = getState()
+      dispatch(boardActions.updateLocalLayout({
+        scenes
+      }))
       if (isConnected) {
         const profile = _.find(profiles, p => p.id === profileId)
         const controls = scenes[0].controls
         dispatch(actions.updateCooldown())
-        dispatch(boardActions.updateLocalLayout({ scenes }))
         beam.updateControls(profile, sounds, controls)
       }
     }
@@ -195,7 +277,11 @@ export const actions = {
 // Action handlers
 const ACTION_HANDLERS = {
   INTERACTIVE_INITIALIZE: (state, actions) => {
-    const { payload: { loadedState } } = actions
+    const {
+      payload: {
+        loadedState
+      }
+    } = actions
     return {
       ...state,
       storage: {
@@ -205,7 +291,11 @@ const ACTION_HANDLERS = {
     }
   },
   SET_COOLDOWN_OPTION: (state, actions) => {
-    const { payload: { cooldownOption } } = actions
+    const {
+      payload: {
+        cooldownOption
+      }
+    } = actions
     return {
       ...state,
       storage: {
@@ -215,7 +305,9 @@ const ACTION_HANDLERS = {
     }
   },
   TOGGLE_AUTO_RECONNECT: (state, actions) => {
-    const { payload } = actions
+    const {
+      payload
+    } = actions
     return {
       ...state,
       storage: {
@@ -225,7 +317,9 @@ const ACTION_HANDLERS = {
     }
   },
   UPDATE_RECONNECTION_TIMEOUT: (state, actions) => {
-    const { payload } = actions
+    const {
+      payload
+    } = actions
     return {
       ...state,
       storage: {
@@ -256,7 +350,11 @@ const ACTION_HANDLERS = {
     }
   },
   UPDATE_USER_COUNT: (state, actions) => {
-    const { payload: { user_count } } = actions
+    const {
+      payload: {
+        user_count
+      }
+    } = actions
     return {
       ...state,
       user_count: user_count
@@ -270,7 +368,11 @@ const ACTION_HANDLERS = {
     }
   },
   UPDATE_STATIC_COOLDOWN: (state, action) => {
-    const { payload: { staticCooldown } } = action
+    const {
+      payload: {
+        staticCooldown
+      }
+    } = action
     return {
       ...state,
       storage: {
@@ -280,7 +382,11 @@ const ACTION_HANDLERS = {
     }
   },
   UPDATE_SMART_COOLDOWN: (state, action) => {
-    const { payload: { smartCooldown } } = action
+    const {
+      payload: {
+        smartCooldown
+      }
+    } = action
     return {
       ...state,
       storage: {

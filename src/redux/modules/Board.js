@@ -1,9 +1,7 @@
-import storage from 'electron-json-storage'
 import { toastr } from 'react-redux-toastr'
 import _ from 'lodash'
 import DevLabUtil from '../utils/DevLabUtil'
 import { client } from '../utils/Beam'
-import { actions as interactiveActions } from './Interactive'
 
 // Constants
 export const constants = {
@@ -52,7 +50,7 @@ function createGameAndVersion (controls, userId) {
   const data = {
     name: DEVLAB_APP_NAME,
     description: 'Soundwave Interactive Personal Soundboard',
-    installation: 'Download the app at http://soundwave.deek.io/',
+    installation: 'Download the app at https://github.com/DeekyJay/SoundwaveInteractive',
     ownerId: userId
   }
   let gameId, versionId

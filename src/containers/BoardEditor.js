@@ -139,7 +139,7 @@ export class BoardEditor extends React.Component {
                   ? this.renderProfileGrid(large_grid)
                   : null}
               </div>
-              {this.renderButtonContexts(large_grid)}
+              {/* {this.renderButtonContexts(large_grid)} */}
             </div>
             {this.isProfileLocked() ? <div className='board-locked'><span className='sicon-lock' /></div> : null}
             <div className='board-actions'>
@@ -172,7 +172,7 @@ export class BoardEditor extends React.Component {
             const editSound = this.editSound.bind(this, button.i)
             const unassignSound = this.unassignSound.bind(this, button.i)
             return (
-              <ContextMenu id={'context-sound ' + button.i}>
+              <ContextMenu style={{}} id={'context-sound ' + button.i} key={'context-sound-' + button.i}>
                 <Item label='Play' icon={'sicon-play'} onClick={playSound}
                   disabled={button.name === 'Unassigned'} />
                 <Separator />
@@ -204,7 +204,7 @@ export class BoardEditor extends React.Component {
             const clickSound = button.name !== 'Unassigned' ? this.playSound.bind(this, button.i) : () => {}
             return (
               <div key={button.i} className={`grid-button ${button.hover ? 'hover' : ''}`} onClick={clickSound} >
-                <ContextMenuProvider id={'context-sound ' + button.i} >
+                <ContextMenuProvider style={{display: 'block'}} key={'context-sound-' + button.i} id={'context-sound ' + button.i} >
                   <div className='button-number'>#{button.i}</div>
                   <div className='button-name'>{button.name}</div>
                   <span className={`tactile tactile|${button.i}`}></span>
